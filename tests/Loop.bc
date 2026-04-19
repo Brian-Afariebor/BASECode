@@ -1,7 +1,9 @@
 /*
 Should print numbers 1...9 with code 0.
 */
+
 mn Constants
+
     /* 
     Having a constants section is standard
     though it can be placed in main
@@ -10,24 +12,33 @@ mn Constants
     set range::pointer range::start
     set range::end int 10 )
     set range::step int 1 )
+
 /* 
 By convention Loop is a function
 though it could be a main as well
 */
 fn Loop
+
     /* 
     Out does not print a new line 
     */
     out range::pointer
     out " \ n "
+
     set range::pointer + range::pointer range::step )
+
     if range::pointer range::end
+
         end int 0
+
     else
+
         /* 
         It's standard to explicitly go back to the loop 
         though this is not required
         */
         jmp function::Loop
+
 mn Main
+
     jmp function::Loop

@@ -1,5 +1,5 @@
 /*
-Should print numbers 1...10 with code 0.
+Should print numbers 1...9 with code 0.
 */
 mn Constants
     set range::start int 1 )

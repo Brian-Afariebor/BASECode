@@ -1,0 +1,9 @@
+/*
+This should print -1 with code 0.
+*/
+mn Main
+    set a int 1 )
+    set b int 2 )
+    set c - a b )
+    out c
+    end int 0

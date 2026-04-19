@@ -1,3 +1,6 @@
-set x str_s Hello, World! str_e
-out obj x
-end 0
+fn Comment
+    This should print "Hello, World!" to the console and return 0.
+mn Main
+    set x str_s Hello, World! str_e
+    out obj x
+    end 0

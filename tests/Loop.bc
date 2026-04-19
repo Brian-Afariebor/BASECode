@@ -1,0 +1,18 @@
+/*
+Should print numbers 1...10 with code 0.
+*/
+mn Constants
+    set range::start int 1 )
+    set range::pointer range::start
+    set range::end int 10 )
+    set range::step int 1 )
+fn Loop
+    out range::pointer
+    out " \ n "
+    set range::pointer + range::pointer range::step )
+    if range::pointer range::end
+        end int 0
+    else
+        jmp function::Loop
+mn Main
+    jmp function::Loop

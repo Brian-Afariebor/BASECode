@@ -1,0 +1,72 @@
+/*
+Should print numbers arg_1...arg_2 using step arg_3 
+if (arg_2-arg_1)/arg_3 is an integer
+and return code 0.
+Else, should return "Range is not valid".
+*/
+/* Helps with formatting */
+enable IGNORE_EMPTY_LINES
+
+    /* 
+    Helps with not having some arguments
+    but can make code errors harder to spot
+    so use only when you have to
+    */
+    enable IGNORE_UNDEFINED_VARIABLES
+
+        /* 
+        Having a constants section is standard
+        though it can be placed in main
+        */
+        mn Constants
+
+            /* If argument is missing NULL will be given */
+            set range::start int_cast main::args::0
+            set range::pointer range::start
+            set range::end int_cast main::args::1
+            set range::step int_cast main::args::2
+
+        /* 
+        By convention Loop is a function
+        though it could be a main as well
+        */
+        fn Loop
+
+            /* 
+            Out does not print a new line 
+            */
+            out range::pointer
+            out " \ n "
+
+            set range::pointer + range::pointer range::step )
+
+            if range::pointer range::end
+
+                end int 0
+
+            else
+
+                /* 
+                It's standard to explicitly go back to the loop 
+                though this is not required
+                */
+                jmp function::Loop
+
+        mn Main
+
+            set gradient / - main::args::1 main::args::0 ) main::args::2 )
+
+            if gradient int_cast gradient   
+
+                jmp function::Loop
+            
+            else
+
+                end " Range is not valid "
+
+    /* 
+    It's convention to disable flags after they are enabled
+    though it's not required
+    */
+    disable IGNORE_UNDEFINED_VARIABLES
+disable IGNORE_WHITE_SPACE

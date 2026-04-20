@@ -1,6 +1,7 @@
 /*
 Should print numbers 1...9 with code 0.
 */
+/* Helps with formatting */
 enable IGNORE_EMPTY_LINES
 
     mn Constants

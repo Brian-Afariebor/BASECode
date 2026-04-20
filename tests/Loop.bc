@@ -1,8 +1,7 @@
 /*
 Should print numbers 1...9 with code 0.
 */
-
-enable INGNORE_WHITE_SPACE
+enable IGNORE_WHITE_SPACE
 
     mn Constants
 

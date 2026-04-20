@@ -21,10 +21,10 @@ enable IGNORE_EMPTY_LINES
         mn Constants
 
             /* If argument is missing NULL will be given */
-            set range::start int_cast main::args::0 )
+            set range::start int_cast main::args::0
             set range::pointer range::start
-            set range::end int_cast main::args::1 )
-            set range::step int_cast main::args::2 )
+            set range::end int_cast main::args::1
+            set range::step int_cast main::args::2
 
         /* 
         By convention Loop is a function

@@ -54,7 +54,9 @@ enable IGNORE_EMPTY_LINES
 
         mn Main
 
-            set gradient / - main::args::1 main::args::0 ) main::args::2 )
+
+            set delta - main::args::1 main::args::0 )
+            set gradient / delta main::args::2 )
 
             if gradient int_cast gradient   
 
@@ -69,4 +71,5 @@ enable IGNORE_EMPTY_LINES
     though it's not required
     */
     disable IGNORE_UNDEFINED_VARIABLES
+
 disable IGNORE_WHITE_SPACE

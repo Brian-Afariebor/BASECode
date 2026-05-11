@@ -49,7 +49,7 @@ enable IGNORE_EMPTY_LINES
     out str_s , str_e
     out b
     out str_s \ n str_e
-    set a + a b
+    set a + a b )
     set b a
     jmp main::Main
 disable IGNORE_EMPTY_LINES

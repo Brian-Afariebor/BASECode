@@ -55,8 +55,8 @@ enable IGNORE_EMPTY_LINES
         mn Main
 
 
-            set delta - main::args::1 main::args::0 )
-            set gradient / delta main::args::2 )
+            set delta - range::end range::start )
+            set gradient / range::step delta )
 
             if gradient int_cast gradient   
 

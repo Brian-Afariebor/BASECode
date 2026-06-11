@@ -1,0 +1,4 @@
+imp utils
+
+mn main
+    jmp quit

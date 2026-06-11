@@ -1,9 +1,11 @@
 from re import finditer
 
+BASECode = str
+Regex = str
 
 class Token:
 
-    def __init__(self, type: str, contents: str, line: int, column: int):
+    def __init__(self, type: str, contents: BASECode, line: int, column: int):
 
         self.TYPE = type
         self.CONTENTS = contents
@@ -21,19 +23,28 @@ class Token:
 
 class BASECodeParser:
 
-    MAPPINGS = {
-        "OUT": "out",
+    MAPPINGS: dict[BASECode, Regex] = {
+
+        # General Expressions
+        "FLOAT":r"-?\d+?\.\d+(e\d+)?",
+        "INTEGER":r"-?\d+(e\d+)?",
+        "IDENTIFIER":r"\w+",
         "STRING": r"\"(?:[^\"]*)\"",
-        "WHITESPACE": r"\s+",
+        "WHITESPACE": r"[\s;]+",
+
+        # Specific Expressions
+        "OUT": "out",
+
+        # No Match
         "UNMAPPED": ".+",
     }
 
     @staticmethod
-    def parse(basecode: str):
+    def parse(basecode: BASECode) -> list[Token]:
 
         buffer: list[Token] = []
 
-        regex_string = "|".join(
+        regex_string: Regex = "|".join(
             f"(?P<{name}>{regex})" for name, regex in BASECodeParser.MAPPINGS.items()
         )
 

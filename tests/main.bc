@@ -1,4 +1,4 @@
 imp utils
 
 mn main
-    jmp quit
+    jmp utils::quit

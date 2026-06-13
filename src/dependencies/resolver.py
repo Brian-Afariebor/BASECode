@@ -1,35 +1,42 @@
 from re import finditer
-from re import match
 from re import sub
 
 BASECode = str
 
+
 class DependencyResolver:
 
     @staticmethod
-    def resolve(source: str)->BASECode:
+    def resolve(source_directory: str) -> BASECode:
 
-        with open(source, "rt") as source_file:
+        with open(source_directory, "rt") as source_file:
 
             text = source_file.read()
 
-        directory_match = match(r"(\/[^\/]+)+(?=\/[^\/]+)", source)
+        directory_parts = source_directory.split("/")
 
-        if directory_match is None:
+        directory = "/" + "/".join(directory_parts[:-1]) + "/"
 
-            raise RuntimeError("Invalid file directory")
+        buffer = text
 
-        directory = directory_match.string 
+        for match in finditer(r"imp\s+(?P<name>\w+)", text):
 
-        for file_match in finditer(r"(?=imp(\w+))(.+)",text):
+            replacement_name = match.group("name")
 
-            file_name = file_match.string
+            with open(directory + replacement_name + ".bc") as replacement_file:
 
-            with open(directory+file_name+".bc", "rt") as dependency:
+                replacement_text = replacement_file.read()
 
-                dependency_text = dependency.read()
+            replacement_text: BASECode = sub(
+                r"(?P<function>mn|fn)\s+(?P<name>\w+)",
+                rf"\g<function> {replacement_name}::\g<name>",
+                replacement_text,
+            )
 
-            text = sub(rf"imp(\w+){file_name}",dependency_text,text)
+            buffer: BASECode = sub(
+                f"imp\\s+{replacement_name}",
+                replacement_text,
+                buffer,
+            )
 
-        return text
-        
+        return buffer

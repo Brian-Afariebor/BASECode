@@ -1,7 +1,7 @@
 from re import finditer
 from re import sub
 
-BASECode = str
+type BASECode = str
 
 
 class DependencyResolver:

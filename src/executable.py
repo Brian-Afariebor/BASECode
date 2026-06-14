@@ -1,7 +1,7 @@
-from parsing.parser import Token
+from parser import Token
 
 
-class Interpreter:
+class Executable:
 
     def __init__(self, name: str, tokens: list[Token]):
 

@@ -1,7 +1,7 @@
 from re import finditer
 
-BASECode = str
-Regex = str
+type BASECode = str
+type Regex = str
 
 class Token:
 

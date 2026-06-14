@@ -1,8 +1,9 @@
+from parser import BASECode
 from parser import BASECodeParser
 
 def main():
 
-    code = 'set x 1.; out "Hello, World!";'
+    code: BASECode = 'set x 1.; out "Hello, World!";'
 
     parsed_code = BASECodeParser.parse(code)
 

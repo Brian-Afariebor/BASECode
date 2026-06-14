@@ -33,7 +33,7 @@ class Executable:
 
             self._variables[f"main::args::{pos}"] = arg
 
-        self._run_position_id("main",0)
+        self._run_position_id("main", 0)
 
     def _append_to_stack(self, value: Any, stack: str = "main"):
 
@@ -50,11 +50,29 @@ class Executable:
         self._variables[top_pointer] += 1
         self._variables[self._variables[top_pointer]] = value
 
+    def _end(self, token: Token, pos_id: PositionId):
+
+        self._step_position(pos_id)
+        self._eval_at_position(pos_id)
+
+        del self._positions[pos_id]
+
+        if pos_id == "main":
+
+            self._positions.clear()
+            print(
+                "\n" * 5
+                + f"Program '{self.NAME}' ended with a "
+                + f"return value of {self._pop_from_stack('main')}."
+            )
+
     def _eval_at_position(self, pos_id: PositionId):
 
         MAPPINGS: FunctionMap = {
             "OUT": self._out,
             "STRING": self._string,
+            "END": self._end,
+            "INTEGER": self._int,
         }
 
         position = self._positions[pos_id]
@@ -65,11 +83,15 @@ class Executable:
 
         return function(token, pos_id)
 
+    def _int(self, token: Token, pos_id: PositionId):
+
+        self._append_to_stack(int(token.VALUE))
+
     def _out(self, token: Token, pos_id: PositionId):
 
         self._step_position(pos_id)
         self._eval_at_position(pos_id)
-        print(self._pop_from_stack("main"))
+        print(self._pop_from_stack("main"), end="")
         self._step_position(pos_id)
 
     def _pop_from_stack(self, stack: str = "main"):
@@ -88,29 +110,45 @@ class Executable:
 
         return top_value
 
-    def _step_position(self, pos_id: PositionId):
+    def _run_position_id(self, pos_id: PositionId, start: int):
+
+        self._positions[pos_id] = start
+
+        while pos_id in self._positions:
+
+            self._eval_at_position(pos_id)
+            self._step_position(pos_id)
+
+    def _step_position(self, pos_id: PositionId)-> None | Token:
+
+        if pos_id not in self._positions:
+
+            return None
 
         old_position = self._positions[pos_id]
 
         if old_position + 1 >= len(self.TOKENS):
 
-            raise EOFError("End of Code reached")
+            raise EOFError(
+                f"End of Code reached by thread {pos_id}, "
+                + f"at:\n\t{self._token_at_pos(old_position)}"
+            ) from None
 
         self._positions[pos_id] += 1
 
-
-    def _run_position_id(self, pos_id: PositionId, start: int):
-
-        self._positions[pos_id] = start
-
-        while self._positions[pos_id] < len(self.TOKENS):
-
-            self._eval_at_position(pos_id)
-            self._step_position(pos_id)
+        return self._token_at_pos_id(pos_id)
 
     def _string(self, token: Token, pos_id: PositionId):
 
-        self._append_to_stack(token.VALUE, "main")
+        string = token.VALUE[1:-1]
+
+        string.replace(r"\n","\n")
+        string.replace(r"\b","\b")
+        string.replace(r"\t","\t")
+        string.replace("\\qt",'"')
+        string.replace(r"\\","\\")
+
+        self._append_to_stack(string, "main")
 
     def _token_at_pos(self, pos: int):
 

@@ -33,6 +33,7 @@ class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
         # Specific Expressions
+        "END": "end",
         "OUT": "out",
         "SEMICOLON": ";",
         "OPEN_PAREN": r"\(",
@@ -63,7 +64,7 @@ class Parser:
 
             token_string = match.group()
             token_type = str(match.lastgroup)
-            column = match.start() - line_start
+            column = match.start() - line_start + 1
 
             buffer.append(
                 Token(

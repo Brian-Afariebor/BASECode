@@ -1,1 +1,2 @@
-out "Hello, World!"
+out "\qtHello, World!\qt";
+end 0;

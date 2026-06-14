@@ -2,7 +2,7 @@ from parser import BASECodeParser
 
 def main():
 
-    code = 'set x 1.9e1; out "Hello, World!";'
+    code = 'set x 1.; out "Hello, World!";'
 
     parsed_code = BASECodeParser.parse(code)
 

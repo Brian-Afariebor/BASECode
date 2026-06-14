@@ -30,13 +30,16 @@ class BASECodeParser:
         "INTEGER":r"-?\d+(e\d+)?",
         "IDENTIFIER":r"\w+",
         "STRING": r"\"(?:[^\"]*)\"",
-        "WHITESPACE": r"[\s;]+",
+        "WHITESPACE": r"[\s]+",
 
         # Specific Expressions
         "OUT": "out",
+        "SEMICOLON":";",
+        "OPEN_PAREN":"(",
+        "CLOSE_PAERM":")",
 
         # No Match
-        "UNMAPPED": ".+",
+        "UNMAPPED": ".",
     }
 
     @staticmethod

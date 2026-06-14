@@ -2,13 +2,21 @@ from re import finditer
 
 type BASECode = str
 type Regex = str
+type TokenStream = list[Token]
+
 
 class Token:
 
-    def __init__(self, type: str, contents: BASECode, line: int, column: int):
+    def __init__(
+        self,
+        type: str,
+        contents: BASECode,
+        line: int,
+        column: int,
+    ):
 
         self.TYPE = type
-        self.CONTENTS = contents
+        self.VALUE = contents
         self.LINE = line
         self.COLUMN = column
 
@@ -16,50 +24,55 @@ class Token:
 
         return (
             f"Token of type {self.TYPE}, "
-            + f"wtih contents {repr(self.CONTENTS)}, "
+            + f"wtih contents {repr(self.VALUE)}, "
             + f"at {self.LINE},{self.COLUMN}"
         )
 
 
-class BASECodeParser:
+class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
-
-        # General Expressions
-        "FLOAT":r"-?\d+?\.\d+(e\d+)?",
-        "INTEGER":r"-?\d+(e\d+)?",
-        "IDENTIFIER":r"\w+",
-        "STRING": r"\"(?:[^\"]*)\"",
-        "WHITESPACE": r"[\s]+",
-
         # Specific Expressions
         "OUT": "out",
-        "SEMICOLON":";",
-        "OPEN_PAREN":"(",
-        "CLOSE_PAERM":")",
-
+        "SEMICOLON": ";",
+        "OPEN_PAREN": r"\(",
+        "CLOSE_PAERM": r"\)",
+        # General Expressions
+        "FLOAT": r"-?\d+?\.\d+(e\d+)?",
+        "INTEGER": r"-?\d+(e\d+)?",
+        "IDENTIFIER": r"\w+",
+        "STRING": r"\"(?:[^\"]*)\"",
+        "WHITESPACE": r"[\s]+",
         # No Match
         "UNMAPPED": ".",
     }
 
     @staticmethod
-    def parse(basecode: BASECode) -> list[Token]:
+    def parse(basecode: BASECode) -> TokenStream:
 
-        buffer: list[Token] = []
+        buffer: TokenStream = []
 
         regex_string: Regex = "|".join(
-            f"(?P<{name}>{regex})" for name, regex in BASECodeParser.MAPPINGS.items()
+            f"(?P<{name}>{regex})" for name, regex in Parser.MAPPINGS.items()
         )
 
         line = 1
         line_start = 0
+
         for match in finditer(regex_string, basecode):
 
             token_string = match.group()
             token_type = str(match.lastgroup)
             column = match.start() - line_start
 
-            buffer.append(Token(token_type, token_string, line, column))
+            buffer.append(
+                Token(
+                    token_type,
+                    token_string,
+                    line,
+                    column,
+                ),
+            )
 
             if "\n" in token_string:
 

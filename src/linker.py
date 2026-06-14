@@ -4,16 +4,16 @@ from re import sub
 type BASECode = str
 
 
-class DependencyResolver:
+class Linker:
 
     @staticmethod
-    def resolve(source_directory: str) -> BASECode:
+    def resolve(source_path: str) -> BASECode:
 
-        with open(source_directory, "rt") as source_file:
+        with open(source_path, "rt") as source_file:
 
             text = source_file.read()
 
-        directory_parts = source_directory.split("/")
+        directory_parts = source_path.split("/")
 
         directory = "/" + "/".join(directory_parts[:-1]) + "/"
 
@@ -23,9 +23,7 @@ class DependencyResolver:
 
             replacement_name = match.group("name")
 
-            with open(directory + replacement_name + ".bc") as replacement_file:
-
-                replacement_text = replacement_file.read()
+            replacement_text = Linker.resolve(directory + replacement_name + ".bc")
 
             replacement_text: BASECode = sub(
                 r"(?P<function>mn|fn)\s+(?P<name>\w+)",

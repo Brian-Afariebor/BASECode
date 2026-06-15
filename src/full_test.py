@@ -3,7 +3,7 @@ from parser import Parser
 from executable import Executable
 from executable import ExecutionMode
 
-file_path = "tests/hello_world.bc"
+file_path = "tests/HelloWorld.bc"
 
 linked_code = Linker.resolve(file_path)
 

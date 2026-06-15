@@ -1,4 +1,12 @@
-/**Should print "Hello World" and return 0*/
+/**
+Test HelloWorld:
+
+    Arguments:
+        None
+
+    Result:
+        Should print "Hello World" and return 0.
+*/
 
 out "Hello, World!";
 end 0;

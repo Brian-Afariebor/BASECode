@@ -40,8 +40,8 @@ class Parser:
         "CLOSE_PAERM": r"\)",
         # General Expressions
         "SHEBANG": r"#!.*\n",
-        "DOCSTRING": r"\/\*\*.*?\*\/",
-        "COMMENT": r"\/\*.*?\*\/",
+        "DOCSTRING": r"\/\*\*[\s\S]*?\*\/",
+        "COMMENT": r"\/\*[\s\S]*?\*\/",
         "FLOAT": r"-?\d+?\.\d+(e\d+)?",
         "INTEGER": r"-?\d+(e\d+)?",
         "IDENTIFIER": r"\w+",

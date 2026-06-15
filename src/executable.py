@@ -95,9 +95,9 @@ class Executable:
     def _docstring(self, token: Token, pos_id: PositionId):
 
         docstring = token.VALUE
-        docstring = sub(r"\/\*\*","",docstring)
-        docstring = sub(r"\*\/","",docstring)
-        print(docstring.strip()+"\n"*2)
+        docstring = sub(r"\/\*\*", "", docstring)
+        docstring = sub(r"\*\/", "", docstring)
+        print(docstring.strip() + "\n" * 2)
 
     def _end(self, token: Token, pos_id: PositionId):
 
@@ -123,6 +123,8 @@ class Executable:
             "END": self._end,
             "INTEGER": self._int,
             "DOCSTRING": self._docstring,
+            "IDENTIFIER":self._identifier,
+            "SET":self._set,
         }
 
         position = self._positions[pos_id]
@@ -134,6 +136,19 @@ class Executable:
         function = MAPPINGS[type]
 
         return function(token, pos_id)
+
+    def _identifier(self, token: Token, pos_id: PositionId):
+        
+        variable_name = token.VALUE
+
+        if variable_name in self._variables:
+
+            self._append_to_stack(self._variables[variable_name])
+        
+        else:
+
+            # TODO: Implement "Null" type
+            self._append_to_stack(None)
 
     def _int(self, token: Token, pos_id: PositionId):
 
@@ -171,6 +186,24 @@ class Executable:
             self._eval_at_position(pos_id)
             self._step_position(pos_id)
 
+    def _set(self, token: Token, pos_id: PositionId):
+
+        next_token = self._step_position(pos_id)
+        
+        if next_token is None:
+
+            raise NameError("Name of assignment operator not found.") from None
+
+        variable_name = next_token.VALUE
+
+        self._step_position(pos_id)
+
+        self._eval_at_position(pos_id)
+
+        self._variables[variable_name] = self._pop_from_stack()
+
+        self._step_position(pos_id)
+
     def _step_position(self, pos_id: PositionId) -> None | Token:
 
         if pos_id not in self._positions:
@@ -185,7 +218,7 @@ class Executable:
 
                 del self._positions[pos_id]
                 return
-            
+
             raise EOFError(
                 f"End of Code reached by thread {pos_id}, "
                 + f"at:\n\t{self._token_at_pos(old_position)}"

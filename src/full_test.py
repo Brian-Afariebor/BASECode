@@ -1,7 +1,7 @@
 from linker import Linker
 from parser import Parser
 from executable import Executable
-from executable import ExecutionMode
+from executable import ExecutionMode # pyright: ignore[reportUnusedImport]
 
 file_path = "tests/HelloWorld.bc"
 
@@ -12,7 +12,6 @@ parsed_code = Parser.parse(linked_code)
 code_executable = Executable(
     "Hello World",
     parsed_code,
-    ExecutionMode.DOCSTRINGS,
 )
 
 code_executable.run()

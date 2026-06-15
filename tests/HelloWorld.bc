@@ -5,8 +5,9 @@ Test HelloWorld:
         None
 
     Result:
-        Should print "Hello World" and return 0.
+        Should print "Hello, World!" and return 0.
 */
 
-out "Hello, World!";
+set x "Hello, World!";
+out x;
 end 0;

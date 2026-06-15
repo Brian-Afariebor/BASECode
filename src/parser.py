@@ -35,6 +35,7 @@ class Parser:
         # Specific Expressions
         "END": "end",
         "OUT": "out",
+        "SET": "set",
         "SEMICOLON": ";",
         "OPEN_PAREN": r"\(",
         "CLOSE_PAERM": r"\)",

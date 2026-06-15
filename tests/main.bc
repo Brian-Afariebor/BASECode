@@ -1,4 +1,0 @@
-imp utils
-
-mn main
-    jmp utils::quit

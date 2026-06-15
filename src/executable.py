@@ -1,5 +1,7 @@
 from collections.abc import Callable
 
+from enum import StrEnum
+
 from typing import Any
 
 from parser import Token
@@ -12,12 +14,28 @@ type PositionId = str
 type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
 
 
+class ExecutionMode(StrEnum):
+
+    DOCSTRINGS = "-d"
+
+
 class Executable:
 
-    def __init__(self, name: str, tokens: TokenStream):
+    def __init__(
+        self,
+        name: str,
+        tokens: TokenStream,
+        *args: ExecutionMode,
+    ):
 
         self.NAME = name
-        self.TOKENS = list(
+
+        self.modes = args
+
+        self._variables: Context = {}
+        self._positions: dict[PositionId, int] = {"main": 0}
+
+        tokens = list(
             filter(
                 lambda token: token.TYPE
                 not in [
@@ -29,8 +47,25 @@ class Executable:
             ),
         )
 
-        self._variables: Context = {}
-        self._positions: dict[PositionId, int] = {"main": 0}
+        if ExecutionMode.DOCSTRINGS in self.modes:
+
+            tokens = list(
+                filter(
+                    lambda token: token.TYPE == "DOCSTRING",
+                    tokens,
+                )
+            )
+
+        else:
+
+            tokens = list(
+                filter(
+                    lambda token: token.TYPE != "DOCSTRING",
+                    tokens,
+                )
+            )
+
+        self.TOKENS = tokens
 
     def run(self, *args: Any):
 
@@ -57,6 +92,13 @@ class Executable:
         self._variables[top_pointer] += 1
         self._variables[self._variables[top_pointer]] = value
 
+    def _docstring(self, token: Token, pos_id: PositionId):
+
+        docstring = token.VALUE
+        docstring = sub(r"\/\*\*","",docstring)
+        docstring = sub(r"\*\/","",docstring)
+        print(docstring)
+
     def _end(self, token: Token, pos_id: PositionId):
 
         self._step_position(pos_id)
@@ -80,13 +122,16 @@ class Executable:
             "STRING": self._string,
             "END": self._end,
             "INTEGER": self._int,
+            "DOCSTRING": self._docstring,
         }
 
         position = self._positions[pos_id]
 
         token = self._token_at_pos(position)
 
-        function = MAPPINGS[token.TYPE]
+        type = token.TYPE
+
+        function = MAPPINGS[type]
 
         return function(token, pos_id)
 
@@ -136,6 +181,11 @@ class Executable:
 
         if old_position + 1 >= len(self.TOKENS):
 
+            if ExecutionMode.DOCSTRINGS in self.modes:
+
+                del self._positions[pos_id]
+                return
+            
             raise EOFError(
                 f"End of Code reached by thread {pos_id}, "
                 + f"at:\n\t{self._token_at_pos(old_position)}"
@@ -156,6 +206,10 @@ class Executable:
         self._append_to_stack(string, "main")
 
     def _token_at_pos(self, pos: int):
+
+        if pos >= len(self.TOKENS):
+
+            raise EOFError(f"No tokens at position {pos+1}") from None
 
         return self.TOKENS[pos]
 

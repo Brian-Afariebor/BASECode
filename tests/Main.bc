@@ -1,0 +1,4 @@
+imp Utils
+
+mn main
+    jmp Utils::quit

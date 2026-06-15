@@ -97,7 +97,7 @@ class Executable:
         docstring = token.VALUE
         docstring = sub(r"\/\*\*","",docstring)
         docstring = sub(r"\*\/","",docstring)
-        print(docstring)
+        print(docstring.strip()+"\n"*2)
 
     def _end(self, token: Token, pos_id: PositionId):
 

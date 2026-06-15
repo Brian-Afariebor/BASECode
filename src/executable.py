@@ -5,6 +5,8 @@ from typing import Any
 from parser import Token
 from parser import TokenStream
 
+from re import sub
+
 type Context = dict[str, Any]
 type PositionId = str
 type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
@@ -142,11 +144,9 @@ class Executable:
 
         string = token.VALUE[1:-1]
 
-        string.replace(r"\n","\n")
-        string.replace(r"\b","\b")
-        string.replace(r"\t","\t")
-        string.replace("\\qt",'"')
-        string.replace(r"\\","\\")
+        string = sub(r"\\t",r"\t",string)
+        string = sub(r"\\n",r"\n",string)
+        string = sub(r"\\q",r"\"",string)
 
         self._append_to_stack(string, "main")
 

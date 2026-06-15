@@ -19,7 +19,12 @@ class Executable:
         self.NAME = name
         self.TOKENS = list(
             filter(
-                lambda token: token.TYPE != "WHITESPACE",
+                lambda token: token.TYPE
+                not in [
+                    "WHITESPACE",
+                    "SHEBANG",
+                    "COMMENT",
+                ],
                 tokens,
             ),
         )
@@ -121,7 +126,7 @@ class Executable:
             self._eval_at_position(pos_id)
             self._step_position(pos_id)
 
-    def _step_position(self, pos_id: PositionId)-> None | Token:
+    def _step_position(self, pos_id: PositionId) -> None | Token:
 
         if pos_id not in self._positions:
 
@@ -144,9 +149,9 @@ class Executable:
 
         string = token.VALUE[1:-1]
 
-        string = sub(r"\\t",r"\t",string)
-        string = sub(r"\\n",r"\n",string)
-        string = sub(r"\\q",r"\"",string)
+        string = sub(r"\\t", r"\t", string)
+        string = sub(r"\\n", r"\n", string)
+        string = sub(r"\\q", r"\"", string)
 
         self._append_to_stack(string, "main")
 

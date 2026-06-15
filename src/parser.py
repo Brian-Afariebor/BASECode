@@ -39,6 +39,9 @@ class Parser:
         "OPEN_PAREN": r"\(",
         "CLOSE_PAERM": r"\)",
         # General Expressions
+        "SHEBANG": r"#!.*\n",
+        "DOCSTRING": r"\/\*\*.*?\*\/",
+        "COMMENT": r"\/\*.*?\*\/",
         "FLOAT": r"-?\d+?\.\d+(e\d+)?",
         "INTEGER": r"-?\d+(e\d+)?",
         "IDENTIFIER": r"\w+",

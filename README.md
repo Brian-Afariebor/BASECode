@@ -4,53 +4,57 @@ An assembly like programming language.
 
 ## Origin
 
-When I was younger, I had the idea of making a programming language--a language like assembly, but easier to write---and of course easier to interpret, as I had no idea how a compiler worked. BASECode was the language I chose to make.
-
-## How to Use
-
-BASECode can run code with any extension, but .bc is the prefered extension.
-
-The mini shell environment should help you from there---here are some commands:
-
-add CODE_NAME FILE_PATH: Adds the code at FILE_PATH to the list of code to run. Is saved as CODE_NAME.
-
-add CODE_NAME: Directs the user to get the file CODE_NAME to be turned into code. Code is saved as CODE_NAME.
-
-run CODE_NAME: Runs the code CODE_NAME: Prints any errors it had.
-
-parse CODE_NAME: Returns the tokens the interpeter sees.
-
-format CODE_NAME: Prints the code, but formatted. Does not do indentation.
+When I was younger, I had the idea of making a programming language--a language like assembly, but easier to write, and a bit higher-level. 
 
 ## Examples
-BASECode is a sort of "mashup" of some of my favorite languages.
 
-Here's Hello World:
+Here are some examples of BASECode:
 
 ### Hello World
-
 ```
-main Main
-  out string_start Hello, World string_end
-  end NULL
+mn Main
+
+  out "Hello, World!";
+
+  end 0;
 ```
 
-### Fibonacci Program
-
-Note: Will run indefinitely.
-
+### 99 Bottles of Beer
 ```
-enable IGNORE_EMPTY_LINES
-  mn Constants
-    set a int 0
-    set b int 1
-  mn Main
-    out a
-    out str_s , str_e
-    out b
-    out str_s \ n str_e
-    set a + a b )
-    set b a
-    jmp main::Main
-disable IGNORE_EMPTY_LINES
+mn Constants
+
+  set Start 99;
+
+fn Loop
+
+  if Start 0
+
+    jmp function::End;
+
+  else
+
+    out Start;
+    out " bottles of beer on the wall,\n";
+    out Start;
+    out " bottles of beer.\n";
+    out "Take one down, and pass it around,\n";
+    set Start - Start 1);
+    out Start;
+    out " bottles of beer.";
+
+fn End
+  
+  out "No more bottles of beer on the wall,\n";
+  out "No more bottles of beer.\n";
+  out "Go to the store, and buy some more,\n";
+  out "99 bottles of beer...";
+
+  ret 0;
+
+mn Main
+
+  call function::Loop;
+
+  end 0;
+
 ```

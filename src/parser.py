@@ -38,8 +38,8 @@ class Parser:
         "SET": "set",
         "MAIN": "mn",
         "FUNCTION": "fn",
-        "DUMMY": r"\(|{",
-        "TERMINATORS":r"\)|}|;",
+        "DUMMY": r"\(|{|\)|}",
+        "TERMINATOR":r";",
         # General Expressions
         "SHEBANG": r"#!.*\n",
         "DOCSTRING": r"\/\*\*[\s\S]*?\*\/",

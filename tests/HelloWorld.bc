@@ -8,6 +8,7 @@ Test HelloWorld:
         Should print "Hello, World!" and return 0.
 */
 
-set x "Hello, World!";
-out x;
-end 0;
+mn Main
+    set x "Hello, World!";
+    out x;
+    end 0;

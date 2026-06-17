@@ -38,7 +38,6 @@ class Parser:
         "SET": "set",
         "MAIN": "mn",
         "FUNCTION": "fn",
-        "DUMMY": r"\(|{|\)|}",
         "TERMINATOR":r";",
         # General Expressions
         "SHEBANG": r"#!.*\n",
@@ -49,6 +48,7 @@ class Parser:
         "IDENTIFIER": r"\w+",
         "STRING": r"\"(?:[^\"]*)\"",
         "WHITESPACE": r"[\s]+",
+        "DUMMY": r"\(|{|\)|}|,",
         # No Match
         "UNMAPPED": ".",
     }

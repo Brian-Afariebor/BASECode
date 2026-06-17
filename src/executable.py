@@ -123,8 +123,9 @@ class Executable:
             "END": self._end,
             "INTEGER": self._int,
             "DOCSTRING": self._docstring,
-            "IDENTIFIER":self._identifier,
-            "SET":self._set,
+            "IDENTIFIER": self._identifier,
+            "SET": self._set,
+            "MAIN": self._main,
         }
 
         position = self._positions[pos_id]
@@ -138,21 +139,34 @@ class Executable:
         return function(token, pos_id)
 
     def _identifier(self, token: Token, pos_id: PositionId):
-        
+
         variable_name = token.VALUE
 
         if variable_name in self._variables:
 
             self._append_to_stack(self._variables[variable_name])
-        
+
         else:
 
+            raise NameError(
+                f"Variable '{variable_name}' not defined at:" + f"\n\t{token}."
+            )
             # TODO: Implement "Null" type
             self._append_to_stack(None)
 
     def _int(self, token: Token, pos_id: PositionId):
 
         self._append_to_stack(int(token.VALUE))
+
+    def _main(self, token: Token, pos_id: PositionId):
+
+        main_token = self._step_position(pos_id)
+
+        if main_token is None:
+
+            raise NameError(f"Missing name of main at:\n\t{token}")
+
+        self._variables[f"main::{main_token.VALUE}"] = self._positions[pos_id]
 
     def _out(self, token: Token, pos_id: PositionId):
 
@@ -189,10 +203,12 @@ class Executable:
     def _set(self, token: Token, pos_id: PositionId):
 
         next_token = self._step_position(pos_id)
-        
+
         if next_token is None:
 
-            raise NameError("Name of assignment operator not found.") from None
+            raise NameError(
+                f"Name of assignment operator not found at:\n\t{token}."
+            ) from None
 
         variable_name = next_token.VALUE
 

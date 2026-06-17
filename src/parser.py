@@ -36,6 +36,8 @@ class Parser:
         "END": "end",
         "OUT": "out",
         "SET": "set",
+        "MAIN": "mn",
+        "FUNCTION": "fn",
         "SEMICOLON": ";",
         "OPEN_PAREN": r"\(",
         "CLOSE_PAERM": r"\)",

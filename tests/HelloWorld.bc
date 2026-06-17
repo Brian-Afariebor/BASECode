@@ -9,6 +9,8 @@ Test HelloWorld:
 */
 
 mn Main
+{
     set x "Hello, World!";
-    out x;
-    end 0;
+    out(x);
+    end(0);
+}

@@ -38,9 +38,7 @@ class Parser:
         "SET": "set",
         "MAIN": "mn",
         "FUNCTION": "fn",
-        "SEMICOLON": ";",
-        "OPEN_PAREN": r"\(",
-        "CLOSE_PAERM": r"\)",
+        "DUMMY": r"\(|\)|}|{|;",
         # General Expressions
         "SHEBANG": r"#!.*\n",
         "DOCSTRING": r"\/\*\*[\s\S]*?\*\/",

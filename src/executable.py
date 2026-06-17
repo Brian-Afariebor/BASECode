@@ -42,6 +42,7 @@ class Executable:
                     "WHITESPACE",
                     "SHEBANG",
                     "COMMENT",
+                    "DUMMY",
                 ],
                 tokens,
             ),
@@ -133,6 +134,10 @@ class Executable:
         token = self._token_at_pos(position)
 
         type = token.TYPE
+
+        if type not in MAPPINGS:
+
+            raise NameError(f"Invalid token at:\n{token}")
 
         function = MAPPINGS[type]
 

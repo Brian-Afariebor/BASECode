@@ -19,7 +19,7 @@ Test HelloWorld:
 */
 
 /**
-Main Main:
+Main HelloWorld::Main:
 
     Description:
         Prints "Hello, World!".

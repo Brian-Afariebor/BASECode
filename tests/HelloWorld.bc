@@ -1,15 +1,31 @@
 /**
 Test HelloWorld:
 
+    Description:
+        A test for Hello World.
+
+    Preconditions:
+        None
+
     Arguments:
         None
 
     Result:
         Should print "Hello, World!" and return 0.
+
+    Postconditions:
+        x = "Hello, World!".
+
 */
 
 /**
 Main Main:
+
+    Description:
+        Prints "Hello, World!".
+
+    Arguments:
+        None
 
     Preconditions:
         None

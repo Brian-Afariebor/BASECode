@@ -36,9 +36,11 @@ class Parser:
         "END": "end",
         "OUT": "out",
         "SET": "set",
+        "RAW_SET": "rset",
         "MAIN": "mn",
         "FUNCTION": "fn",
-        "TERMINATOR":r";",
+        "FUNCTION_TERMINATOR":r"\)",
+        "LINE_TERMINATOR":r";",
         # General Expressions
         "SHEBANG": r"#!.*\n",
         "DOCSTRING": r"\/\*\*[\s\S]*?\*\/",
@@ -48,7 +50,7 @@ class Parser:
         "IDENTIFIER": r"\w+",
         "STRING": r"\"(?:[^\"]*)\"",
         "WHITESPACE": r"[\s]+",
-        "DUMMY": r"\(|{|\)|}|,",
+        "DUMMY": r"\(|{|}|,|=",
         # No Match
         "UNMAPPED": ".",
     }

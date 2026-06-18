@@ -8,9 +8,22 @@ Test HelloWorld:
         Should print "Hello, World!" and return 0.
 */
 
+/**
+Main Main:
+
+    Preconditions:
+        None
+
+    Result:
+        Prints "Hello, World!" and returns 0.
+
+    Postconditions:
+        x = "Hello, World!".
+
+*/
 mn Main
 {
-    set x "Hello, World!";
+    rset("x","Hello, World!");
     out(x);
     end(0);
 }

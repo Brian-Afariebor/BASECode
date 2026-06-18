@@ -91,7 +91,7 @@ class Executable:
             return
 
         self._variables[top_pointer] += 1
-        self._variables[self._variables[top_pointer]] = value
+        self._variables[f"{stack}::{self._variables[top_pointer]}"] = value
 
     def _docstring(self, token: Token, pos_id: PositionId):
 
@@ -103,7 +103,7 @@ class Executable:
     def _end(self, token: Token, pos_id: PositionId):
 
         self._step_position(pos_id)
-        self._eval_at_position(pos_id)
+        self._eval_position(pos_id)
 
         del self._positions[pos_id]
 
@@ -116,7 +116,7 @@ class Executable:
                 + f"return value of {self._pop_from_stack('main')}."
             )
 
-    def _eval_at_position(self, pos_id: PositionId):
+    def _eval_position(self, pos_id: PositionId):
 
         MAPPINGS: FunctionMap = {
             "OUT": self._out,
@@ -127,6 +127,8 @@ class Executable:
             "IDENTIFIER": self._identifier,
             "SET": self._set,
             "MAIN": self._main,
+            "LINE_TERMINATOR": self._line_terminator,
+            "RAW_SET": self._raw_set,
         }
 
         position = self._positions[pos_id]
@@ -163,6 +165,10 @@ class Executable:
 
         self._append_to_stack(int(token.VALUE))
 
+    def _line_terminator(self, token: Token, pos_id: PositionId):
+
+        pass
+
     def _main(self, token: Token, pos_id: PositionId):
 
         main_token = self._step_position(pos_id)
@@ -176,13 +182,18 @@ class Executable:
     def _out(self, token: Token, pos_id: PositionId):
 
         self._step_position(pos_id)
-        self._eval_at_position(pos_id)
+        self._eval_position(pos_id)
         print(self._pop_from_stack("main"), end="")
         self._step_position(pos_id)
 
     def _pop_from_stack(self, stack: str = "main"):
 
         top_pointer = f"{stack}::tp"
+
+        if top_pointer not in self._variables:
+
+            return None
+
         top_value_pointer = f"{stack}::{self._variables[top_pointer]}"
         top_value = self._variables[top_value_pointer]
 
@@ -190,11 +201,25 @@ class Executable:
 
         self._variables[top_pointer] -= 1
 
-        if self._variables[top_pointer] == 0:
+        if self._variables[top_pointer] <= -1:
 
             del self._variables[top_pointer]
 
         return top_value
+
+    def _raw_set(self, token: Token, pos_id: PositionId):
+
+        self._step_position(pos_id)
+
+        self._eval_position(pos_id)
+
+        name = str(self._pop_from_stack())
+
+        self._step_position(pos_id)
+        self._eval_position(pos_id)
+
+        self._variables[name] = self._pop_from_stack()
+        self._step_position(pos_id)
 
     def _run_position_id(self, pos_id: PositionId, start: int):
 
@@ -202,7 +227,7 @@ class Executable:
 
         while pos_id in self._positions:
 
-            self._eval_at_position(pos_id)
+            self._eval_position(pos_id)
             self._step_position(pos_id)
 
     def _set(self, token: Token, pos_id: PositionId):
@@ -219,7 +244,7 @@ class Executable:
 
         self._step_position(pos_id)
 
-        self._eval_at_position(pos_id)
+        self._eval_position(pos_id)
 
         self._variables[variable_name] = self._pop_from_stack()
 

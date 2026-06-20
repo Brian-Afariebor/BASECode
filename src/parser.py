@@ -33,10 +33,11 @@ class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
         # Specific Expressions
+        "RAW_SET": "rset",
+        "JUMP":"jmp",
         "END": "end",
         "OUT": "out",
         "SET": "set",
-        "RAW_SET": "rset",
         "MAIN": "mn",
         "FUNCTION": "fn",
         "FUNCTION_TERMINATOR":r"\)",
@@ -47,7 +48,7 @@ class Parser:
         "COMMENT": r"\/\*[\s\S]*?\*\/",
         "FLOAT": r"-?\d+?\.\d+(e\d+)?",
         "INTEGER": r"-?\d+(e\d+)?",
-        "IDENTIFIER": r"\w+",
+        "IDENTIFIER": r"[\w:]+",
         "STRING": r"\"(?:[^\"]*)\"",
         "WHITESPACE": r"[\s]+",
         "DUMMY": r"\(|{|}|,|=",

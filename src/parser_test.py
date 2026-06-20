@@ -3,7 +3,7 @@ from parser import Parser
 
 def main():
 
-    code: BASECode = 'set x 1.; out "Hello, World!";'
+    code: BASECode = 'out main::x;'
 
     parsed_code = Parser.parse(code)
 

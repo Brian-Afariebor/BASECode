@@ -102,7 +102,7 @@ class Executable:
 
     def _end(self, token: Token, pos_id: PositionId):
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
         self._eval_position(pos_id)
 
         del self._positions[pos_id]
@@ -116,7 +116,7 @@ class Executable:
                 + f"return value of {self._pop_from_stack('main')}."
             )
 
-    def _eval_position(self, pos_id: PositionId):
+    def _eval_position(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
             "OUT": self._out,
@@ -129,6 +129,7 @@ class Executable:
             "MAIN": self._main,
             "LINE_TERMINATOR": self._line_terminator,
             "RAW_SET": self._raw_set,
+            "FUNCTION": self._function,
         }
 
         position = self._positions[pos_id]
@@ -144,6 +145,23 @@ class Executable:
         function = MAPPINGS[type]
 
         return function(token, pos_id)
+
+    def _function(self, token: Token, pos_id: PositionId):
+
+        name_token = self._step_pos(pos_id)
+
+        if name_token is None:
+
+            raise NameError(f"Missing function name at:\t\n{token}")
+
+        self._variables[f"function::{name_token.VALUE}"] = self._positions[pos_id] + 1
+
+        while ((next := self._step_pos(pos_id)) is not None) and (
+            next.VALUE not in ["FUNCTION", "MAIN"]
+        ):
+            pass
+
+        self._positions[pos_id] -= 1
 
     def _identifier(self, token: Token, pos_id: PositionId):
 
@@ -171,7 +189,7 @@ class Executable:
 
     def _main(self, token: Token, pos_id: PositionId):
 
-        main_token = self._step_position(pos_id)
+        main_token = self._step_pos(pos_id)
 
         if main_token is None:
 
@@ -181,10 +199,10 @@ class Executable:
 
     def _out(self, token: Token, pos_id: PositionId):
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
         self._eval_position(pos_id)
         print(self._pop_from_stack("main"), end="")
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
 
     def _pop_from_stack(self, stack: str = "main"):
 
@@ -209,17 +227,17 @@ class Executable:
 
     def _raw_set(self, token: Token, pos_id: PositionId):
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
 
         self._eval_position(pos_id)
 
         name = str(self._pop_from_stack())
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
         self._eval_position(pos_id)
 
         self._variables[name] = self._pop_from_stack()
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
 
     def _run_position_id(self, pos_id: PositionId, start: int):
 
@@ -228,11 +246,11 @@ class Executable:
         while pos_id in self._positions:
 
             self._eval_position(pos_id)
-            self._step_position(pos_id)
+            self._step_pos(pos_id)
 
     def _set(self, token: Token, pos_id: PositionId):
 
-        next_token = self._step_position(pos_id)
+        next_token = self._step_pos(pos_id)
 
         if next_token is None:
 
@@ -242,15 +260,15 @@ class Executable:
 
         variable_name = next_token.VALUE
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
 
         self._eval_position(pos_id)
 
         self._variables[variable_name] = self._pop_from_stack()
 
-        self._step_position(pos_id)
+        self._step_pos(pos_id)
 
-    def _step_position(self, pos_id: PositionId) -> None | Token:
+    def _step_pos(self, pos_id: PositionId) -> None | Token:
 
         if pos_id not in self._positions:
 

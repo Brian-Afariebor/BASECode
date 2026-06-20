@@ -7,9 +7,6 @@ Test HelloWorld:
     Preconditions:
         None
 
-    Arguments:
-        None
-
     Result:
         Should print "Hello, World!" and return 0.
 
@@ -23,9 +20,6 @@ Main HelloWorld::Main:
 
     Description:
         Prints "Hello, World!".
-
-    Arguments:
-        None
 
     Preconditions:
         None

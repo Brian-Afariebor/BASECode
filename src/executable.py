@@ -1,11 +1,14 @@
 from collections.abc import Callable
 
+from constants import Constants
+
 from enum import StrEnum
 
 from typing import Any
 
-from parser import Token
-from parser import TokenStream
+from tokens import Token
+from tokens import TokenStream
+from tokens import TokenType
 
 from re import sub
 
@@ -32,17 +35,19 @@ class Executable:
 
         self.modes = args
 
-        self._variables: Context = {}
-        self._positions: dict[PositionId, int] = {"main": 0}
+        self._variables: Context = {
+            Constants.MAIN_NAME + Constants.REFERENCE_OPERATOR + "name": self.NAME
+        }
+        self._positions: dict[PositionId, int] = {Constants.MAIN_NAME: 0}
 
         tokens = list(
             filter(
                 lambda token: token.TYPE
                 not in [
-                    "WHITESPACE",
-                    "SHEBANG",
-                    "COMMENT",
-                    "DUMMY",
+                    TokenType.WHITESPACE,
+                    TokenType.SHEBANG,
+                    TokenType.COMMENT,
+                    TokenType.DUMMY,
                 ],
                 tokens,
             ),
@@ -52,7 +57,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE == "DOCSTRING",
+                    lambda token: token.TYPE == TokenType.DOCSTRING,
                     tokens,
                 )
             )
@@ -61,7 +66,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE != "DOCSTRING",
+                    lambda token: token.TYPE != TokenType.DOCSTRING,
                     tokens,
                 )
             )
@@ -74,14 +79,20 @@ class Executable:
 
         for pos, arg in enumerate(args):
 
-            self._variables[f"main::args::{pos}"] = arg
+            self._variables[
+                Constants.MAIN_NAME
+                + Constants.REFERENCE_OPERATOR
+                + "args"
+                + Constants.REFERENCE_OPERATOR
+                + str(pos)
+            ] = arg
 
-        self._run_position_id("main", 0)
+        self._run_position_id(Constants.MAIN_NAME, 0)
 
-    def _append_to_stack(self, value: Any, stack: str = "main"):
+    def _append_to_stack(self, value: Any, stack_name: str = Constants.MAIN_NAME):
 
-        first_value = f"{stack}::0"
-        top_pointer = f"{stack}::tp"
+        first_value = stack_name + Constants.REFERENCE_OPERATOR + "0"
+        top_pointer = stack_name + Constants.REFERENCE_OPERATOR + "tp"
 
         if first_value not in self._variables:
 
@@ -91,7 +102,11 @@ class Executable:
             return
 
         self._variables[top_pointer] += 1
-        self._variables[f"{stack}::{self._variables[top_pointer]}"] = value
+        self._variables[
+            stack_name
+            + Constants.REFERENCE_OPERATOR
+            + str(self._variables[top_pointer])
+        ] = value
 
     def _docstring(self, token: Token, pos_id: PositionId):
 
@@ -107,7 +122,7 @@ class Executable:
 
         del self._positions[pos_id]
 
-        if pos_id == "main":
+        if pos_id == Constants.MAIN_NAME:
 
             self._positions.clear()
             print(
@@ -119,17 +134,17 @@ class Executable:
     def _eval_position(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
-            "OUT": self._out,
-            "STRING": self._string,
-            "END": self._end,
-            "INTEGER": self._int,
-            "DOCSTRING": self._docstring,
-            "IDENTIFIER": self._identifier,
-            "SET": self._set,
-            "MAIN": self._main,
-            "LINE_TERMINATOR": self._line_terminator,
-            "RAW_SET": self._raw_set,
-            "FUNCTION": self._function,
+            TokenType.OUT: self._out,
+            TokenType.STRING: self._string,
+            TokenType.END: self._end,
+            TokenType.INTEGER: self._int,
+            TokenType.DOCSTRING: self._docstring,
+            TokenType.IDENTIFIER: self._identifier,
+            TokenType.SET: self._set,
+            TokenType.MAIN: self._main,
+            TokenType.LINE_TERMINATOR: self._line_terminator,
+            TokenType.RAW_SET: self._raw_set,
+            TokenType.FUNCTION: self._function,
         }
 
         position = self._positions[pos_id]
@@ -154,10 +169,14 @@ class Executable:
 
             raise NameError(f"Missing function name at:\t\n{token}")
 
-        self._variables[f"function::{name_token.VALUE}"] = self._positions[pos_id] + 1
+        function_reference = Constants.FUNCTION_NAME + Constants.REFERENCE_OPERATOR
+
+        self._variables[function_reference + name_token.VALUE] = (
+            self._positions[pos_id] + 1
+        )
 
         while ((next := self._step_pos(pos_id)) is not None) and (
-            next.VALUE not in ["FUNCTION", "MAIN"]
+            next.VALUE not in [TokenType.FUNCTION, TokenType.MAIN]
         ):
             pass
 
@@ -195,24 +214,30 @@ class Executable:
 
             raise NameError(f"Missing name of main at:\n\t{token}")
 
-        self._variables[f"main::{main_token.VALUE}"] = self._positions[pos_id]
+        main_reference = Constants.MAIN_NAME + Constants.REFERENCE_OPERATOR
+
+        self._variables[main_reference + main_token.VALUE] = self._positions[pos_id]
 
     def _out(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
         self._eval_position(pos_id)
-        print(self._pop_from_stack("main"), end="")
+        print(self._pop_from_stack(), end="")
         self._step_pos(pos_id)
 
-    def _pop_from_stack(self, stack: str = "main"):
+    def _pop_from_stack(self, stack_name: str = Constants.MAIN_NAME):
 
-        top_pointer = f"{stack}::tp"
+        stack_reference = stack_name + Constants.REFERENCE_OPERATOR
+
+        top_pointer = stack_reference + "tp"
 
         if top_pointer not in self._variables:
 
+            # TOO: Add NULL
             return None
 
-        top_value_pointer = f"{stack}::{self._variables[top_pointer]}"
+        top_value_pointer = stack_reference + str(self._variables[top_pointer])
+
         top_value = self._variables[top_value_pointer]
 
         del self._variables[top_value_pointer]

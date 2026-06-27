@@ -1,59 +1,37 @@
 from re import finditer
+from tokens import Token
+from tokens import TokenStream
+from tokens import TokenType
 
 type BASECode = str
 type Regex = str
-type TokenStream = list[Token]
-
-
-class Token:
-
-    def __init__(
-        self,
-        type: str,
-        contents: BASECode,
-        line: int,
-        column: int,
-    ):
-
-        self.TYPE = type
-        self.VALUE = contents
-        self.LINE = line
-        self.COLUMN = column
-
-    def __repr__(self) -> str:
-
-        return (
-            f"Token of type {self.TYPE}, "
-            + f"wtih contents {repr(self.VALUE)}, "
-            + f"at {self.LINE},{self.COLUMN}"
-        )
 
 
 class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
         # Specific Expressions
-        "RAW_SET": "rset",
-        "JUMP":"jmp",
-        "END": "end",
-        "OUT": "out",
-        "SET": "set",
-        "MAIN": "mn",
-        "FUNCTION": "fn",
-        "FUNCTION_TERMINATOR":r"\)",
-        "LINE_TERMINATOR":r";",
+        TokenType.RAW_SET: "rset",
+        TokenType.JUMP: "jmp",
+        TokenType.END: "end",
+        TokenType.OUT: "out",
+        TokenType.SET: "set",
+        TokenType.MAIN: "mn",
+        TokenType.FUNCTION: "fn",
+        TokenType.FUNCTION_TERMINATOR: r"\)",
+        TokenType.LINE_TERMINATOR: r";",
         # General Expressions
-        "SHEBANG": r"#!.*\n",
-        "DOCSTRING": r"\/\*\*[\s\S]*?\*\/",
-        "COMMENT": r"\/\*[\s\S]*?\*\/",
-        "FLOAT": r"-?\d+?\.\d+(e\d+)?",
-        "INTEGER": r"-?\d+(e\d+)?",
-        "IDENTIFIER": r"[\w:]+",
-        "STRING": r"\"(?:[^\"]*)\"",
-        "WHITESPACE": r"[\s]+",
-        "DUMMY": r"\(|{|}|,|=",
+        TokenType.SHEBANG: r"#!.*\n",
+        TokenType.DOCSTRING: r"\/\*\*[\s\S]*?\*\/",
+        TokenType.COMMENT: r"\/\*[\s\S]*?\*\/",
+        TokenType.FLOAT: r"-?\d+?\.\d+(e\d+)?",
+        TokenType.INTEGER: r"-?\d+(e\d+)?",
+        TokenType.IDENTIFIER: r"[\w:]+",
+        TokenType.STRING: r"\"(?:[^\"]*)\"",
+        TokenType.WHITESPACE: r"[\s]+",
+        TokenType.DUMMY: r"\(|{|}|,|=",
         # No Match
-        "UNMAPPED": ".",
+        TokenType.UNMAPPED: ".",
     }
 
     @staticmethod

@@ -34,7 +34,7 @@ class TestLinker(unittest.TestCase):
         self.assertEqual(linked_code, true_code)
 
 
-class TestExecutable(unittest.TestCase):
+class TestParser(unittest.TestCase):
 
     def test_minimal_hello_world(self):
 
@@ -71,6 +71,6 @@ class TestExecutable(unittest.TestCase):
         )
 
 
-if __name__ == "_main__":
+if __name__ == "__main__":
 
     unittest.main()

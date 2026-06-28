@@ -107,6 +107,10 @@ class Executable:
             + str(self._variables[top_pointer])
         ] = value
 
+    def _current_token(self, pos_id: PositionId):
+
+        return self.TOKENS[self._positions[pos_id]]
+
     def _docstring(self, token: Token, pos_id: PositionId):
 
         docstring = token.VALUE
@@ -121,7 +125,7 @@ class Executable:
 
         del self._positions[pos_id]
 
-        return_value = self._pop_from_stack('main')
+        return_value = self._pop_from_stack("main")
         self._last_return_value = return_value
 
         if pos_id == Constants.MAIN_NAME:
@@ -147,6 +151,7 @@ class Executable:
             TokenType.LINE_TERMINATOR: self._line_terminator,
             TokenType.RAW_SET: self._raw_set,
             TokenType.FUNCTION: self._function,
+            TokenType.JUMP: self._jump,
         }
 
         position = self._positions[pos_id]
@@ -203,6 +208,40 @@ class Executable:
     def _int(self, token: Token, pos_id: PositionId):
 
         self._append_to_stack(int(token.VALUE))
+
+    def _jump(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_position(pos_id)
+
+        new_position = self._pop_from_stack()
+
+        # TODO: Add Null
+
+        if new_position is None:
+
+            raise ValueError(
+                f"None was given as a position at:\n\t"
+                + repr(self._current_token(pos_id))
+            )
+
+        adjusted_position = int(new_position) - 1
+
+        if adjusted_position < 0:
+
+            raise ValueError(
+                f"Given position {new_position} was too small. "
+                + f"Given at:\n\t{self._current_token(pos_id)}"
+            )
+
+        if adjusted_position >= len(self.TOKENS):
+
+            raise ValueError(
+                f"Given position {new_position} was too big. "
+                + f"Given at:\n\t{self._current_token(pos_id)}"
+            )
+
+        self._positions[pos_id] = int(new_position) - 1
 
     def _line_terminator(self, token: Token, pos_id: PositionId):
 

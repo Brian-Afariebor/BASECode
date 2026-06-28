@@ -7,7 +7,7 @@ from parser import Parser
 from tokens import Token
 
 
-class TestLinker(unittest.TestCase):
+class LinkerTest(unittest.TestCase):
 
     def test_no_links(self):
 
@@ -35,7 +35,7 @@ class TestLinker(unittest.TestCase):
         self.assertEqual(linked_code, true_code)
 
 
-class TestParser(unittest.TestCase):
+class ParserTest(unittest.TestCase):
 
     def test_minimal_hello_world(self):
 
@@ -71,7 +71,7 @@ class TestParser(unittest.TestCase):
             ],
         )
 
-class TestExecutable(unittest.TestCase):
+class ExecutableTest(unittest.TestCase):
 
     def test_end(self):
 

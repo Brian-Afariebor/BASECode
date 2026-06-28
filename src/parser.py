@@ -2,7 +2,7 @@ from re import finditer
 
 from tokens import Token
 from tokens import TokenStream
-from tokens import TokenType
+from constants import Constants
 
 type BASECode = str
 type Regex = str
@@ -11,28 +11,31 @@ type Regex = str
 class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
-        # Specific Expressions
-        TokenType.RAW_SET: "rset",
-        TokenType.JUMP: "jmp",
-        TokenType.END: "end",
-        TokenType.OUT: "out",
-        TokenType.SET: "set",
-        TokenType.MAIN: "mn",
-        TokenType.FUNCTION: "fn",
-        TokenType.FUNCTION_TERMINATOR: r"\)",
-        TokenType.LINE_TERMINATOR: r";",
+
+        # Keywords
+        Constants.RAW_SET_TYPE: Constants.RAW_SET_KEYWORD,
+        Constants.JUMP_TYPE: Constants.JUMP_KEYWORD,
+        Constants.END_TYPE: Constants.END_KEYWORD,
+        Constants.OUT_TYPE: Constants.OUT_KEYWORD,
+        Constants.SET_TYPE: Constants.SET_KEYWORD,
+        Constants.MAIN_TYPE: Constants.MAIN_KEYWORD,
+        Constants.FUNCTION_TYPE: Constants.FUNCTION_KEYWORD,
+        Constants.FUNCTION_TERMINATOR_TYPE: Constants.FUNCTION_TERMINATOR_REGEX,
+        Constants.LINE_TERMINATOR_TYPE: Constants.LINE_TERMINATOR,
+
         # General Expressions
-        TokenType.SHEBANG: r"#!.*\n",
-        TokenType.DOCSTRING: r"\/\*\*[\s\S]*?\*\/",
-        TokenType.COMMENT: r"\/\*[\s\S]*?\*\/",
-        TokenType.FLOAT: r"-?\d+?\.\d+(e\d+)?",
-        TokenType.INTEGER: r"-?\d+(e\d+)?",
-        TokenType.IDENTIFIER: r"[\w:]+",
-        TokenType.STRING: r"\"(?:[^\"]*)\"",
-        TokenType.WHITESPACE: r"[\s]+",
-        TokenType.DUMMY: r"\(|{|}|,|=",
+        Constants.SHEBANG_TYPE: Constants.SHEBANG_REGEX,
+        Constants.DOCSTRING_TYPE: Constants.DOCSTRING_REGEX,
+        Constants.COMMENT_TYPE: Constants.COMMENT_REGEX,
+        Constants.FLOAT_TYPE: Constants.FLOAT_REGEX,
+        Constants.INTEGER_TYPE: Constants.INTEGER_REGEX,
+        Constants.IDENTIFIER_TYPE: Constants.IDENTIFIER_REGEX,
+        Constants.STRING_TYPE: Constants.STRING_REGEX,
+        Constants.WHITESPACE_TYPE: Constants.WHITESPACE_REGEX,
+        Constants.DUMMY_TYPE: Constants.DUMMY_REGEX,
+        
         # No Match
-        TokenType.UNMAPPED: ".",
+        Constants.UNMAPPED_TYPE: Constants.UNMAPPED_REGEX,
     }
 
     @staticmethod

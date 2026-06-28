@@ -1,5 +1,6 @@
 import unittest
 
+import constants
 import executable
 import linker
 import parser
@@ -44,25 +45,25 @@ class TestParser(unittest.TestCase):
             parsed_code,
             [
                 tokens.Token(
-                    parser.TokenType.OUT,
+                    constants.Constants.OUT_TYPE,
                     "out",
                     1,
                     1,
                 ),
                 tokens.Token(
-                    parser.TokenType.WHITESPACE,
+                    constants.Constants.WHITESPACE_TYPE,
                     " ",
                     1,
                     4,
                 ),
                 tokens.Token(
-                    parser.TokenType.STRING,
+                    constants.Constants.STRING_TYPE,
                     '"Hello, World!"',
                     1,
                     5,
                 ),
                 tokens.Token(
-                    parser.TokenType.LINE_TERMINATOR,
+                    constants.Constants.LINE_TERMINATOR_TYPE,
                     ";",
                     1,
                     20,

@@ -6,7 +6,6 @@ from typing import Any
 from constants import Constants
 from tokens import Token
 from tokens import TokenStream
-from tokens import TokenType
 
 type Context = dict[str, Any]
 type PositionId = str
@@ -31,10 +30,11 @@ class Executable:
 
         self.modes = args
 
+        # TODO: Add Null
         self._last_return_value = None
 
         self._variables: Context = {
-            Constants.MAIN_NAME + Constants.REFERENCE_OPERATOR + "name": self.NAME
+            Constants.reference(Constants.MAIN_NAME) + "name": self.NAME
         }
         self._positions: dict[PositionId, int] = {Constants.MAIN_NAME: 0}
 
@@ -42,10 +42,10 @@ class Executable:
             filter(
                 lambda token: token.TYPE
                 not in [
-                    TokenType.WHITESPACE,
-                    TokenType.SHEBANG,
-                    TokenType.COMMENT,
-                    TokenType.DUMMY,
+                    Constants.WHITESPACE_TYPE,
+                    Constants.SHEBANG_TYPE,
+                    Constants.COMMENT_TYPE,
+                    Constants.DUMMY_TYPE,
                 ],
                 tokens,
             ),
@@ -55,7 +55,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE == TokenType.DOCSTRING,
+                    lambda token: token.TYPE == Constants.DOCSTRING_TYPE,
                     tokens,
                 )
             )
@@ -64,7 +64,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE != TokenType.DOCSTRING,
+                    lambda token: token.TYPE != Constants.DOCSTRING_TYPE,
                     tokens,
                 )
             )
@@ -78,20 +78,26 @@ class Executable:
         for pos, arg in enumerate(args):
 
             self._variables[
-                Constants.MAIN_NAME
-                + Constants.REFERENCE_OPERATOR
-                + "args"
-                + Constants.REFERENCE_OPERATOR
+                Constants.reference(
+                    Constants.reference(
+                        Constants.MAIN_NAME,
+                    )
+                    + "args",
+                )
                 + str(pos)
             ] = arg
 
         self._run_position_id(Constants.MAIN_NAME, 0)
         return self._last_return_value
 
-    def _append_to_stack(self, value: Any, stack_name: str = Constants.MAIN_NAME):
+    def _append_to_stack(
+        self,
+        value: Any,
+        stack_name: str = Constants.MAIN_NAME,
+    ):
 
-        first_value = stack_name + Constants.REFERENCE_OPERATOR + "0"
-        top_pointer = stack_name + Constants.REFERENCE_OPERATOR + "tp"
+        first_value = Constants.reference(stack_name) + "0"
+        top_pointer = Constants.reference(stack_name) + "tp"
 
         if first_value not in self._variables:
 
@@ -102,9 +108,12 @@ class Executable:
 
         self._variables[top_pointer] += 1
         self._variables[
-            stack_name
-            + Constants.REFERENCE_OPERATOR
-            + str(self._variables[top_pointer])
+            Constants.reference(
+                stack_name,
+            )
+            + str(
+                self._variables[top_pointer],
+            )
         ] = value
 
     def _current_token(self, pos_id: PositionId):
@@ -140,18 +149,18 @@ class Executable:
     def _eval_position(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
-            TokenType.OUT: self._out,
-            TokenType.STRING: self._string,
-            TokenType.END: self._end,
-            TokenType.INTEGER: self._int,
-            TokenType.DOCSTRING: self._docstring,
-            TokenType.IDENTIFIER: self._identifier,
-            TokenType.SET: self._set,
-            TokenType.MAIN: self._main,
-            TokenType.LINE_TERMINATOR: self._line_terminator,
-            TokenType.RAW_SET: self._raw_set,
-            TokenType.FUNCTION: self._function,
-            TokenType.JUMP: self._jump,
+            Constants.DOCSTRING_TYPE: self._docstring,
+            Constants.END_TYPE: self._end,
+            Constants.FUNCTION_TYPE: self._function,
+            Constants.IDENTIFIER_TYPE: self._identifier,
+            Constants.INTEGER_TYPE: self._int,
+            Constants.JUMP_TYPE: self._jump,
+            Constants.LINE_TERMINATOR_TYPE: self._line_terminator,
+            Constants.MAIN_TYPE: self._main,
+            Constants.OUT_TYPE: self._out,
+            Constants.RAW_SET_TYPE: self._raw_set,
+            Constants.SET_TYPE: self._set,
+            Constants.STRING_TYPE: self._string,
         }
 
         position = self._positions[pos_id]
@@ -176,14 +185,17 @@ class Executable:
 
             raise NameError(f"Missing function name at:\t\n{token}")
 
-        function_reference = Constants.FUNCTION_NAME + Constants.REFERENCE_OPERATOR
-
-        self._variables[function_reference + name_token.VALUE] = (
+        self._variables[
+            Constants.reference(
+                Constants.FUNCTION_NAME,
+            )
+            + name_token.VALUE
+        ] = (
             self._positions[pos_id] + 1
         )
 
         while ((next := self._step_pos(pos_id)) is not None) and (
-            next.VALUE not in [TokenType.FUNCTION, TokenType.MAIN]
+            next.TYPE not in [Constants.FUNCTION_TYPE, Constants.MAIN_TYPE]
         ):
             pass
 
@@ -255,9 +267,12 @@ class Executable:
 
             raise NameError(f"Missing name of main at:\n\t{token}")
 
-        main_reference = Constants.MAIN_NAME + Constants.REFERENCE_OPERATOR
-
-        self._variables[main_reference + main_token.VALUE] = self._positions[pos_id]
+        self._variables[
+            Constants.reference(
+                Constants.MAIN_NAME,
+            )
+            + main_token.VALUE
+        ] = self._positions[pos_id]
 
     def _out(self, token: Token, pos_id: PositionId):
 
@@ -268,7 +283,7 @@ class Executable:
 
     def _pop_from_stack(self, stack_name: str = Constants.MAIN_NAME):
 
-        stack_reference = stack_name + Constants.REFERENCE_OPERATOR
+        stack_reference = Constants.reference(stack_name)
 
         top_pointer = stack_reference + "tp"
 

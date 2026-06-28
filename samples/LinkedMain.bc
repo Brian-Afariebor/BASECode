@@ -2,4 +2,4 @@ fn Utils::quit
     end 0
 
 mn main
-    jmp Utils::quit
+    jmp function::Utils::quit

@@ -1,4 +1,5 @@
 from re import finditer
+
 from tokens import Token
 from tokens import TokenStream
 from tokens import TokenType

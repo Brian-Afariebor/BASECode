@@ -15,7 +15,7 @@ class Linker:
 
         directory_parts = source_path.split("/")
 
-        directory = "/" + "/".join(directory_parts[:-1]) + "/"
+        directory = "/".join(directory_parts[:-1]) + "/"
 
         buffer = text
 

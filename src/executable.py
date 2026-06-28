@@ -1,16 +1,12 @@
 from collections.abc import Callable
-
-from constants import Constants
-
 from enum import StrEnum
-
+from re import sub
 from typing import Any
 
+from constants import Constants
 from tokens import Token
 from tokens import TokenStream
 from tokens import TokenType
-
-from re import sub
 
 type Context = dict[str, Any]
 type PositionId = str
@@ -34,6 +30,8 @@ class Executable:
         self.NAME = name
 
         self.modes = args
+
+        self._last_return_value = None
 
         self._variables: Context = {
             Constants.MAIN_NAME + Constants.REFERENCE_OPERATOR + "name": self.NAME
@@ -88,6 +86,7 @@ class Executable:
             ] = arg
 
         self._run_position_id(Constants.MAIN_NAME, 0)
+        return self._last_return_value
 
     def _append_to_stack(self, value: Any, stack_name: str = Constants.MAIN_NAME):
 
@@ -122,13 +121,16 @@ class Executable:
 
         del self._positions[pos_id]
 
+        return_value = self._pop_from_stack('main')
+        self._last_return_value = return_value
+
         if pos_id == Constants.MAIN_NAME:
 
             self._positions.clear()
             print(
                 "\n" * 5
                 + f"Program '{self.NAME}' ended with a "
-                + f"return value of {self._pop_from_stack('main')}."
+                + f"return value of {return_value}."
             )
 
     def _eval_position(self, pos_id: PositionId) -> None:

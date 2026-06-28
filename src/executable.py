@@ -151,6 +151,7 @@ class Executable:
         MAPPINGS: FunctionMap = {
             Constants.DOCSTRING_TYPE: self._docstring,
             Constants.END_TYPE: self._end,
+            Constants.FLOAT_TYPE: self._float,
             Constants.FUNCTION_TYPE: self._function,
             Constants.IDENTIFIER_TYPE: self._identifier,
             Constants.INTEGER_TYPE: self._int,
@@ -176,6 +177,10 @@ class Executable:
         function = MAPPINGS[type]
 
         return function(token, pos_id)
+
+    def _float(self, token: Token, pos_id: PositionId):
+
+        self._append_to_stack(float(token.VALUE))
 
     def _function(self, token: Token, pos_id: PositionId):
 

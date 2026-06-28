@@ -7,7 +7,7 @@ type BASECode = str
 class Linker:
 
     @staticmethod
-    def resolve(source_path: str) -> BASECode:
+    def link(source_path: str) -> BASECode:
 
         with open(source_path, "rt") as source_file:
 
@@ -23,7 +23,7 @@ class Linker:
 
             replacement_name = match.group("name")
 
-            replacement_text = Linker.resolve(directory + replacement_name + ".bc")
+            replacement_text = Linker.link(directory + replacement_name + ".bc")
 
             replacement_text: BASECode = sub(
                 r"(?P<function>mn|fn)\s+(?P<name>\w+)",

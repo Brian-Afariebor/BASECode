@@ -21,7 +21,7 @@ def main():
         print("Usage:\n\t"+"python intrepreter.py FILE_PATH FILE_ARGS")
         return
 
-    linked_code = Linker.resolve(file_path)
+    linked_code = Linker.link(file_path)
 
     parsed_code = Parser.parse(linked_code)
 

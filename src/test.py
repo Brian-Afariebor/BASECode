@@ -1,10 +1,10 @@
 import unittest
 
-import constants
-import executable
-import linker
-import parser
-import tokens
+from constants import Constants
+from executable import Executable
+from linker import Linker
+from parser import Parser
+from tokens import Token
 
 
 class TestLinker(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestLinker(unittest.TestCase):
 
         file_path = "samples/HelloWorld.bc"
 
-        linked_code = linker.Linker.resolve(file_path)
+        linked_code = Linker.link(file_path)
 
         with open(file_path) as source_file:
 
@@ -26,7 +26,7 @@ class TestLinker(unittest.TestCase):
         unlinked_file_path = "samples/Main.bc"
         linked_file_path = "samples/LinkedMain.bc"
 
-        linked_code = linker.Linker.resolve(unlinked_file_path)
+        linked_code = Linker.link(unlinked_file_path)
 
         with open(linked_file_path) as source_file:
 
@@ -40,36 +40,48 @@ class TestParser(unittest.TestCase):
     def test_minimal_hello_world(self):
 
         hello_world_code = 'out "Hello, World!";'
-        parsed_code = parser.Parser.parse(hello_world_code)
+        parsed_code = Parser.parse(hello_world_code)
         self.assertEqual(
             parsed_code,
             [
-                tokens.Token(
-                    constants.Constants.OUT_TYPE,
+                Token(
+                    Constants.OUT_TYPE,
                     "out",
                     1,
                     1,
                 ),
-                tokens.Token(
-                    constants.Constants.WHITESPACE_TYPE,
+                Token(
+                    Constants.WHITESPACE_TYPE,
                     " ",
                     1,
                     4,
                 ),
-                tokens.Token(
-                    constants.Constants.STRING_TYPE,
+                Token(
+                    Constants.STRING_TYPE,
                     '"Hello, World!"',
                     1,
                     5,
                 ),
-                tokens.Token(
-                    constants.Constants.LINE_TERMINATOR_TYPE,
+                Token(
+                    Constants.LINE_TERMINATOR_TYPE,
                     ";",
                     1,
                     20,
                 ),
             ],
         )
+
+class TestExecutable(unittest.TestCase):
+
+    def test_end(self):
+
+        for i  in range(-10,11):
+
+            resolved_code = f"end {i/10};"
+            parsed_code = Parser.parse(resolved_code)
+            code_executable = Executable("EndTest",parsed_code)
+            self.assertEqual(code_executable.run(),i/10)
+
 
 
 if __name__ == "__main__":

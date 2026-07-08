@@ -1,8 +1,8 @@
 class Constants:
 
-    COMMENT_REGEX = r"\/\*[\s\S]*?\*\/"
+    COMMENT_REGEX = r"\/\*[\s\S]*?\*\/|\/\/.*"
     COMMENT_TYPE = "COMMENT"
-    DOCSTRING_REGEX = r"\/\*\*[\s\S]*?\*\/"
+    DOCSTRING_REGEX = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
     DOCSTRING_TYPE = "DOCSTRING"
     DUMMY_REGEX = r"\(|{|}|,|="
     DUMMY_TYPE = "DUMMY"
@@ -35,6 +35,10 @@ class Constants:
     SET_TYPE = "SET"
     SHEBANG_REGEX = r"#!.*\n"
     SHEBANG_TYPE = "SHEBANG"
+    START_KEYWORD = "start"
+    START_TYPE = "START"
+    STOP_KEYWORD = "stop"
+    STOP_TYPE = "STOP"
     STRING_REGEX = r"\"(?:[^\"]*)\""
     STRING_TYPE = "STRING"
     UNMAPPED_REGEX = "."

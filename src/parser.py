@@ -13,6 +13,8 @@ class Parser:
     MAPPINGS: dict[BASECode, Regex] = {
 
         # Keywords
+        Constants.START_TYPE: Constants.START_KEYWORD,
+        Constants.STOP_TYPE: Constants.STOP_KEYWORD,
         Constants.RAW_SET_TYPE: Constants.RAW_SET_KEYWORD,
         Constants.JUMP_TYPE: Constants.JUMP_KEYWORD,
         Constants.END_TYPE: Constants.END_KEYWORD,

@@ -9,9 +9,15 @@ class Linker:
     @staticmethod
     def link(source_path: str) -> BASECode:
 
-        with open(source_path, "rt") as source_file:
+        try:
 
-            text = source_file.read()
+            with open(source_path, "rt") as source_file:
+
+                text = source_file.read()
+
+        except FileNotFoundError:
+
+            raise FileNotFoundError(f"Missing file '{source_path}'.") from None
 
         directory_parts = source_path.split("/")
 

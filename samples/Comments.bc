@@ -1,0 +1,43 @@
+/**
+Test Comments:
+
+    Description:
+        A test for BASECode Comments.
+
+    Preconditions:
+        None
+
+    Result:
+        Should return 0.
+
+    Postconditions:
+        Returns 0, defines Comments::Main.
+
+*/
+
+/**
+Main HelloWorld::Main:
+
+    Description:
+        Evaluates different comments, then returns 0.
+
+    Preconditions:
+        None
+
+    Result:
+        Returns 0.
+
+    Postconditions:
+        Returns 0.
+
+*/
+mn Main
+{
+    /*
+        Multiline Comment
+    */
+
+    // Single Line Comment
+
+    end(0);
+}

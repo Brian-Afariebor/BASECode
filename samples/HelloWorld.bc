@@ -11,7 +11,7 @@ Test HelloWorld:
         Should print "Hello, World!" and return 0.
 
     Postconditions:
-        x = "Hello, World!".
+        "Hello, World!" is printed to the console.
 
 */
 
@@ -28,12 +28,11 @@ Main HelloWorld::Main:
         Prints "Hello, World!" and returns 0.
 
     Postconditions:
-        x = "Hello, World!".
+        "Hello, World!" is printed to the console.
 
 */
 mn Main
 {
-    rset("x","Hello, World!");
-    out(x);
+    out("Hello, World!");
     end(0);
 }

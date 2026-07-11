@@ -72,25 +72,25 @@ class ParserTest(unittest.TestCase):
             parsed_code,
             [
                 Token(
-                    Constants.OUT_TYPE,
+                    Constants.Types.OUT,
                     "out",
                     1,
                     1,
                 ),
                 Token(
-                    Constants.WHITESPACE_TYPE,
+                    Constants.Types.WHITESPACE,
                     " ",
                     1,
                     4,
                 ),
                 Token(
-                    Constants.STRING_TYPE,
+                    Constants.Types.STRING,
                     '"Hello, World!"',
                     1,
                     5,
                 ),
                 Token(
-                    Constants.LINE_TERMINATOR_TYPE,
+                    Constants.Types.LINE_TERMINATOR,
                     ";",
                     1,
                     20,

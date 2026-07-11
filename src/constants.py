@@ -1,52 +1,73 @@
 class Constants:
 
-    COMMENT_REGEX = r"\/\*[\s\S]*?\*\/|\/\/.*"
-    COMMENT_TYPE = "COMMENT"
-    DOCSTRING_REGEX = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
-    DOCSTRING_TYPE = "DOCSTRING"
-    DUMMY_REGEX = r"\(|{|}|,|="
-    DUMMY_TYPE = "DUMMY"
-    END_TYPE = "END"
-    END_KEYWORD = "end"
-    FLOAT_REGEX = r"-?\d+?\.\d+(e\d+)?"
-    FLOAT_TYPE = "FLOAT"
-    FUNCTION_KEYWORD = "fn"
-    FUNCTION_NAME = "function"
-    FUNCTION_TERMINATOR_REGEX = r"\)"
-    FUNCTION_TERMINATOR_TYPE = "FUNCTION_TERMINATOR"
-    FUNCTION_TYPE = "FUNCTION"
-    IDENTIFIER_REGEX = r"[\w:]+"
-    IDENTIFIER_TYPE = "IDENTIFIER"
-    INTEGER_REGEX = r"-?\d+(e\d+)?"
-    INTEGER_TYPE = "INTEGER"
-    JUMP_KEYWORD = "jmp"
-    JUMP_TYPE = "JUMP"
-    LINE_TERMINATOR = ";"
-    LINE_TERMINATOR_TYPE = "LINE_TERMINATOR"
-    MAIN_KEYWORD = "mn"
-    MAIN_NAME = "main"
-    MAIN_TYPE = "MAIN"
-    OUT_KEYWORD = "out"
-    OUT_TYPE = "OUT"
-    RAW_SET_KEYWORD = "rset"
-    RAW_SET_TYPE = "RAW_SET"
-    REFERENCE_OPERATOR = "::"
-    SET_KEYWORD = "set"
-    SET_TYPE = "SET"
-    SHEBANG_REGEX = r"#!.*\n"
-    SHEBANG_TYPE = "SHEBANG"
-    START_KEYWORD = "start"
-    START_TYPE = "START"
-    STOP_KEYWORD = "stop"
-    STOP_TYPE = "STOP"
-    STRING_REGEX = r"\"(?:[^\"]*)\""
-    STRING_TYPE = "STRING"
-    UNMAPPED_REGEX = "."
-    UNMAPPED_TYPE = "UNMAPPED"
-    WHITESPACE_REGEX = r"[\s]+"
-    WHITESPACE_TYPE = "WHITESPACE"
+    class ExecutionModes:
+
+        DOCSTRINGS = "-d"
+
+    class Flags:
+
+        DOCSTRING = "-d"
+        FILE = "-f"
+        HELP = "-h" 
+        NAME = "-n"
+
+    class Keywords:
+
+        END = "end"
+        FUNCTION = "fn"
+        FUNCTION_NAME = "function"
+        JUMP = "jmp"
+        LINE_TERMINATOR = ";"
+        MAIN = "mn"
+        MAIN_NAME = "main"
+        OUT = "out"
+        RAW_SET = "rset"
+        REFERENCE_OPERATOR = "::"
+        SET = "set"
+        START = "start"
+        STOP = "stop"
+
+    class Regexes:
+
+        COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
+        DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
+        DUMMY = r"\(|{|}|,|="
+        FLOAT = r"-?\d+?\.\d+(e\d+)?"
+        FUNCTION_TERMINATOR = r"\)"
+        IDENTIFIER = r"[\w:]+"
+        INTEGER = r"-?\d+(e\d+)?"
+        SHEBANG = r"#!.*\n"
+        STRING = r"\"(?:[^\"]*)\""
+        UNMAPPED = "."
+        WHITESPACE = r"[\s]+"
+
+
+    class Types:
+
+        COMMENT = "COMMENT"
+        DOCSTRING = "DOCSTRING"
+        DUMMY = "DUMMY"
+        END = "END"
+        FLOAT = "FLOAT"
+        FUNCTION_TERMINATOR = "FUNCTION_TERMINATOR"
+        FUNCTION = "FUNCTION"
+        IDENTIFIER = "IDENTIFIER"
+        INTEGER = "INTEGER"
+        JUMP = "JUMP"
+        LINE_TERMINATOR = "LINE_TERMINATOR"
+        MAIN = "MAIN"
+        OUT = "OUT"
+        RAW_SET = "RAW_SET"
+        SET = "SET"
+        SHEBANG = "SHEBANG"
+        START = "START"
+        STOP = "STOP"
+        STRING = "STRING"
+        UNMAPPED = "UNMAPPED"
+        WHITESPACE = "WHITESPACE"
+    
 
     @staticmethod
     def reference(variable: str):
 
-        return variable + Constants.REFERENCE_OPERATOR
+        return variable + Constants.Keywords.REFERENCE_OPERATOR

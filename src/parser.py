@@ -13,31 +13,31 @@ class Parser:
     MAPPINGS: dict[BASECode, Regex] = {
 
         # Keywords
-        Constants.START_TYPE: Constants.START_KEYWORD,
-        Constants.STOP_TYPE: Constants.STOP_KEYWORD,
-        Constants.RAW_SET_TYPE: Constants.RAW_SET_KEYWORD,
-        Constants.JUMP_TYPE: Constants.JUMP_KEYWORD,
-        Constants.END_TYPE: Constants.END_KEYWORD,
-        Constants.OUT_TYPE: Constants.OUT_KEYWORD,
-        Constants.SET_TYPE: Constants.SET_KEYWORD,
-        Constants.MAIN_TYPE: Constants.MAIN_KEYWORD,
-        Constants.FUNCTION_TYPE: Constants.FUNCTION_KEYWORD,
-        Constants.FUNCTION_TERMINATOR_TYPE: Constants.FUNCTION_TERMINATOR_REGEX,
-        Constants.LINE_TERMINATOR_TYPE: Constants.LINE_TERMINATOR,
+        Constants.Types.START: Constants.Keywords.START,
+        Constants.Types.STOP: Constants.Keywords.STOP,
+        Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
+        Constants.Types.JUMP: Constants.Keywords.JUMP,
+        Constants.Types.END: Constants.Keywords.END,
+        Constants.Types.OUT: Constants.Keywords.OUT,
+        Constants.Types.SET: Constants.Keywords.SET,
+        Constants.Types.MAIN: Constants.Keywords.MAIN,
+        Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
+        Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
+        Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
 
         # General Expressions
-        Constants.SHEBANG_TYPE: Constants.SHEBANG_REGEX,
-        Constants.DOCSTRING_TYPE: Constants.DOCSTRING_REGEX,
-        Constants.COMMENT_TYPE: Constants.COMMENT_REGEX,
-        Constants.FLOAT_TYPE: Constants.FLOAT_REGEX,
-        Constants.INTEGER_TYPE: Constants.INTEGER_REGEX,
-        Constants.IDENTIFIER_TYPE: Constants.IDENTIFIER_REGEX,
-        Constants.STRING_TYPE: Constants.STRING_REGEX,
-        Constants.WHITESPACE_TYPE: Constants.WHITESPACE_REGEX,
-        Constants.DUMMY_TYPE: Constants.DUMMY_REGEX,
-        
+        Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
+        Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
+        Constants.Types.COMMENT: Constants.Regexes.COMMENT,
+        Constants.Types.FLOAT: Constants.Regexes.FLOAT,
+        Constants.Types.INTEGER: Constants.Regexes.INTEGER,
+        Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
+        Constants.Types.STRING: Constants.Regexes.STRING,
+        Constants.Types.WHITESPACE: Constants.Regexes.WHITESPACE,
+        Constants.Types.DUMMY: Constants.Regexes.DUMMY,
+
         # No Match
-        Constants.UNMAPPED_TYPE: Constants.UNMAPPED_REGEX,
+        Constants.Types.UNMAPPED: Constants.Regexes.UNMAPPED,
     }
 
     @staticmethod
@@ -50,13 +50,13 @@ class Parser:
         )
 
         line = 1
-        line_start = 0
+        line_START = 0
 
         for match in finditer(regex_string, basecode):
 
             token_string = match.group()
             token_type = str(match.lastgroup)
-            column = match.start() - line_start + 1
+            column = match.start() - line_START + 1
 
             buffer.append(
                 Token(
@@ -70,6 +70,6 @@ class Parser:
             if "\n" in token_string:
 
                 line += token_string.count("\n")
-                line_start = match.end()
+                line_START = match.end()
 
         return buffer

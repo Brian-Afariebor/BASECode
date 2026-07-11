@@ -1,7 +1,6 @@
 from collections.abc import Callable
-
+from constants import Constants
 from executable import Executable
-from executable import ExecutionMode
 from linker import Linker
 from parser import Parser
 from sys import argv
@@ -15,10 +14,12 @@ class Main:
         self._current_flag = 0
         self._file_path = ""
         self._code_name = ""
-        self._execution_modes: list[ExecutionMode] = []
+        self._execution_modes: list[str] = []
         self._code_args: list[str] = []
 
     def run(self):
+
+        self._current_flag = 0
 
         while self._current_flag < len(self.ARGS):
 
@@ -36,13 +37,18 @@ class Main:
 
     def _eval(self):
 
-        MAPPINGS: dict[str, Callable[[], None]] = {"-f": self._file}
+        MAPPINGS: dict[str, Callable[[], None]] = {
+            Constants.Flags.FILE: self._file,
+        }
 
         current_flag = self.ARGS[self._current_flag]
 
         if current_flag not in MAPPINGS:
 
-            raise NameError(f"Unknown flag {current_flag}; see -h for flags.")
+            raise NameError(
+                f"Unknown flag '{current_flag}'; "
+                + f"see {Constants.Flags.HELP} for details."
+            )
 
         function = MAPPINGS[current_flag]
 
@@ -54,7 +60,9 @@ class Main:
 
         if self._current_flag >= len(self.ARGS):
 
-            raise FileNotFoundError("File missing; see -h for details.")
+            raise FileNotFoundError(
+                f"File missing; see {Constants.Flags.HELP} for details."
+            )
 
         self._file_path = self.ARGS[self._current_flag]
 

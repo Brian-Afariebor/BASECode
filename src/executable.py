@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from enum import StrEnum
 from re import sub
 from typing import Any
 
@@ -12,18 +11,13 @@ type PositionId = str
 type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
 
 
-class ExecutionMode(StrEnum):
-
-    DOCSTRINGS = "-d"
-
-
 class Executable:
 
     def __init__(
         self,
         name: str,
         tokens: TokenStream,
-        *args: ExecutionMode,
+        *args: str,
     ):
 
         self.NAME = name
@@ -34,28 +28,28 @@ class Executable:
         self._last_return_value = None
 
         self._variables: Context = {
-            Constants.reference(Constants.MAIN_NAME) + "name": self.NAME
+            Constants.reference(Constants.Keywords.MAIN_NAME) + "name": self.NAME
         }
-        self._positions: dict[PositionId, int] = {Constants.MAIN_NAME: 0}
+        self._positions: dict[PositionId, int] = {Constants.Keywords.MAIN_NAME: 0}
 
         tokens = list(
             filter(
                 lambda token: token.TYPE
                 not in [
-                    Constants.WHITESPACE_TYPE,
-                    Constants.SHEBANG_TYPE,
-                    Constants.COMMENT_TYPE,
-                    Constants.DUMMY_TYPE,
+                    Constants.Types.WHITESPACE,
+                    Constants.Types.SHEBANG,
+                    Constants.Types.COMMENT,
+                    Constants.Types.DUMMY,
                 ],
                 tokens,
             ),
         )
 
-        if ExecutionMode.DOCSTRINGS in self.modes:
+        if Constants.ExecutionModes.DOCSTRINGS in self.modes:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE == Constants.DOCSTRING_TYPE,
+                    lambda token: token.TYPE == Constants.Types.DOCSTRING,
                     tokens,
                 )
             )
@@ -64,7 +58,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE != Constants.DOCSTRING_TYPE,
+                    lambda token: token.TYPE != Constants.Types.DOCSTRING,
                     tokens,
                 )
             )
@@ -80,20 +74,20 @@ class Executable:
             self._variables[
                 Constants.reference(
                     Constants.reference(
-                        Constants.MAIN_NAME,
+                        Constants.Keywords.MAIN_NAME,
                     )
                     + "args",
                 )
                 + str(pos)
             ] = arg
 
-        self._run_position_id(Constants.MAIN_NAME, 0)
+        self._run_position_id(Constants.Keywords.MAIN_NAME, 0)
         return self._last_return_value
 
     def _append_to_stack(
         self,
         value: Any,
-        stack_name: str = Constants.MAIN_NAME,
+        stack_name: str = Constants.Keywords.MAIN_NAME,
     ):
 
         first_value = Constants.reference(stack_name) + "0"
@@ -137,7 +131,7 @@ class Executable:
         return_value = self._pop_from_stack("main")
         self._last_return_value = return_value
 
-        if pos_id == Constants.MAIN_NAME:
+        if pos_id == Constants.Keywords.MAIN_NAME:
 
             self._positions.clear()
             print(
@@ -149,19 +143,19 @@ class Executable:
     def _eval_position(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
-            Constants.DOCSTRING_TYPE: self._docstring,
-            Constants.END_TYPE: self._end,
-            Constants.FLOAT_TYPE: self._float,
-            Constants.FUNCTION_TYPE: self._function,
-            Constants.IDENTIFIER_TYPE: self._identifier,
-            Constants.INTEGER_TYPE: self._int,
-            Constants.JUMP_TYPE: self._jump,
-            Constants.LINE_TERMINATOR_TYPE: self._line_terminator,
-            Constants.MAIN_TYPE: self._main,
-            Constants.OUT_TYPE: self._out,
-            Constants.RAW_SET_TYPE: self._raw_set,
-            Constants.SET_TYPE: self._set,
-            Constants.STRING_TYPE: self._string,
+            Constants.Types.DOCSTRING: self._docstring,
+            Constants.Types.END: self._end,
+            Constants.Types.FLOAT: self._float,
+            Constants.Types.FUNCTION: self._function,
+            Constants.Types.IDENTIFIER: self._identifier,
+            Constants.Types.INTEGER: self._int,
+            Constants.Types.JUMP: self._jump,
+            Constants.Types.LINE_TERMINATOR: self._line_terminator,
+            Constants.Types.MAIN: self._main,
+            Constants.Types.OUT: self._out,
+            Constants.Types.RAW_SET: self._raw_set,
+            Constants.Types.SET: self._set,
+            Constants.Types.STRING: self._string,
         }
 
         position = self._positions[pos_id]
@@ -192,7 +186,7 @@ class Executable:
 
         self._variables[
             Constants.reference(
-                Constants.FUNCTION_NAME,
+                Constants.Keywords.FUNCTION_NAME,
             )
             + name_token.VALUE
         ] = (
@@ -200,7 +194,7 @@ class Executable:
         )
 
         while ((next := self._step_pos(pos_id)) is not None) and (
-            next.TYPE not in [Constants.FUNCTION_TYPE, Constants.MAIN_TYPE]
+            next.TYPE not in [Constants.Types.FUNCTION, Constants.Types.MAIN]
         ):
             pass
 
@@ -274,7 +268,7 @@ class Executable:
 
         self._variables[
             Constants.reference(
-                Constants.MAIN_NAME,
+                Constants.Keywords.MAIN_NAME,
             )
             + main_token.VALUE
         ] = self._positions[pos_id]
@@ -286,7 +280,7 @@ class Executable:
         print(self._pop_from_stack(), end="")
         self._step_pos(pos_id)
 
-    def _pop_from_stack(self, stack_name: str = Constants.MAIN_NAME):
+    def _pop_from_stack(self, stack_name: str = Constants.Keywords.MAIN_NAME):
 
         stack_reference = Constants.reference(stack_name)
 
@@ -364,7 +358,7 @@ class Executable:
 
         if old_position + 1 >= len(self.TOKENS):
 
-            if ExecutionMode.DOCSTRINGS in self.modes:
+            if Constants.ExecutionModes.DOCSTRINGS in self.modes:
 
                 del self._positions[pos_id]
                 return

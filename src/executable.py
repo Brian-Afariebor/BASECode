@@ -114,6 +114,20 @@ class Executable:
 
         return self.TOKENS[self._positions[pos_id]]
 
+    def _delete(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        variable_token = self._token_at_pos_id(pos_id)
+        variable_name = variable_token.VALUE
+
+        if variable_name in self._variables:
+
+            del self._variables[variable_name]
+
+        self._step_pos(pos_id)
+
     def _docstring(self, token: Token, pos_id: PositionId):
 
         docstring = token.VALUE
@@ -124,7 +138,7 @@ class Executable:
     def _end(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
 
         del self._positions[pos_id]
 
@@ -140,9 +154,10 @@ class Executable:
                 + f"return value of {return_value}."
             )
 
-    def _eval_position(self, pos_id: PositionId) -> None:
+    def _eval_pos(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
+            Constants.Types.DELETE: self._delete,
             Constants.Types.DOCSTRING: self._docstring,
             Constants.Types.END: self._end,
             Constants.Types.FLOAT: self._float,
@@ -223,7 +238,7 @@ class Executable:
     def _jump(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
 
         new_position = self._pop_from_stack()
 
@@ -276,7 +291,7 @@ class Executable:
     def _out(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
         print(self._pop_from_stack(), end="")
         self._step_pos(pos_id)
 
@@ -309,12 +324,12 @@ class Executable:
 
         self._step_pos(pos_id)
 
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
 
         name = str(self._pop_from_stack())
 
         self._step_pos(pos_id)
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
 
         self._variables[name] = self._pop_from_stack()
         self._step_pos(pos_id)
@@ -325,7 +340,7 @@ class Executable:
 
         while pos_id in self._positions:
 
-            self._eval_position(pos_id)
+            self._eval_pos(pos_id)
             self._step_pos(pos_id)
 
     def _set(self, token: Token, pos_id: PositionId):
@@ -342,7 +357,7 @@ class Executable:
 
         self._step_pos(pos_id)
 
-        self._eval_position(pos_id)
+        self._eval_pos(pos_id)
 
         self._variables[variable_name] = self._pop_from_stack()
 

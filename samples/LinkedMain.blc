@@ -1,4 +1,5 @@
-imp Utils
+fn quit
+    end 0
 
 mn main
     jmp function::quit

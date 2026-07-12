@@ -1,5 +1,0 @@
-fn Utils::quit
-    end 0
-
-mn main
-    jmp function::Utils::quit

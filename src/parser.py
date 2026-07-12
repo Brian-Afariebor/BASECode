@@ -17,6 +17,7 @@ class Parser:
         Constants.Types.STOP: Constants.Keywords.STOP,
         Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
         Constants.Types.JUMP: Constants.Keywords.JUMP,
+        Constants.Types.DELETE: Constants.Keywords.DELETE,
         Constants.Types.END: Constants.Keywords.END,
         Constants.Types.OUT: Constants.Keywords.OUT,
         Constants.Types.SET: Constants.Keywords.SET,

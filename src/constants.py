@@ -13,6 +13,7 @@ class Constants:
 
     class Keywords:
 
+        DELETE = "del"
         END = "end"
         FUNCTION = "fn"
         FUNCTION_NAME = "function"
@@ -45,6 +46,7 @@ class Constants:
     class Types:
 
         COMMENT = "COMMENT"
+        DELETE = "DELETE"
         DOCSTRING = "DOCSTRING"
         DUMMY = "DUMMY"
         END = "END"

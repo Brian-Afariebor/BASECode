@@ -13,7 +13,8 @@ from main import Main
 
 hello_world_file_path = "samples/HelloWorld.bc"
 unlinked_code_file_path = "samples/Main.bc"
-linked_code_file_path = "samples/LinkedMain.bc"
+linked_code_file_path = "samples/LinkedMain.blc"
+beer_bottles_file_path = "samples/99BottlesOfBeer.bc"
 
 with open(linked_code_file_path) as source_file:
 
@@ -189,6 +190,26 @@ class MainTest(unittest.TestCase):
     def test_small_code_execution_speed(self):
 
         file_path = "samples/Comments.bc"
+        speed_requirement = 0.01
+        reps = 100
+
+        def run_code():
+
+            self.run_code(file_path)
+
+        for _ in range(reps):
+
+            self.assertLessEqual(
+                get_time(run_code),
+                speed_requirement,
+                f"Main Test did not meet speed requirement of "
+                + str(speed_requirement)
+                + " seconds.",
+            )
+
+    def test_large_code_execution_speed(self):
+
+        file_path = beer_bottles_file_path
         speed_requirement = 0.01
         reps = 100
 

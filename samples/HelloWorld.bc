@@ -31,7 +31,7 @@ Main HelloWorld::Main:
         "Hello, World!" is printed to the console.
 
 */
-mn Main
+mn HelloWorld::Main
 {
     out("Hello, World!");
     end(0);

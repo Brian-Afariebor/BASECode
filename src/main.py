@@ -35,10 +35,15 @@ class Main:
         )
         code_executable.run(*self._code_args)
 
+    def _docstring(self):
+
+        self._execution_modes.append(Constants.ExecutionModes.DOCSTRINGS)
+
     def _eval(self):
 
         MAPPINGS: dict[str, Callable[[], None]] = {
             Constants.Flags.FILE: self._file,
+            Constants.Flags.DOCSTRING: self._docstring,
         }
 
         current_flag = self.ARGS[self._current_flag]

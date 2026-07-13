@@ -13,10 +13,13 @@ class Constants:
 
     class Keywords:
 
+        ADD = "add"
         DELETE = "del"
+        ELSE = "else"
         END = "end"
         FUNCTION = "fn"
         FUNCTION_NAME = "function"
+        IF = "if"
         JUMP = "jmp"
         LINE_TERMINATOR = ";"
         MAIN = "mn"
@@ -45,15 +48,18 @@ class Constants:
 
     class Types:
 
+        ADD = "add"
         COMMENT = "COMMENT"
         DELETE = "DELETE"
         DOCSTRING = "DOCSTRING"
         DUMMY = "DUMMY"
+        ELSE = "ELSE"
         END = "END"
         FLOAT = "FLOAT"
         FUNCTION_TERMINATOR = "FUNCTION_TERMINATOR"
         FUNCTION = "FUNCTION"
         IDENTIFIER = "IDENTIFIER"
+        IF = "IF"
         INTEGER = "INTEGER"
         JUMP = "JUMP"
         LINE_TERMINATOR = "LINE_TERMINATOR"

@@ -84,6 +84,21 @@ class Executable:
         self._run_position_id(Constants.Keywords.MAIN_NAME, 0)
         return self._last_return_value
 
+    def _add(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+        item1 = self._pop_from_stack()
+        if item1 is None:
+
+            raise ValueError("None was given as an addition value at:"+f"\n\t{token}")
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+        item2 = self._pop_from_stack()
+        
+        self._append_to_stack(item1+item2)
+
     def _append_to_stack(
         self,
         value: Any,
@@ -157,12 +172,14 @@ class Executable:
     def _eval_pos(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
+            Constants.Types.ADD: self._add,
             Constants.Types.DELETE: self._delete,
             Constants.Types.DOCSTRING: self._docstring,
             Constants.Types.END: self._end,
             Constants.Types.FLOAT: self._float,
             Constants.Types.FUNCTION: self._function,
             Constants.Types.IDENTIFIER: self._identifier,
+            Constants.Types.IF: self._if,
             Constants.Types.INTEGER: self._int,
             Constants.Types.JUMP: self._jump,
             Constants.Types.LINE_TERMINATOR: self._line_terminator,
@@ -227,9 +244,31 @@ class Executable:
 
             raise NameError(
                 f"Variable '{variable_name}' not defined at:" + f"\n\t{token}."
-            )
+            ) from None
             # TODO: Implement "Null" type
             self._append_to_stack(None)
+
+    def _if(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item1 = self._pop_from_stack()
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item2 = self._pop_from_stack()
+
+        if item1 == item2:
+
+            self._step_pos(pos_id)
+            return
+
+        while ((next := self._step_pos(pos_id)) is not None) and (
+            next.TYPE != Constants.Types.ELSE
+        ):
+            pass
 
     def _int(self, token: Token, pos_id: PositionId):
 
@@ -247,25 +286,25 @@ class Executable:
         if new_position is None:
 
             raise ValueError(
-                f"None was given as a position at:\n\t"
+                f"None was given as a jump position at:\n\t"
                 + repr(self._current_token(pos_id))
-            )
+            ) from None
 
         adjusted_position = int(new_position) - 1
 
         if adjusted_position < 0:
 
             raise ValueError(
-                f"Given position {new_position} was too small. "
+                f"Given jump position {new_position} was too small. "
                 + f"Given at:\n\t{self._current_token(pos_id)}"
-            )
+            ) from None
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given position {new_position} was too big. "
+                f"Given jump position {new_position} was too big. "
                 + f"Given at:\n\t{self._current_token(pos_id)}"
-            )
+            ) from None
 
         self._positions[pos_id] = int(new_position) - 1
 

@@ -1,4 +1,36 @@
+/**
+Test Main:
+
+    Description:
+        A test for code linking.
+
+    Preconditions:
+        None.
+
+    Result:
+        Ends the code.
+
+    Postconditions:
+        The code is ended.
+*/
 imp Utils
 
-mn main
-    jmp function::quit
+/**
+Main Main::Main:
+
+    Description:
+        Starts Utils::Quit.
+
+    Preconditions:
+        The function Utils::Quit is defined.
+
+    Result:
+        Jumps to function::Utils::Quit.
+
+    Postconditions:
+        The code is ended.
+*/
+mn Main::Main
+{
+    jmp(function::Utils::Quit);
+}

@@ -1,5 +1,9 @@
 fn quit
-    end 0
+{
+    end(0);
+}
 
 mn main
-    jmp function::quit
+{
+    jmp(function::quit);
+}

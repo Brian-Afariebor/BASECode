@@ -6,10 +6,15 @@ class Constants:
 
     class Flags:
 
-        DOCSTRING = "-d"
         FILE = "-f"
-        HELP = "-h" 
+        HELP = "-h"
         NAME = "-n"
+        NO_LINK = "-nl"
+        NO_PARSE = "-np"
+        PRINT_DOCSTRINGS = "-pd"
+        SAVE_LINK = "-sl"
+        SAVE_PARSE = "-sp"
+        SAVE_TRIMMINGS = "-st"
 
     class Keywords:
 

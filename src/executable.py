@@ -91,13 +91,13 @@ class Executable:
         item1 = self._pop_from_stack()
         if item1 is None:
 
-            raise ValueError("None was given as an addition value at:"+f"\n\t{token}")
+            raise ValueError("None was given as an addition value at:" + f"\n\t{token}")
 
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         item2 = self._pop_from_stack()
-        
-        self._append_to_stack(item1+item2)
+
+        self._append_to_stack(item1 + item2)
 
     def _append_to_stack(
         self,
@@ -198,7 +198,7 @@ class Executable:
 
         if type not in MAPPINGS:
 
-            raise NameError(f"Invalid token at:\n{token}")
+            raise SyntaxError(f"Invalid token at:\n{token}")
 
         function = MAPPINGS[type]
 
@@ -302,8 +302,8 @@ class Executable:
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given jump position {new_position} was too big. "
-                + f"Given at:\n\t{self._current_token(pos_id)}"
+                f"Given jump position {new_position} was too big at:"
+                + f"\n\t{self._current_token(pos_id)}"
             ) from None
 
         self._positions[pos_id] = int(new_position) - 1
@@ -318,7 +318,7 @@ class Executable:
 
         if main_token is None:
 
-            raise NameError(f"Missing name of main at:\n\t{token}")
+            raise SyntaxError(f"Missing name of main at:\n\t{token}")
 
         self._variables[
             Constants.reference(
@@ -388,8 +388,8 @@ class Executable:
 
         if next_token is None:
 
-            raise NameError(
-                f"Name of assignment operator not found at:\n\t{token}."
+            raise SyntaxError(
+                f"Name of variable not found at:\n\t{token}."
             ) from None
 
         variable_name = next_token.VALUE
@@ -418,7 +418,7 @@ class Executable:
                 return
 
             raise EOFError(
-                f"End of Code reached by thread {pos_id}, "
+                f"End of Code reached by thread {pos_id} "
                 + f"at:\n\t{self._token_at_pos(old_position)}"
             ) from None
 

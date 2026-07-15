@@ -1,2 +1,4 @@
-fn quit
-    end 0
+fn Utils::Quit
+{
+    end(0);
+}

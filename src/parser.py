@@ -35,8 +35,10 @@ class Parser:
         Constants.Types.DUMMY: Constants.Regexes.DUMMY,
         Constants.Types.FLOAT: Constants.Regexes.FLOAT,
         Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
-        Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
+
+        #* Fixes bugs with integer parsing 
         Constants.Types.INTEGER: Constants.Regexes.INTEGER,
+        Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
         Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
         Constants.Types.STRING: Constants.Regexes.STRING,
         Constants.Types.WHITESPACE: Constants.Regexes.WHITESPACE,

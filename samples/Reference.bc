@@ -1,0 +1,7 @@
+
+mn Reference::Main
+{
+    set VarA = 1;
+    set VarAReference = "VarA";
+    end(ref(VarAReference));
+}

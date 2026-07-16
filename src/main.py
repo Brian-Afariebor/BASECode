@@ -75,6 +75,20 @@ class Main:
         self._save_linked_code_flag = True
         self._linked_code_file = self.ARGS[self._current_flag]
 
+
+    def _enable_save_trimmings(self):
+
+        self._current_flag += 1
+
+        if self._current_flag >= len(self.ARGS):
+
+            raise FileNotFoundError(
+                f"File missing; see {Constants.Flags.HELP} for details."
+            ) from None
+
+        self._save_trimmed_code_flag = True
+        self._trimmed_code_file = self.ARGS[self._current_flag]
+
     def _eval(self):
 
         MAPPINGS: dict[str, Callable[[], None]] = {
@@ -84,6 +98,7 @@ class Main:
             Constants.Flags.NO_LINK: self._enable_no_link,
             Constants.Flags.PRINT_DOCSTRINGS: self._docstring,
             Constants.Flags.SAVE_LINK: self._enable_save_link,
+            Constants.Flags.SAVE_TRIMMINGS: self._enable_save_trimmings
         }
 
         current_flag = self.ARGS[self._current_flag]
@@ -185,13 +200,14 @@ class Main:
 
                 token_content = token.VALUE
 
-                if token_content == Constants.Keywords.LINE_TERMINATOR:
+                trimmed_code_file.write(token_content)
 
-                    trimmed_code_file.write(token_content + "\n")
-                    
+                if "\"" in token_content:
                     continue
 
-                trimmed_code_file.write(token_content + " ")
+                if token_content not in [")",";"]:
+
+                    trimmed_code_file.write(" ")
 
 
 MAIN = Main(argv[1:])

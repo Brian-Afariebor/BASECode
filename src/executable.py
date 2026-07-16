@@ -186,6 +186,7 @@ class Executable:
             Constants.Types.MAIN: self._main,
             Constants.Types.OUT: self._out,
             Constants.Types.RAW_SET: self._raw_set,
+            Constants.Types.REFERENCE: self._reference,
             Constants.Types.SET: self._set,
             Constants.Types.STRING: self._string,
         }
@@ -371,6 +372,18 @@ class Executable:
         self._eval_pos(pos_id)
 
         self._variables[name] = self._pop_from_stack()
+        self._step_pos(pos_id)
+
+    def _reference(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+
+        self._eval_pos(pos_id)
+
+        name = str(self._pop_from_stack())
+
+        self._append_to_stack(self._variables[name])
+
         self._step_pos(pos_id)
 
     def _run_position_id(self, pos_id: PositionId, start: int):

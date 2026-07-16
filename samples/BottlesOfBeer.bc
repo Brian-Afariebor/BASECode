@@ -11,30 +11,9 @@ Program BottlesOfBeer:
         Prints the full lyrics of "99 Bottles of Beer".
 
     Postconditions:
-
-
+        Prints the full lyrics of "99 Bottles of Beer",
+            and the code is ended.
 */
-
-/**
-Main BottlesOfBeer::Constants:
-
-    Description:
-        Initializes the loop constants.
-
-    Preconditions:
-        None.
-
-    Result:
-        Sets BottlesOfBeer::LoopStart to 99.
-    
-    Postconditions:
-        The value of BottlesOfBeer::LoopStart is replaced with 99.
-*/
-mn BottlesOfBeer::Constants
-{
-    // Adds the amount of bottles
-    set BottlesOfBeer::LoopStart = 99;
-}
 
 
 /**
@@ -132,5 +111,7 @@ Main BottlesOfBeer::Main:
 */
 mn BottlesOfBeer::Main
 {
+    // There are 99 lyrics, so this is set to 99
+    set BottlesOfBeer::LoopStart = 99;
     jmp(function::BottlesOfBeer::Loop);
 }

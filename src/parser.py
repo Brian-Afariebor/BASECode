@@ -12,32 +12,36 @@ class Parser:
 
     MAPPINGS: dict[BASECode, Regex] = {
         # Keywords
+        Constants.Types.ADD: Constants.Keywords.ADD,
+        Constants.Types.DELETE: Constants.Keywords.DELETE,
+        Constants.Types.ELSE: Constants.Keywords.ELSE,
+        Constants.Types.END: Constants.Keywords.END,
+        Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
+        Constants.Types.IF: Constants.Keywords.IF,
+        Constants.Types.JUMP: Constants.Keywords.JUMP,
+        Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
+        Constants.Types.MAIN: Constants.Keywords.MAIN,
+        Constants.Types.OUT: Constants.Keywords.OUT,
+        Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
+        Constants.Types.REFERENCE: Constants.Keywords.REFERENCE,
+        Constants.Types.SET: Constants.Keywords.SET,
         Constants.Types.START: Constants.Keywords.START,
         Constants.Types.STOP: Constants.Keywords.STOP,
-        Constants.Types.ELSE: Constants.Keywords.ELSE,
-        Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
-        Constants.Types.JUMP: Constants.Keywords.JUMP,
-        Constants.Types.DELETE: Constants.Keywords.DELETE,
-        Constants.Types.END: Constants.Keywords.END,
-        Constants.Types.OUT: Constants.Keywords.OUT,
-        Constants.Types.SET: Constants.Keywords.SET,
-        Constants.Types.ADD: Constants.Keywords.ADD,
-        Constants.Types.IF: Constants.Keywords.IF,
-        Constants.Types.MAIN: Constants.Keywords.MAIN,
-        Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
-        Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
-        Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
-        # General Expressions
-        Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
-        Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
         Constants.Types.COMMENT: Constants.Regexes.COMMENT,
+        Constants.Types.DELETE: Constants.Keywords.DELETE,
+
+        # Regexes
+        Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
+        Constants.Types.DUMMY: Constants.Regexes.DUMMY,
         Constants.Types.FLOAT: Constants.Regexes.FLOAT,
-        Constants.Types.INTEGER: Constants.Regexes.INTEGER,
+        Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
         Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
+        Constants.Types.INTEGER: Constants.Regexes.INTEGER,
+        Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
         Constants.Types.STRING: Constants.Regexes.STRING,
         Constants.Types.WHITESPACE: Constants.Regexes.WHITESPACE,
-        Constants.Types.DUMMY: Constants.Regexes.DUMMY,
-        # No Match
+
+        # Unmapped
         Constants.Types.UNMAPPED: Constants.Regexes.UNMAPPED,
     }
 

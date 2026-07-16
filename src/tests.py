@@ -14,7 +14,7 @@ from main import Main
 hello_world_file_path = "samples/HelloWorld.bc"
 unlinked_code_file_path = "samples/Main.bc"
 linked_code_file_path = "samples/LinkedMain.blc"
-beer_bottles_file_path = "samples/99BottlesOfBeer.bc"
+beer_bottles_file_path = "samples/BottlesOfBeer.bc"
 
 with open(linked_code_file_path) as source_file:
 

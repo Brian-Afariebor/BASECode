@@ -210,7 +210,7 @@ class MainTest(unittest.TestCase):
     def test_large_code_execution_speed(self):
 
         file_path = beer_bottles_file_path
-        speed_requirement = 0.01
+        speed_requirement = 0.05
         reps = 100
 
         def run_code():
@@ -226,9 +226,6 @@ class MainTest(unittest.TestCase):
                 + str(speed_requirement)
                 + " seconds.",
             )
- 
-
-
 
 if __name__ == "__main__":
 

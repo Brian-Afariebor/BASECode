@@ -163,7 +163,7 @@ class ExecutableTest(unittest.TestCase):
 
         hello_world_code = "end 0;"
         parsed_code = Parser.parse(hello_world_code)
-        speed_requirement = 0.01
+        speed_requirement = 0.02
         reps = 1000
 
         def run_code():

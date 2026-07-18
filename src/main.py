@@ -50,14 +50,14 @@ class Main:
 
             return
 
-        parsed_code = Parser.parse(linked_code)
+        parsed_code = self._parse_code(linked_code)
 
         self._run_code(parsed_code)
 
     def _docstring(self):
 
         self._execution_modes.append(Constants.ExecutionModes.DOCSTRINGS)
-        
+
     def _enable_no_link(self):
 
         self._link_code_flag = False
@@ -75,6 +75,18 @@ class Main:
         self._save_linked_code_flag = True
         self._linked_code_file = self.ARGS[self._current_flag]
 
+    def _enable_save_parse(self):
+
+        self._current_flag += 1
+
+        if self._current_flag >= len(self.ARGS):
+
+            raise FileNotFoundError(
+                f"File missing; see {Constants.Flags.HELP} for details."
+            ) from None
+
+        self._save_parsed_code_flag = True
+        self._parsed_code_file = self.ARGS[self._current_flag]
 
     def _enable_save_trimmings(self):
 
@@ -98,7 +110,8 @@ class Main:
             Constants.Flags.NO_LINK: self._enable_no_link,
             Constants.Flags.PRINT_DOCSTRINGS: self._docstring,
             Constants.Flags.SAVE_LINK: self._enable_save_link,
-            Constants.Flags.SAVE_TRIMMINGS: self._enable_save_trimmings
+            Constants.Flags.SAVE_PARSE: self._enable_save_parse,
+            Constants.Flags.SAVE_TRIMMINGS: self._enable_save_trimmings,
         }
 
         current_flag = self.ARGS[self._current_flag]
@@ -143,7 +156,7 @@ class Main:
                 linked_code = code_file.read()
 
         if self._save_linked_code_flag:
-            
+
             self._save_linked_code(linked_code)
 
         return linked_code
@@ -159,6 +172,22 @@ class Main:
             ) from None
 
         self._code_name = self.ARGS[self._current_flag]
+    
+    def _parse_code(self, code: str):
+        
+        parsed_code = Parser.parse(code)
+        
+        if not self._parse_code_flag:
+            
+            return parsed_code
+        
+        with open(self._parsed_code_file,"w") as parsed_code_file:
+                 
+            for token in parsed_code:
+                
+                parsed_code_file.write(repr(token)+"\n")
+                
+        return parsed_code
 
     def _run_code(self, parsed_code: TokenStream):
 
@@ -169,11 +198,11 @@ class Main:
         )
 
         if self._save_trimmed_code_flag:
-            
+
             self._save_trimmed_code(code_executable)
 
         if self._run_code_flag:
-            
+
             code_executable.run(*self._code_args)
 
     def _run_flags(self):
@@ -181,16 +210,16 @@ class Main:
         self._current_flag = 0
 
         while self._current_flag < len(self.ARGS):
-            
+
             self._eval()
-            
+
             self._current_flag += 1
 
     def _save_linked_code(self, linked_code: str):
 
         with open(self._linked_code_file, "w") as linked_code_file:
 
-            linked_code_file.write(linked_code)         
+            linked_code_file.write(linked_code)
 
     def _save_trimmed_code(self, code_executable: Executable):
 
@@ -202,10 +231,10 @@ class Main:
 
                 trimmed_code_file.write(token_content)
 
-                if "\"" in token_content:
+                if '"' in token_content:
                     continue
 
-                if token_content not in [")",";"]:
+                if token_content not in [")", ";"]:
 
                     trimmed_code_file.write(" ")
 

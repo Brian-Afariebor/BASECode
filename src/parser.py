@@ -29,10 +29,10 @@ class Parser:
         Constants.Types.SET: Constants.Keywords.SET,
         Constants.Types.START: Constants.Keywords.START,
         Constants.Types.STOP: Constants.Keywords.STOP,
-        Constants.Types.COMMENT: Constants.Regexes.COMMENT,
         Constants.Types.DELETE: Constants.Keywords.DELETE,
         # Regexes
         Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
+        Constants.Types.COMMENT: Constants.Regexes.COMMENT,
         Constants.Types.DUMMY: Constants.Regexes.DUMMY,
         Constants.Types.FLOAT: Constants.Regexes.FLOAT,
         Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,

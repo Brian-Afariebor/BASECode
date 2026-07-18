@@ -1,0 +1,44 @@
+/**
+Test Cat::Main:
+
+    Description:
+        Tests if in works.
+
+    Preconditions:
+        None.
+
+    Result:
+        The user input should be printed on a different line.
+
+    Postconditions:
+        The code is ended,
+                and Cat::Input is deleted. 
+*/
+
+/**
+    Main Cat::Main:
+
+        Description:
+            Echos the input to the user.
+
+        Preconditions:
+            None.
+
+        Result:
+            Gets the input from the user,
+                prints it,
+                and returns 0.
+
+        Postconditions:
+            The code is ended,
+                and Cat::Input is deleted.
+*/
+mn Cat::Main
+{
+    // Storing in a variable for readability
+    set Cat::Input = in();
+
+    out(Cat::Input);
+    del(Cat::input);
+    end(0);
+}

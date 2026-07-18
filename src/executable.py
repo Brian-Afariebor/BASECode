@@ -132,7 +132,6 @@ class Executable:
     def _delete(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
-        self._eval_pos(pos_id)
 
         variable_token = self._token_at_pos_id(pos_id)
         variable_name = variable_token.VALUE

@@ -1,15 +1,17 @@
 from collections.abc import Callable
-from time import perf_counter
-from time import sleep
-import unittest
-
 from constants import Constants
 from executable import Executable
 from linker import Linker
+from main import Main
 from parser import Parser
+
+from time import perf_counter
+from time import sleep
+
 from tokens import Token
 from tokens import TokenStream
-from main import Main
+
+import unittest
 
 hello_world_file_path = "samples/HelloWorld.bc"
 unlinked_code_file_path = "samples/Main.bc"
@@ -182,10 +184,10 @@ class ExecutableTest(unittest.TestCase):
 
 class MainTest(unittest.TestCase):
 
-    def run_code(self,file_path: str):
+    def run_code(self, file_path: str):
 
-        main = Main(["-f",file_path])
-        main.run() 
+        main = Main(["-f", file_path])
+        main.run()
 
     def test_small_code_execution_speed(self):
 
@@ -226,6 +228,7 @@ class MainTest(unittest.TestCase):
                 + str(speed_requirement)
                 + " seconds.",
             )
+
 
 if __name__ == "__main__":
 

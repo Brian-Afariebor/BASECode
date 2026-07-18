@@ -18,6 +18,8 @@ class Parser:
         Constants.Types.END: Constants.Keywords.END,
         Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
         Constants.Types.IF: Constants.Keywords.IF,
+        Constants.Types.INPUT: Constants.Keywords.INPUT,
+        Constants.Types.INT_CAST: Constants.Keywords.INT_CAST,
         Constants.Types.JUMP: Constants.Keywords.JUMP,
         Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
         Constants.Types.MAIN: Constants.Keywords.MAIN,
@@ -29,20 +31,17 @@ class Parser:
         Constants.Types.STOP: Constants.Keywords.STOP,
         Constants.Types.COMMENT: Constants.Regexes.COMMENT,
         Constants.Types.DELETE: Constants.Keywords.DELETE,
-
         # Regexes
         Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
         Constants.Types.DUMMY: Constants.Regexes.DUMMY,
         Constants.Types.FLOAT: Constants.Regexes.FLOAT,
         Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
-
-        #* Fixes bugs with integer parsing 
+        # * Fixes bugs with integer parsing
         Constants.Types.INTEGER: Constants.Regexes.INTEGER,
         Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
         Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
         Constants.Types.STRING: Constants.Regexes.STRING,
         Constants.Types.WHITESPACE: Constants.Regexes.WHITESPACE,
-
         # Unmapped
         Constants.Types.UNMAPPED: Constants.Regexes.UNMAPPED,
     }

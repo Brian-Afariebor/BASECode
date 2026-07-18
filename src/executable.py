@@ -180,6 +180,8 @@ class Executable:
             Constants.Types.FUNCTION: self._function,
             Constants.Types.IDENTIFIER: self._identifier,
             Constants.Types.IF: self._if,
+            Constants.Types.INPUT: self._input,
+            Constants.Types.INT_CAST: self._int_cast,
             Constants.Types.INTEGER: self._int,
             Constants.Types.JUMP: self._jump,
             Constants.Types.LINE_TERMINATOR: self._line_terminator,
@@ -271,9 +273,28 @@ class Executable:
         ):
             pass
 
+    def _input(self, token: Token, pos_id: PositionId):
+
+        self._append_to_stack(input())
+        self._step_pos(pos_id)
+
     def _int(self, token: Token, pos_id: PositionId):
 
         self._append_to_stack(int(token.VALUE))
+
+    def _int_cast(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        value = self._pop_from_stack()
+
+        if value is None:
+
+            raise ValueError("None was given as an int cast value at:" + f"\n\t{token}")
+
+        self._append_to_stack(int(value))
+        self._step_pos(pos_id)
 
     def _jump(self, token: Token, pos_id: PositionId):
 
@@ -401,9 +422,7 @@ class Executable:
 
         if next_token is None:
 
-            raise SyntaxError(
-                f"Name of variable not found at:\n\t{token}."
-            ) from None
+            raise SyntaxError(f"Name of variable not found at:\n\t{token}.") from None
 
         variable_name = next_token.VALUE
 

@@ -25,6 +25,8 @@ class Constants:
         FUNCTION = "fn"
         FUNCTION_NAME = "function"
         IF = "if"
+        INPUT = "in"
+        INT_CAST = "int"
         JUMP = "jmp"
         LINE_TERMINATOR = ";"
         MAIN = "mn"
@@ -51,7 +53,6 @@ class Constants:
         UNMAPPED = "."
         WHITESPACE = r"[\s]+"
 
-
     class Types:
 
         ADD = "add"
@@ -66,6 +67,8 @@ class Constants:
         FUNCTION = "FUNCTION"
         IDENTIFIER = "IDENTIFIER"
         IF = "IF"
+        INPUT = "INPUT"
+        INT_CAST = "INT_CAST"
         INTEGER = "INTEGER"
         JUMP = "JUMP"
         LINE_TERMINATOR = "LINE_TERMINATOR"
@@ -80,7 +83,6 @@ class Constants:
         STRING = "STRING"
         UNMAPPED = "UNMAPPED"
         WHITESPACE = "WHITESPACE"
-    
 
     @staticmethod
     def reference(variable: str):

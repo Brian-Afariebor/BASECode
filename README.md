@@ -12,49 +12,165 @@ Here are some examples of BASECode:
 
 ### Hello World
 ```
-mn Main
+/**
+Test HelloWorld:
 
-  out "Hello, World!";
+    Description:
+        A test for Hello World.
 
-  end 0;
+    Preconditions:
+        None
+
+    Result:
+        Should print "Hello, World!" and return 0.
+
+    Postconditions:
+        "Hello, World!" is printed to the console.
+
+*/
+
+/**
+Main HelloWorld::Main:
+
+    Description:
+        Prints "Hello, World!".
+
+    Preconditions:
+        None
+
+    Result:
+        Prints "Hello, World!" and returns 0.
+
+    Postconditions:
+        "Hello, World!" is printed to the console.
+
+*/
+mn HelloWorld::Main
+{
+    out("Hello, World!");
+    end(0);
+}
+
 ```
 
 ### 99 Bottles of Beer
 ```
-mn Constants
+/**
+Program BottlesOfBeer:
+    
+    Description:
+        A program that prints the full lyrics of "99 Bottles of Beer".
 
-  set Start 99;
+    Preconditions:
+        None.
 
-fn Loop
+    Result:
+        Prints the full lyrics of "99 Bottles of Beer".
 
-  if Start 0
+    Postconditions:
+        Prints the full lyrics of "99 Bottles of Beer",
+            and the code is ended.
+*/
 
-    jmp function::End;
 
-  else
+/**
+Function BottlesOfBeer::Loop:
 
-    out Start;
-    out " bottles of beer on the wall,\n";
-    out Start;
-    out " bottles of beer.\n";
-    out "Take one down, and pass it around,\n";
-    set Start - Start 1);
-    out Start;
-    out " bottles of beer.";
+    Description:
+        Runs an iteration of the song loop.
 
-fn End
-  
-  out "No more bottles of beer on the wall,\n";
-  out "No more bottles of beer.\n";
-  out "Go to the store, and buy some more,\n";
-  out "99 bottles of beer...";
+    Preconditions:
+        BottlesOfBeer::LoopStart is not null.
 
-  ret 0;
+    Result:
+        If BottlesOfBeer::LoopStart is not 0, 
+            prints the next line of the song,
+            decrements BottlesOfBeer::LoopStart by 1,
+            and jumps back to itself.
 
-mn Main
+        Otherwise, 
+            it deletes BottlesOfBeer::LoopStart
+            and jumps to function::BottlesOfBeer::End.
 
-  call function::Loop;
+        Postconditions:
+            BottlesOfBeer::LoopStart is deleted,
+                and the code is ended.
+*/
+fn BottlesOfBeer::Loop
+{
+    if(BottlesOfBeer::LoopStart == 0)
+    {
+        del(BottlesOfBeer::LoopStart);
+        jmp(function::BottlesOfBeer::End);
+    }
+    else
+    {
+        out(BottlesOfBeer::LoopStart);
+        out(" bottles of beer on the wall,\n");
+        out(BottlesOfBeer::LoopStart);
+        out(" bottles of beer.\n");
+        out("Take one down, and pass it around,\n");
+        
+        // Removes one bottle of beer
+        set BottlesOfBeer::LoopStart = add(BottlesOfBeer::LoopStart,-1);
+        
+        out(BottlesOfBeer::LoopStart);
+        out(" bottles of beer.\n\n");
+        
+        jmp(function::BottlesOfBeer::Loop);
+    }
+}
 
-  end 0;
+
+/**
+Function BottlesOfBeer::End:
+
+    Description:
+        Ends the song loop.
+        
+    Preconditions:
+        None.
+        
+    Result:
+        The last loop of the song is printed.
+        
+    Postconditions:
+        The last loop of the song is added to the console,
+            and the code is ended.
+
+*/
+fn BottlesOfBeer::End
+{
+    out("No more bottles of beer on the wall,\n");
+    out("No more bottles of beer.\n");
+    out("Go to the store, and buy some more,\n");
+    out("99 bottles of beer...");
+    
+    end(0);
+}
+
+
+/**
+Main BottlesOfBeer::Main:
+
+    Description:
+        Starts the song loop.
+        
+    Preconditions:
+        None.
+        
+    Result:
+        The song loop is run.
+        
+    Postconditions:
+        BottlesOfBeer::LoopStart is deleted,
+            and the code is ended.
+*/
+mn BottlesOfBeer::Main
+{
+    // There are 99 lyrics, so this is set to 99
+    set BottlesOfBeer::LoopStart = 99;
+    jmp(function::BottlesOfBeer::Loop);
+}
 
 ```

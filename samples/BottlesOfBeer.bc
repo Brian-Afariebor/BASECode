@@ -26,18 +26,15 @@ Function BottlesOfBeer::Loop:
         BottlesOfBeer::LoopStart is not null.
 
     Result:
-        If BottlesOfBeer::LoopStart is not 0, 
-            prints the next line of the song,
-            decrements BottlesOfBeer::LoopStart by 1,
-            and jumps back to itself.
+        If the next verse of the song exists,
+            it is printed.
 
-        Otherwise, 
-            it deletes BottlesOfBeer::LoopStart
-            and jumps to function::BottlesOfBeer::End.
-
-        Postconditions:
-            BottlesOfBeer::LoopStart is deleted,
-                and the code is ended.
+    Postconditions:
+        If BottlesOfBeer::LoopStart is 0,
+            function::BottlesOfBeer::End is jumped to.
+        
+        Otherwise,
+            function::BottlesOfBeer::Loop is jumped to. 
 */
 fn BottlesOfBeer::Loop
 {
@@ -54,7 +51,6 @@ fn BottlesOfBeer::Loop
         out(" bottles of beer.\n");
         out("Take one down, and pass it around,\n");
         
-        // Removes one bottle of beer
         set BottlesOfBeer::LoopStart = add(BottlesOfBeer::LoopStart,-1);
         
         out(BottlesOfBeer::LoopStart);
@@ -69,17 +65,16 @@ fn BottlesOfBeer::Loop
 Function BottlesOfBeer::End:
 
     Description:
-        Ends the song loop.
+        Ends the song.
         
     Preconditions:
         None.
         
     Result:
-        The last loop of the song is printed.
+        The last verse of the song is printed.
         
     Postconditions:
-        The last loop of the song is added to the console,
-            and the code is ended.
+        The current thread is ended.
 
 */
 fn BottlesOfBeer::End
@@ -103,11 +98,11 @@ Main BottlesOfBeer::Main:
         None.
         
     Result:
-        The song loop is run.
+        The song loop is jumped to.
         
     Postconditions:
-        BottlesOfBeer::LoopStart is deleted,
-            and the code is ended.
+        BottlesOfBeer::LoopStart is initialized to 99,
+            and function::BottlesOfBeer::Loop is jumped to.
 */
 mn BottlesOfBeer::Main
 {

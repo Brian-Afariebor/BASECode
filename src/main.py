@@ -177,7 +177,7 @@ class Main:
         
         parsed_code = Parser.parse(code)
         
-        if not self._parse_code_flag:
+        if not self._save_parsed_code_flag:
             
             return parsed_code
         

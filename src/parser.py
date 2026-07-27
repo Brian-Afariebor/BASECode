@@ -18,8 +18,9 @@ class Parser:
         Constants.Types.END: Constants.Keywords.END,
         Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
         Constants.Types.IF: Constants.Keywords.IF,
-        Constants.Types.INPUT: Constants.Keywords.INPUT,
+        # int needs to go before in in order for the parser to parse correctly
         Constants.Types.INT_CAST: Constants.Keywords.INT_CAST,
+        Constants.Types.INPUT: Constants.Keywords.INPUT,
         Constants.Types.JUMP: Constants.Keywords.JUMP,
         Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
         Constants.Types.MAIN: Constants.Keywords.MAIN,

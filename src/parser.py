@@ -13,6 +13,7 @@ class Parser:
     MAPPINGS: dict[BASECode, Regex] = {
         # Keywords
         Constants.Types.ADD: Constants.Keywords.ADD,
+        Constants.Types.CALL: Constants.Keywords.CALL,
         Constants.Types.DELETE: Constants.Keywords.DELETE,
         Constants.Types.ELSE: Constants.Keywords.ELSE,
         Constants.Types.END: Constants.Keywords.END,

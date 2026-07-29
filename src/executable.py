@@ -135,6 +135,42 @@ class Executable:
             )
         ] = value
 
+    def _call(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+        self._step_pos(pos_id)
+
+        # We have to account for the semicolon
+        return_pos = self._positions[pos_id] + 1
+        new_position = self._pop_from_stack()
+
+        if isinstance(new_position, Constants.Null):
+
+            raise ValueError(
+                f"Null was given as a jump position at:\n\t"
+                + repr(self._current_token(pos_id))
+            ) from None
+
+        adjusted_position = int(new_position) - 1
+
+        if adjusted_position < 0:
+
+            raise ValueError(
+                f"Given jump position {new_position} was too small. "
+                + f"Given at:\n\t{self._current_token(pos_id)}"
+            ) from None
+
+        if adjusted_position >= len(self.TOKENS):
+
+            raise ValueError(
+                f"Given jump position {new_position} was too big at:"
+                + f"\n\t{self._current_token(pos_id)}"
+            ) from None
+
+        self._positions[pos_id] = adjusted_position
+        self._append_to_stack(return_pos)
+
     def _current_token(self, pos_id: PositionId):
 
         return self.TOKENS[self._positions[pos_id]]
@@ -182,6 +218,7 @@ class Executable:
 
         MAPPINGS: FunctionMap = {
             Constants.Types.ADD: self._add,
+            Constants.Types.CALL: self._call,
             Constants.Types.DELETE: self._delete,
             Constants.Types.DOCSTRING: self._docstring,
             Constants.Types.END: self._end,
@@ -297,7 +334,7 @@ class Executable:
         if isinstance(value, Constants.Null):
 
             raise ValueError(
-                "None was given as an int cast value at:" + f"\n\t{token}",
+                "Null was given as an int cast value at:" + f"\n\t{token}",
             )
 
         self._append_to_stack(int(value))
@@ -310,12 +347,10 @@ class Executable:
 
         new_position = self._pop_from_stack()
 
-        # TODO: Add Null
-
         if isinstance(new_position, Constants.Null):
 
             raise ValueError(
-                f"None was given as a jump position at:\n\t"
+                f"Null was given as a jump position at:\n\t"
                 + repr(self._current_token(pos_id))
             ) from None
 
@@ -335,7 +370,7 @@ class Executable:
                 + f"\n\t{self._current_token(pos_id)}"
             ) from None
 
-        self._positions[pos_id] = int(new_position) - 1
+        self._positions[pos_id] = adjusted_position
 
     def _line_terminator(self, token: Token, pos_id: PositionId):
 

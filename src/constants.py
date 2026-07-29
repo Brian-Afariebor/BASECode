@@ -19,6 +19,7 @@ class Constants:
     class Keywords:
 
         ADD = "add"
+        CALL = "call"
         DELETE = "del"
         ELSE = "else"
         END = "end"
@@ -64,7 +65,8 @@ class Constants:
 
     class Types:
 
-        ADD = "add"
+        ADD = "ADD"
+        CALL = "CALL"
         COMMENT = "COMMENT"
         DELETE = "DELETE"
         DOCSTRING = "DOCSTRING"

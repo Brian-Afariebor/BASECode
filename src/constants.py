@@ -53,6 +53,15 @@ class Constants:
         UNMAPPED = "."
         WHITESPACE = r"[\s]+"
 
+    class Null:
+
+        def __repr__(self):
+
+            return "NULL"
+
+
+    NULL = Null()        
+
     class Types:
 
         ADD = "add"

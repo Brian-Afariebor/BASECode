@@ -24,13 +24,15 @@ class Executable:
 
         self.modes = args
 
-        # TODO: Add Null
-        self._last_return_value = None
+        self._last_return_value = Constants.NULL
 
-        self._variables: Context = {
-            Constants.reference(Constants.Keywords.MAIN_NAME) + "name": self.NAME
+        name_ref = Constants.reference(Constants.Keywords.MAIN_NAME) + "name"
+
+        self._variables: Context = {name_ref: self.NAME}
+
+        self._positions: dict[PositionId, int] = {
+            Constants.Keywords.MAIN_NAME: 0,
         }
-        self._positions: dict[PositionId, int] = {Constants.Keywords.MAIN_NAME: 0}
 
         tokens = list(
             filter(
@@ -89,13 +91,21 @@ class Executable:
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         item1 = self._pop_from_stack()
-        if item1 is None:
+        if isinstance(item1, Constants.Null):
 
-            raise ValueError("None was given as an addition value at:" + f"\n\t{token}")
+            raise ValueError(
+                "Null was given as an addition value at:" + f"\n\t{token}",
+            )
 
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         item2 = self._pop_from_stack()
+
+        if isinstance(item2, Constants.Null):
+
+            raise ValueError(
+                "Null was given as an addition value at:" + f"\n\t{token}",
+            )
 
         self._append_to_stack(item1 + item2)
 
@@ -244,11 +254,7 @@ class Executable:
 
         else:
 
-            raise NameError(
-                f"Variable '{variable_name}' not defined at:" + f"\n\t{token}."
-            ) from None
-            # TODO: Implement "Null" type
-            self._append_to_stack(None)
+            self._append_to_stack(Constants.NULL)
 
     def _if(self, token: Token, pos_id: PositionId):
 
@@ -288,9 +294,11 @@ class Executable:
 
         value = self._pop_from_stack()
 
-        if value is None:
+        if isinstance(value, Constants.Null):
 
-            raise ValueError("None was given as an int cast value at:" + f"\n\t{token}")
+            raise ValueError(
+                "None was given as an int cast value at:" + f"\n\t{token}",
+            )
 
         self._append_to_stack(int(value))
         self._step_pos(pos_id)
@@ -304,7 +312,7 @@ class Executable:
 
         # TODO: Add Null
 
-        if new_position is None:
+        if isinstance(new_position, Constants.Null):
 
             raise ValueError(
                 f"None was given as a jump position at:\n\t"
@@ -364,7 +372,7 @@ class Executable:
         if top_pointer not in self._variables:
 
             # TOO: Add NULL
-            return None
+            return Constants.NULL
 
         top_value_pointer = stack_reference + str(self._variables[top_pointer])
 
@@ -421,7 +429,9 @@ class Executable:
 
         if next_token is None:
 
-            raise SyntaxError(f"Name of variable not found at:\n\t{token}.") from None
+            raise SyntaxError(
+                f"Name of variable not found at:\n\t{token}.",
+            ) from None
 
         variable_name = next_token.VALUE
 

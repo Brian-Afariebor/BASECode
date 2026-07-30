@@ -16,7 +16,7 @@ import unittest
 hello_world_file_path = "samples/HelloWorld.bc"
 unlinked_code_file_path = "samples/Main.bc"
 linked_code_file_path = "samples/LinkedMain.blc"
-beer_bottles_file_path = "samples/BottlesOfBeer.bc"
+loop_file_path = "samples/Loop.bc"
 
 with open(linked_code_file_path) as source_file:
 
@@ -103,13 +103,11 @@ class ParserTest(unittest.TestCase):
 
     def parse_big_code(self):
 
-        file_path = "samples/HelloWorld.bc"
+        with open(loop_file_path) as code_file:
 
-        with open(file_path) as code_file:
+            code = code_file.read()
 
-            hello_world_code = code_file.read()
-
-        Parser.parse(hello_world_code)
+        Parser.parse(code)
 
     def parse_small_code(self):
 
@@ -140,7 +138,7 @@ class ParserTest(unittest.TestCase):
             self.assertLessEqual(
                 get_time(self.parse_big_code),
                 speed_requirement,
-                f"Small Code Parsing did not meet speed requirement of "
+                f"Big Code Parsing did not meet speed requirement of "
                 + str(speed_requirement)
                 + " seconds.",
             )
@@ -204,14 +202,14 @@ class MainTest(unittest.TestCase):
             self.assertLessEqual(
                 get_time(run_code),
                 speed_requirement,
-                f"Main Test did not meet speed requirement of "
+                f"Small Main Test did not meet speed requirement of "
                 + str(speed_requirement)
                 + " seconds.",
             )
 
     def test_large_code_execution_speed(self):
 
-        file_path = beer_bottles_file_path
+        file_path = loop_file_path
         speed_requirement = 0.05
         reps = 100
 
@@ -224,7 +222,7 @@ class MainTest(unittest.TestCase):
             self.assertLessEqual(
                 get_time(run_code),
                 speed_requirement,
-                f"Main Test did not meet speed requirement of "
+                f"Large Main Test did not meet speed requirement of "
                 + str(speed_requirement)
                 + " seconds.",
             )

@@ -13,7 +13,7 @@ Test Main:
     Postconditions:
         The code is ended.
 */
-imp Utils
+imp "Utils.bc"
 
 /**
 Main Main::Main:

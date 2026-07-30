@@ -1,9 +1,39 @@
-fn quit
+/**
+Test Main:
+
+    Description:
+        A test for code linking.
+
+    Preconditions:
+        None.
+
+    Result:
+        Ends the code.
+
+    Postconditions:
+        The code is ended.
+*/
+fn Utils::Quit
 {
     end(0);
 }
 
-mn main
+/**
+Main Main::Main:
+
+    Description:
+        Starts Utils::Quit.
+
+    Preconditions:
+        The function Utils::Quit is defined.
+
+    Result:
+        Jumps to function::Utils::Quit.
+
+    Postconditions:
+        The code is ended.
+*/
+mn Main::Main
 {
-    jmp(function::quit);
+    jmp(function::Utils::Quit);
 }

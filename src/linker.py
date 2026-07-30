@@ -21,18 +21,18 @@ class Linker:
 
         directory_parts = source_path.split("/")
 
-        directory = "/".join(directory_parts[:-1]) + "/"
+        current_directory = "/".join(directory_parts[:-1]) + "/"
 
         buffer = text
 
-        for match in finditer(r"imp\s+(?P<name>\w+)", text):
+        for match in finditer(r"imp\s+\"(?P<name>[\w\W]+)\"", text):
 
-            replacement_name = match.group("name")
+            replacement_path = match.group("name")
 
-            replacement_text = Linker.link(directory + replacement_name + ".bc")
+            replacement_text = Linker.link(current_directory + replacement_path)
 
             buffer: BASECode = sub(
-                f"imp\\s+{replacement_name}",
+                f'imp\\s+"{replacement_path}"',
                 replacement_text,
                 buffer,
             )

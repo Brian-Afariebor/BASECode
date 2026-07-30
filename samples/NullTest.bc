@@ -1,0 +1,45 @@
+/**
+Test NullTest:
+
+    Description:
+        Tests if null is working.
+
+    Preconditions:
+        A is not defined.
+
+    Result:
+        Ends the code with null.
+
+    Postconditions:
+        None.
+*/
+
+
+/**
+Main NullTest::Main:
+
+    Description:
+        Reads from a null variable.
+
+    Preconditions:
+        A is not defined.
+
+    Result:
+        Ends the code with null.
+
+    Postconditions:
+        None.
+*/
+mn NullTest::Main
+{
+    set A = null;
+    
+    if(A == null)
+    {
+        end(A);
+    }
+    else
+    {
+        end(-1);
+    }
+}

@@ -1,176 +1,25 @@
 # BASECode
+A low level programming language intending to make low-level programming easier.
 
-An assembly like programming language.
+## Index
 
-## Origin
+1. [Introduction](#Introduction)
+2. [Notes](#Notes)
+3. [Installation]
+## Introduction
 
-When I was younger, I had the idea of making a programming language--a language like assembly, but easier to write, and a bit higher-level. 
 
+## Introduction
+
+BASECode is a buffer language; it makes transitioning to a lower-level language easier.
+
+To demonstrate this, take pointers. While pointers are the address of a variable, in BASECode they are represented as the name of the variable itself. Here's an example:
+```
+set Constants::A = 1;
+// In BASECode, ref() is the reference function.
+// As a result, Constants::B is set to 1.
+set Constants::B = ref("Constants::A");
+```
+BASECode makes low-level concepts easier to understand while also providing the tools to abstract further if needed.
 ## Examples
-
-Here are some examples of BASECode:
-
-### Hello World
-```
-/**
-Test HelloWorld:
-
-    Description:
-        A test for Hello World.
-
-    Preconditions:
-        None
-
-    Result:
-        Should print "Hello, World!" and return 0.
-
-    Postconditions:
-        "Hello, World!" is printed to the console.
-
-*/
-
-/**
-Main HelloWorld::Main:
-
-    Description:
-        Prints "Hello, World!".
-
-    Preconditions:
-        None
-
-    Result:
-        Prints "Hello, World!" and returns 0.
-
-    Postconditions:
-        "Hello, World!" is printed to the console.
-
-*/
-mn HelloWorld::Main
-{
-    out("Hello, World!");
-    end(0);
-}
-
-```
-
-### 99 Bottles of Beer
-```
-/**
-Program BottlesOfBeer:
-    
-    Description:
-        A program that prints the full lyrics of "99 Bottles of Beer".
-
-    Preconditions:
-        None.
-
-    Result:
-        Prints the full lyrics of "99 Bottles of Beer".
-
-    Postconditions:
-        Prints the full lyrics of "99 Bottles of Beer",
-            and the code is ended.
-*/
-
-
-/**
-Function BottlesOfBeer::Loop:
-
-    Description:
-        Runs an iteration of the song loop.
-
-    Preconditions:
-        BottlesOfBeer::LoopStart is not null.
-
-    Result:
-        If BottlesOfBeer::LoopStart is not 0, 
-            prints the next line of the song,
-            decrements BottlesOfBeer::LoopStart by 1,
-            and jumps back to itself.
-
-        Otherwise, 
-            it deletes BottlesOfBeer::LoopStart
-            and jumps to function::BottlesOfBeer::End.
-
-        Postconditions:
-            BottlesOfBeer::LoopStart is deleted,
-                and the code is ended.
-*/
-fn BottlesOfBeer::Loop
-{
-    if(BottlesOfBeer::LoopStart == 0)
-    {
-        del(BottlesOfBeer::LoopStart);
-        jmp(function::BottlesOfBeer::End);
-    }
-    else
-    {
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer on the wall,\n");
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer.\n");
-        out("Take one down, and pass it around,\n");
-        
-        // Removes one bottle of beer
-        set BottlesOfBeer::LoopStart = add(BottlesOfBeer::LoopStart,-1);
-        
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer.\n\n");
-        
-        jmp(function::BottlesOfBeer::Loop);
-    }
-}
-
-
-/**
-Function BottlesOfBeer::End:
-
-    Description:
-        Ends the song loop.
-        
-    Preconditions:
-        None.
-        
-    Result:
-        The last loop of the song is printed.
-        
-    Postconditions:
-        The last loop of the song is added to the console,
-            and the code is ended.
-
-*/
-fn BottlesOfBeer::End
-{
-    out("No more bottles of beer on the wall,\n");
-    out("No more bottles of beer.\n");
-    out("Go to the store, and buy some more,\n");
-    out("99 bottles of beer...");
-    
-    end(0);
-}
-
-
-/**
-Main BottlesOfBeer::Main:
-
-    Description:
-        Starts the song loop.
-        
-    Preconditions:
-        None.
-        
-    Result:
-        The song loop is run.
-        
-    Postconditions:
-        BottlesOfBeer::LoopStart is deleted,
-            and the code is ended.
-*/
-mn BottlesOfBeer::Main
-{
-    // There are 99 lyrics, so this is set to 99
-    set BottlesOfBeer::LoopStart = 99;
-    jmp(function::BottlesOfBeer::Loop);
-}
-
-```
+Examples can be found in [samples](https://github.com/Brian-Afariebor/BASECode/main/samples).

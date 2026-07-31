@@ -406,7 +406,6 @@ class Executable:
 
         if top_pointer not in self._variables:
 
-            # TOO: Add NULL
             return Constants.NULL
 
         top_value_pointer = stack_reference + str(self._variables[top_pointer])

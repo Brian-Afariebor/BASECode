@@ -214,12 +214,13 @@ class Main:
 
             except Exception as runtime_error:
 
-                print(f"The following error was raised: {runtime_error}")
-                print(f"The variables were: ")
+                print("The following error was raised:")
+                print(f"\n\t{runtime_error}")
+                print("\nThe variables were: ")
 
-                for variable_name, value in code_executable.variables.values():
+                for variable_name, value in code_executable.variables.items():
 
-                    print(f"{variable_name}: {value}")
+                    print(f"{variable_name}: {repr(value)}")
 
     def _run_flags(self):
 

@@ -67,6 +67,11 @@ class Executable:
 
         self.TOKENS = tokens
 
+    @property
+    def variables(self):
+
+        return self._variables.copy()
+
     def run(self, *args: Any):
 
         self._variables.clear()

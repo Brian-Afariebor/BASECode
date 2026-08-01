@@ -208,7 +208,18 @@ class Main:
 
         if self._run_code_flag:
 
-            code_executable.run(*self._code_args)
+            try:
+
+                code_executable.run(*self._code_args)
+
+            except Exception as runtime_error:
+
+                print(f"The following error was raised: {runtime_error}")
+                print(f"The variables were: ")
+
+                for variable_name, value in code_executable.variables.values():
+
+                    print(f"{variable_name}: {value}")
 
     def _run_flags(self):
 

@@ -6,8 +6,6 @@ A low level programming language intending to make low-level programming easier.
 1. [Introduction](#Introduction)
 2. [Notes](#Notes)
 3. [Installation]
-## Introduction
-
 
 ## Introduction
 
@@ -21,5 +19,7 @@ set Constants::A = 1;
 set Constants::B = ref("Constants::A");
 ```
 BASECode makes low-level concepts easier to understand while also providing the tools to abstract further if needed.
+
 ## Examples
+
 Examples can be found in [samples](https://github.com/Brian-Afariebor/BASECode/main/samples).

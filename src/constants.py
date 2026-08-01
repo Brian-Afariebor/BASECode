@@ -10,7 +10,7 @@ class Constants:
         HELP = "-h"
         NAME = "-n"
         NO_LINK = "-nl"
-        NO_PARSE = "-np"
+        NO_RUN = "-nr"
         PRINT_DOCSTRINGS = "-pd"
         SAVE_LINK = "-sl"
         SAVE_PARSE = "-sp"
@@ -60,8 +60,7 @@ class Constants:
 
             return "NULL"
 
-
-    NULL = Null()        
+    NULL = Null()
 
     class Types:
 

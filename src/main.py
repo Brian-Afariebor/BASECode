@@ -62,6 +62,10 @@ class Main:
 
         self._link_code_flag = False
 
+    def _enable_no_run(self):
+
+        self._run_code_flag = False
+
     def _enable_save_link(self):
 
         self._current_flag += 1
@@ -108,6 +112,7 @@ class Main:
             Constants.Flags.HELP: self._help,
             Constants.Flags.NAME: self._name,
             Constants.Flags.NO_LINK: self._enable_no_link,
+            Constants.Flags.NO_RUN: self._enable_no_run,
             Constants.Flags.PRINT_DOCSTRINGS: self._docstring,
             Constants.Flags.SAVE_LINK: self._enable_save_link,
             Constants.Flags.SAVE_PARSE: self._enable_save_parse,
@@ -172,21 +177,21 @@ class Main:
             ) from None
 
         self._code_name = self.ARGS[self._current_flag]
-    
+
     def _parse_code(self, code: str):
-        
+
         parsed_code = Parser.parse(code)
-        
+
         if not self._save_parsed_code_flag:
-            
+
             return parsed_code
-        
-        with open(self._parsed_code_file,"w") as parsed_code_file:
-                 
+
+        with open(self._parsed_code_file, "w") as parsed_code_file:
+
             for token in parsed_code:
-                
-                parsed_code_file.write(repr(token)+"\n")
-                
+
+                parsed_code_file.write(repr(token) + "\n")
+
         return parsed_code
 
     def _run_code(self, parsed_code: TokenStream):

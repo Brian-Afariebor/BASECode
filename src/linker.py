@@ -17,7 +17,7 @@ class Linker:
 
         except FileNotFoundError:
 
-            raise FileNotFoundError(f"Missing file '{source_path}'.") from None
+            raise FileNotFoundError(f"Missing file {source_path}") from None
 
         directory_parts = source_path.split("/")
 
@@ -25,7 +25,7 @@ class Linker:
 
         buffer = text
 
-        for match in finditer(r"imp\s+\"(?P<name>[\w\W]+)\"", text):
+        for match in finditer(r"imp\s+\"(?P<name>[^\"]+)\"", text):
 
             replacement_path = match.group("name")
 

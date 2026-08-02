@@ -50,7 +50,8 @@ Main Test::Main:
 mn Test::Main
 {
     // Note: The equals sign (=) is not required;
-    // it's just there for readability. It gets removed before code execution.
+    // it's just there for readability.
+    // It gets removed before code execution.
     set x = 0;
     end(x);
 }

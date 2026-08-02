@@ -2,7 +2,7 @@ from collections.abc import Callable
 from constants import Constants
 from executable import Executable
 from linker import Linker
-from main import Main
+from src.interpreter import Main
 from parser import Parser
 
 from time import perf_counter

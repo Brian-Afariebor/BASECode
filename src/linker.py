@@ -1,3 +1,6 @@
+from constants import Constants
+
+
 from re import finditer
 from re import sub
 
@@ -25,14 +28,34 @@ class Linker:
 
         buffer = text
 
-        for match in finditer(r"imp\s+\"(?P<name>[^\"]+)\"", text):
+        for match in finditer(
+            rf"{Constants.Keywords.IMPORT}\s+\"(?P<name>[^\"]+)\"", text
+        ):
 
             replacement_path = match.group("name")
 
-            replacement_text = Linker.link(current_directory + replacement_path)
+            replacement_text = Linker.link(
+                current_directory + replacement_path,
+            )
 
             buffer: BASECode = sub(
                 f'imp\\s+"{replacement_path}"',
+                replacement_text,
+                buffer,
+            )
+
+        for match in finditer(
+            rf"{Constants.Keywords.IMPORT}\s+<(?P<name>[^>]+)>", text
+        ):
+
+            library_file_name = match.group("name")
+
+            replacement_text = Linker.link(
+                Constants.FilePaths.STANDARD_LIBRARY + library_file_name
+            )
+
+            buffer: BASECode = sub(
+                f"imp\\s+<{library_file_name}>",
                 replacement_text,
                 buffer,
             )

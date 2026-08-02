@@ -4,6 +4,10 @@ class Constants:
 
         DOCSTRINGS = "-d"
 
+    class FilePaths:
+
+        STANDARD_LIBRARY = "lib/"
+
     class Flags:
 
         FILE = "-f"
@@ -26,6 +30,7 @@ class Constants:
         FUNCTION = "fn"
         FUNCTION_NAME = "function"
         IF = "if"
+        IMPORT = "imp"
         INPUT = "in"
         INT_CAST = "int"
         JUMP = "jmp"

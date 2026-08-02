@@ -2,7 +2,7 @@ from collections.abc import Callable
 from constants import Constants
 from executable import Executable
 from linker import Linker
-from src.interpreter import Main
+from interpreter import Main
 from parser import Parser
 
 from time import perf_counter
@@ -13,10 +13,13 @@ from tokens import TokenStream
 
 import unittest
 
-hello_world_file_path = "samples/HelloWorld.bc"
-unlinked_code_file_path = "samples/Main.bc"
-linked_code_file_path = "samples/LinkedMain.blc"
-loop_file_path = "samples/Loop.bc"
+BASECode_directory = "/".join(__file__.split("/")[:-2]) + "/"
+
+hello_world_file_path = BASECode_directory + "samples/HelloWorld.bc"
+unlinked_code_file_path = BASECode_directory + "samples/Main.bc"
+linked_code_file_path = BASECode_directory + "samples/LinkedMain.blc"
+loop_file_path = BASECode_directory + "samples/Loop.bc"
+comment_file_path = BASECode_directory + "samples/Comments.bc"
 
 with open(linked_code_file_path) as source_file:
 
@@ -189,7 +192,7 @@ class MainTest(unittest.TestCase):
 
     def test_small_code_execution_speed(self):
 
-        file_path = "samples/Comments.bc"
+        file_path = comment_file_path
         speed_requirement = 0.01
         reps = 100
 

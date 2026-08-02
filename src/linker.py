@@ -50,8 +50,13 @@ class Linker:
 
             library_file_name = match.group("name")
 
+            BASECode_directory = "/".join(__file__.split("/")[:-2]) + "/"
+
             replacement_text = Linker.link(
-                Constants.FilePaths.STANDARD_LIBRARY + library_file_name
+                BASECode_directory
+                + Constants.FilePaths.STANDARD_LIBRARY
+                + library_file_name
+                + ".bc"
             )
 
             buffer: BASECode = sub(

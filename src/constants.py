@@ -41,6 +41,7 @@ class Constants:
         RAW_SET = "rset"
         REFERENCE = "ref"
         REFERENCE_OPERATOR = "::"
+        RETURN = "ret"
         SET = "set"
         START = "start"
         STOP = "stop"

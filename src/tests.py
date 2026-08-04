@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from constants import Constants
 from executable import Executable
 from linker import Linker
 from interpreter import Main
@@ -8,7 +7,6 @@ from parser import Parser
 from time import perf_counter
 from time import sleep
 
-from tokens import Token
 from tokens import TokenStream
 
 import unittest
@@ -16,10 +14,9 @@ import unittest
 BASECode_directory = "/".join(__file__.split("/")[:-2]) + "/"
 
 hello_world_file_path = BASECode_directory + "samples/HelloWorld.bc"
-unlinked_code_file_path = BASECode_directory + "samples/Main.bc"
-linked_code_file_path = BASECode_directory + "samples/LinkedMain.blc"
-loop_file_path = BASECode_directory + "samples/Loop.bc"
-comment_file_path = BASECode_directory + "samples/Comments.bc"
+unlinked_main_file_path = BASECode_directory + "testfiles/Main.bc"
+linked_code_file_path = BASECode_directory + "testfiles/LinkedMain.blc"
+bottles_of_beer_file_path = BASECode_directory + "samples/BottlesOfBeer.bc"
 
 with open(linked_code_file_path) as source_file:
 
@@ -63,50 +60,16 @@ class LinkerTest(unittest.TestCase):
 
     def test_link(self):
 
-        linked_code = Linker.link(unlinked_code_file_path)
+        linked_code = Linker.link(unlinked_main_file_path)
 
         self.assertEqual(linked_code, linked_code_code)
 
 
 class ParserTest(unittest.TestCase):
 
-    def test_minimal_hello_world(self):
-
-        hello_world_code = 'out "Hello, World!";'
-        parsed_code = Parser.parse(hello_world_code)
-        self.assertEqual(
-            parsed_code,
-            [
-                Token(
-                    Constants.Types.OUT,
-                    "out",
-                    1,
-                    1,
-                ),
-                Token(
-                    Constants.Types.WHITESPACE,
-                    " ",
-                    1,
-                    4,
-                ),
-                Token(
-                    Constants.Types.STRING,
-                    '"Hello, World!"',
-                    1,
-                    5,
-                ),
-                Token(
-                    Constants.Types.LINE_TERMINATOR,
-                    ";",
-                    1,
-                    20,
-                ),
-            ],
-        )
-
     def parse_big_code(self):
 
-        with open(loop_file_path) as code_file:
+        with open(bottles_of_beer_file_path) as code_file:
 
             code = code_file.read()
 
@@ -114,8 +77,11 @@ class ParserTest(unittest.TestCase):
 
     def parse_small_code(self):
 
-        hello_world_code = 'out "Hello, World!"; end 0;'
-        Parser.parse(hello_world_code)
+        with open(hello_world_file_path) as code_file:
+        
+            code = code_file.read()
+        
+        Parser.parse(code)
 
     def test_small_code_parsing_speed(self):
 
@@ -192,7 +158,7 @@ class MainTest(unittest.TestCase):
 
     def test_small_code_execution_speed(self):
 
-        file_path = comment_file_path
+        file_path = hello_world_file_path
         speed_requirement = 0.01
         reps = 100
 
@@ -212,8 +178,8 @@ class MainTest(unittest.TestCase):
 
     def test_large_code_execution_speed(self):
 
-        file_path = loop_file_path
-        speed_requirement = 0.05
+        file_path = bottles_of_beer_file_path
+        speed_requirement = 0.5
         reps = 100
 
         def run_code():

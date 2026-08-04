@@ -1,0 +1,9 @@
+fn Call::Out
+{
+    end(0);
+}
+
+mn Call::Main
+{
+    jmp(function::Call::Out);
+}

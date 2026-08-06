@@ -69,6 +69,11 @@ class Executable:
         self.TOKENS = tokens
 
     @property
+    def positions(self):
+
+        return self._positions.copy()
+
+    @property
     def variables(self):
 
         return self._variables.copy()
@@ -557,7 +562,8 @@ class Executable:
 
         thread_pos_id = self._token_at_pos_id(pos_id).VALUE
 
-        del self._positions[thread_pos_id]
+        if thread_pos_id in self._positions:
+            del self._positions[thread_pos_id]
 
         self._step_pos(pos_id)
 

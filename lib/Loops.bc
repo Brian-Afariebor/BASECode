@@ -1,11 +1,16 @@
+/***/
+
+/***/
 fn Loops::Repeat
 {
     set Loops::Iterations = pop(main);
     set Loops::Function = pop(main);
- 
+
     jmp(function::Loops::Repeat::Loop);
 }
 
+
+/***/
 fn Loops::Repeat::Loop
 {
     if(Loops::Iterations == 0)
@@ -22,6 +27,8 @@ fn Loops::Repeat::Loop
     }
 }
 
+
+/***/
 fn Loops::Repeat::End
 {
     del(Loops::Iterations);

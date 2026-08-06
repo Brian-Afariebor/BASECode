@@ -1,12 +1,13 @@
 from collections.abc import Callable
 from re import sub
+from threading import Thread
 from typing import Any
 
 from constants import Constants
 from tokens import Token
 from tokens import TokenStream
 
-type Context = dict[str, Any]
+type Context = dict[str, Constants.Null | int | float | str]
 type PositionId = str
 type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
 
@@ -88,7 +89,7 @@ class Executable:
                 + str(pos)
             ] = arg
 
-        self._run_position_id(Constants.Keywords.MAIN_NAME, 0)
+        self._run_pos_id(Constants.Keywords.MAIN_NAME, 0)
         return self._last_return_value
 
     def _add(self, token: Token, pos_id: PositionId):
@@ -112,6 +113,17 @@ class Executable:
                 "Null was given as an addition value at:" + f"\n\t{token}",
             )
 
+        if isinstance(item1, str):
+
+            item2 = str(item2)
+
+            self._append_to_stack(item1 + item2)
+            return
+
+        if isinstance(item2, str):
+
+            item2 = float(item2)
+
         self._append_to_stack(item1 + item2)
 
     def _append_to_stack(
@@ -130,7 +142,11 @@ class Executable:
 
             return
 
-        self._variables[top_pointer] += 1
+        if not isinstance(self._variables[top_pointer], int):
+
+            raise ValueError(f"Non-int top pointer found on stack {stack_name}")
+
+        self._variables[top_pointer] += 1  # pyright: ignore[reportOperatorIssue]
         self._variables[
             Constants.reference(
                 stack_name,
@@ -146,7 +162,7 @@ class Executable:
         self._eval_pos(pos_id)
         self._step_pos(pos_id)
 
-        #* We have to account for the parenthesis
+        # * We have to account for the parenthesis
         return_pos = self._positions[pos_id] + 1
         new_position = self._pop_from_stack()
 
@@ -154,7 +170,7 @@ class Executable:
 
             raise ValueError(
                 f"Null was given as a jump position at:\n\t"
-                + repr(self._current_token(pos_id))
+                + repr(self._token_at_pos_id(pos_id))
             ) from None
 
         adjusted_position = int(new_position) - 1
@@ -163,22 +179,18 @@ class Executable:
 
             raise ValueError(
                 f"Given jump position {new_position} was too small. "
-                + f"Given at:\n\t{self._current_token(pos_id)}"
+                + f"Given at:\n\t{self._token_at_pos_id(pos_id)}"
             ) from None
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
                 f"Given jump position {new_position} was too big at:"
-                + f"\n\t{self._current_token(pos_id)}"
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
             ) from None
 
         self._positions[pos_id] = adjusted_position
         self._append_to_stack(return_pos)
-
-    def _current_token(self, pos_id: PositionId):
-
-        return self.TOKENS[self._positions[pos_id]]
 
     def _delete(self, token: Token, pos_id: PositionId):
 
@@ -241,6 +253,8 @@ class Executable:
             Constants.Types.RAW_SET: self._raw_set,
             Constants.Types.REFERENCE: self._reference,
             Constants.Types.SET: self._set,
+            Constants.Types.START: self._start,
+            Constants.Types.STOP: self._stop,
             Constants.Types.STRING: self._string,
         }
 
@@ -355,8 +369,8 @@ class Executable:
         if isinstance(new_position, Constants.Null):
 
             raise ValueError(
-                f"Null was given as a jump position at:\n\t"
-                + repr(self._current_token(pos_id))
+                "Null was given as a jump position at:\n\t"
+                + repr(self._token_at_pos_id(pos_id))
             ) from None
 
         adjusted_position = int(new_position) - 1
@@ -364,15 +378,15 @@ class Executable:
         if adjusted_position < 0:
 
             raise ValueError(
-                f"Given jump position {new_position} was too small. "
-                + f"Given at:\n\t{self._current_token(pos_id)}"
+                f"Given jump position {new_position} was too small at:\n\t"
+                + repr(self._token_at_pos_id(pos_id))
             ) from None
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given jump position {new_position} was too big at:"
-                + f"\n\t{self._current_token(pos_id)}"
+                f"Given jump position {new_position} was too big at:\n\t"
+                + repr(self._token_at_pos_id(pos_id))
             ) from None
 
         self._positions[pos_id] = adjusted_position
@@ -387,7 +401,9 @@ class Executable:
 
         if main_token is None:
 
-            raise SyntaxError(f"Missing name of main at:\n\t{token}")
+            raise SyntaxError(
+                f"Missing name of main at:\n\t{self._token_at_pos_id(pos_id)}"
+            )
 
         self._variables[
             Constants.reference(
@@ -403,7 +419,9 @@ class Executable:
         print(self._pop_from_stack(), end="")
         self._step_pos(pos_id)
 
-    def _pop_from_stack(self, stack_name: str = Constants.Keywords.MAIN_NAME):
+    def _pop_from_stack(
+        self, stack_name: str = Constants.Keywords.MAIN_NAME
+    ) -> Constants.Null | int | float | str:
 
         stack_reference = Constants.reference(stack_name)
 
@@ -419,9 +437,13 @@ class Executable:
 
         del self._variables[top_value_pointer]
 
-        self._variables[top_pointer] -= 1
+        if not isinstance(self._variables[top_pointer], int):
 
-        if self._variables[top_pointer] <= -1:
+            raise ValueError(f"Non-int top pointer found on stack {stack_name}")
+
+        self._variables[top_pointer] -= 1  # pyright: ignore[reportOperatorIssue]
+
+        if self._variables[top_pointer] <= -1:  # pyright: ignore[reportOperatorIssue]
 
             del self._variables[top_pointer]
 
@@ -453,7 +475,7 @@ class Executable:
 
         self._step_pos(pos_id)
 
-    def _run_position_id(self, pos_id: PositionId, start: int):
+    def _run_pos_id(self, pos_id: PositionId, start: int):
 
         self._positions[pos_id] = start
 
@@ -482,6 +504,29 @@ class Executable:
 
         self._step_pos(pos_id)
 
+    def _start(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+
+        thread_pos_id = self._token_at_pos_id(pos_id).VALUE
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        function_location = self._pop_from_stack()
+
+        if isinstance(function_location, Constants.Null):
+
+            raise ValueError(f"Null was given as a jump target at:\n\t{token}")
+
+        Thread(
+            target=self._run_pos_id,
+            args=(thread_pos_id, function_location),
+            name=thread_pos_id,
+        ).run()
+
+        self._step_pos(pos_id)
+
     def _step_pos(self, pos_id: PositionId) -> None | Token:
 
         if pos_id not in self._positions:
@@ -505,6 +550,16 @@ class Executable:
         self._positions[pos_id] += 1
 
         return self._token_at_pos_id(pos_id)
+
+    def _stop(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+
+        thread_pos_id = self._token_at_pos_id(pos_id).VALUE
+
+        del self._positions[thread_pos_id]
+
+        self._step_pos(pos_id)
 
     def _string(self, token: Token, pos_id: PositionId):
 

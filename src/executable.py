@@ -115,7 +115,8 @@ class Executable:
         if isinstance(item2, Constants.Null):
 
             raise ValueError(
-                "Null was given as an addition value at:" + f"\n\t{token}",
+                "Null was given as an addition value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}",
             )
 
         if isinstance(item1, str):
@@ -573,7 +574,7 @@ class Executable:
 
         string = sub(r"\\t", r"\t", string)
         string = sub(r"\\n", r"\n", string)
-        string = sub(r"\\q", "\"", string)
+        string = sub(r"\\q", '"', string)
 
         self._append_to_stack(string, "main")
 

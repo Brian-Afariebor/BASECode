@@ -529,7 +529,7 @@ class Executable:
             target=self._run_pos_id,
             args=(thread_pos_id, function_location),
             name=thread_pos_id,
-        ).run()
+        ).start()
 
         self._step_pos(pos_id)
 

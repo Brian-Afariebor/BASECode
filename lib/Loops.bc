@@ -1,0 +1,31 @@
+fn Loops::Repeat
+{
+    set Loops::Iterations = pop(main);
+    set Loops::Function = pop(main);
+ 
+    jmp(function::Loops::Repeat::Loop);
+}
+
+fn Loops::Repeat::Loop
+{
+    if(Loops::Iterations == 0)
+    {
+        jmp(function::Loops::Repeat::End);
+    }
+    else
+    {
+        call(Loops::Function);
+
+        set Loops::Iterations = rem(Loops::Iterations, 1);
+
+        jmp(function::Loops::Repeat::Loop)
+    }
+}
+
+fn Loops::Repeat::End
+{
+    del(Loops::Iterations);
+    del(Loops::Function);
+
+    ret(null);
+}

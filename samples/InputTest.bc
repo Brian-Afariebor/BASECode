@@ -1,6 +1,0 @@
-mn InputTest::Main
-{
-    set InputTest::A = int(in());
-    set InputTest::B = int(in());
-    end(add(InputTest::A,InputTest::B));
-}

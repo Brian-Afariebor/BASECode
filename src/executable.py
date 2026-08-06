@@ -105,7 +105,8 @@ class Executable:
         if isinstance(item1, Constants.Null):
 
             raise ValueError(
-                "Null was given as an addition value at:" + f"\n\t{token}",
+                "Null was given as an addition value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}",
             )
 
         self._step_pos(pos_id)

@@ -102,6 +102,7 @@ class Executable:
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         item1 = self._pop_from_stack()
+        
         if isinstance(item1, Constants.Null):
 
             raise ValueError(

@@ -567,7 +567,7 @@ class Executable:
 
         string = sub(r"\\t", r"\t", string)
         string = sub(r"\\n", r"\n", string)
-        string = sub(r"\\q", r"\"", string)
+        string = sub(r"\\q", "\"", string)
 
         self._append_to_stack(string, "main")
 

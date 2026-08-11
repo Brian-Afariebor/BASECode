@@ -26,6 +26,8 @@ class Parser:
         Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
         Constants.Types.MAIN: Constants.Keywords.MAIN,
         Constants.Types.OUT: Constants.Keywords.OUT,
+        Constants.Types.POP: Constants.Keywords.POP,
+        Constants.Types.PUSH: Constants.Keywords.PUSH,
         Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
         Constants.Types.REFERENCE: Constants.Keywords.REFERENCE,
         Constants.Types.SET: Constants.Keywords.SET,

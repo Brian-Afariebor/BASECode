@@ -4,9 +4,11 @@ class Constants:
 
         DOCSTRINGS = "-d"
 
-    class FilePaths:
+    class Files:
 
-        STANDARD_LIBRARY = "lib/"
+        STANDARD_LIBRARY_PATH = "lib/"
+        UNLINKED_BASECODE_ENDING = ".bc"
+        LINKED_BASECODE_ENDING = ".blc"
 
     class Flags:
 
@@ -38,6 +40,8 @@ class Constants:
         MAIN = "mn"
         MAIN_NAME = "main"
         OUT = "out"
+        POP = "pop"
+        PUSH = "push"
         RAW_SET = "rset"
         REFERENCE = "ref"
         REFERENCE_OPERATOR = "::"
@@ -90,6 +94,8 @@ class Constants:
         LINE_TERMINATOR = "LINE_TERMINATOR"
         MAIN = "MAIN"
         OUT = "OUT"
+        POP = "POP"
+        PUSH = "PUSH"
         RAW_SET = "RAW_SET"
         REFERENCE = "REFERENCE"
         SET = "SET"

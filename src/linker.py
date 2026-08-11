@@ -54,7 +54,7 @@ class Linker:
 
             replacement_text = Linker.link(
                 BASECode_directory
-                + Constants.FilePaths.STANDARD_LIBRARY
+                + Constants.Files.STANDARD_LIBRARY_PATH
                 + library_file_name
                 + ".bc"
             )

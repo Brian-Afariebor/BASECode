@@ -7,7 +7,9 @@ from constants import Constants
 from tokens import Token
 from tokens import TokenStream
 
-type Context = dict[str, Constants.Null | int | float | str]
+type BASECodeValue = Constants.Null | int | float | str
+
+type Context = dict[str, BASECodeValue]
 type PositionId = str
 type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
 
@@ -78,7 +80,7 @@ class Executable:
 
         return self._variables.copy()
 
-    def run(self, *args: Any):
+    def run(self, *args: BASECodeValue):
 
         self._variables.clear()
 
@@ -102,7 +104,7 @@ class Executable:
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         item1 = self._pop_from_stack()
-        
+
         if isinstance(item1, Constants.Null):
 
             raise ValueError(
@@ -258,6 +260,8 @@ class Executable:
             Constants.Types.LINE_TERMINATOR: self._line_terminator,
             Constants.Types.MAIN: self._main,
             Constants.Types.OUT: self._out,
+            Constants.Types.POP: self._pop,
+            Constants.Types.PUSH: self._push,
             Constants.Types.RAW_SET: self._raw_set,
             Constants.Types.REFERENCE: self._reference,
             Constants.Types.SET: self._set,
@@ -386,14 +390,14 @@ class Executable:
         if adjusted_position < 0:
 
             raise ValueError(
-                f"Given jump position {new_position} was too small at:\n\t"
+                f"Given jump position '{new_position}' was too small at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
             ) from None
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given jump position {new_position} was too big at:\n\t"
+                f"Given jump position '{new_position}' was too big at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
             ) from None
 
@@ -427,6 +431,16 @@ class Executable:
         print(self._pop_from_stack(), end="")
         self._step_pos(pos_id)
 
+    def _pop(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+
+        stack_name = self._token_at_pos_id(pos_id).VALUE
+
+        self._append_to_stack(self._pop_from_stack(stack_name))
+
+        self._step_pos(pos_id)
+
     def _pop_from_stack(
         self, stack_name: str = Constants.Keywords.MAIN_NAME
     ) -> Constants.Null | int | float | str:
@@ -449,6 +463,9 @@ class Executable:
 
             raise ValueError(f"Non-int top pointer found on stack {stack_name}")
 
+        # We know that self._variables[top_pointer] is an int;
+        # so this will not fail.
+
         self._variables[top_pointer] -= 1  # pyright: ignore[reportOperatorIssue]
 
         if self._variables[top_pointer] <= -1:  # pyright: ignore[reportOperatorIssue]
@@ -456,6 +473,19 @@ class Executable:
             del self._variables[top_pointer]
 
         return top_value
+
+    def _push(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+
+        stack_name = self._token_at_pos_id(pos_id).VALUE
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        self._append_to_stack(self._pop_from_stack(), stack_name)
+
+        self._step_pos(pos_id)
 
     def _raw_set(self, token: Token, pos_id: PositionId):
 

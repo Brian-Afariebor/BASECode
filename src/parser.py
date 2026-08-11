@@ -58,23 +58,25 @@ class Parser:
         )
 
         line = 1
-        line_START = 0
+        line_start = 0
 
         for match in finditer(regex_string, basecode):
 
             token_string = match.group()
             token_type = str(match.lastgroup)
-            column = match.start() - line_START + 1
+            column = match.start() - line_start + 1
 
             if "\n" in token_string:
 
                 line += token_string.count("\n")
-                lines = token_string.split()
-                line_START = match.end()
+                lines = token_string.split("\n")
+                line_start = match.end()
 
                 if len(lines) >= 1:
 
-                    line_START -= len(lines[-1])
+                    line_start -= len(lines[-1])
+
+                column = 0
 
             buffer.append(
                 Token(

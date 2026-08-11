@@ -170,7 +170,7 @@ class Executable:
         self._eval_pos(pos_id)
         self._step_pos(pos_id)
 
-        # * We have to account for the parenthesis
+        # * We have to account for the parenthesis and semicolon
         return_pos = self._positions[pos_id] + 1
         new_position = self._pop_from_stack()
 

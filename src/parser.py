@@ -29,11 +29,11 @@ class Parser:
         Constants.Types.POP: Constants.Keywords.POP,
         Constants.Types.PUSH: Constants.Keywords.PUSH,
         Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
+        Constants.Types.RAW_STACK_SET: Constants.Keywords.RAW_STACK_SET,
         Constants.Types.REFERENCE: Constants.Keywords.REFERENCE,
         Constants.Types.SET: Constants.Keywords.SET,
         Constants.Types.START: Constants.Keywords.START,
         Constants.Types.STOP: Constants.Keywords.STOP,
-        Constants.Types.DELETE: Constants.Keywords.DELETE,
         # Regexes
         Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
         Constants.Types.COMMENT: Constants.Regexes.COMMENT,

@@ -7,7 +7,7 @@ Defines a function. Does not run it.
 ## Usage
 ```fn FUNCTION_NAME FUNCTION_CONTENTS```
 
-## Preconditions
+## Requirements
 None.
 
 ## Result
@@ -22,14 +22,11 @@ Test Test:
     Description:
         Demonstrates the "fn" keyword.
     
-    Preconditions:
+    Requirements:
         None.
 
     Result:
-        Ends with 0.
-
-    Postconditions:
-        The current thread is ended.
+        The current thread ends with 0.
 */
 
 /**
@@ -38,14 +35,11 @@ Function Test::Function:
     Description:
         Ends with 0.
 
-    Preconditions:
+    Requirements:
         None.
 
     Result:
-        The code is ended.
-
-    Postconditions:
-        The current thread is ended.
+        The current thread ends with 0.
 */
 fn Test::Function
 // Note: The brackets are not required;
@@ -60,16 +54,13 @@ fn Test::Function
 Main Test::Main:
 
     Description:
-        Jumps to function::Test::Function
+        Jumps to function::Test::Function.
 
-    Preconditions:
-        None.
+    Requirements:
+        function::Test::Function is not null.
 
     Result:
-        The code is ended.
-
-    Postconditions:
-        The current thead is ended.
+        function::Test::Function is jumped to.
 */
 mn Test::Main
 {

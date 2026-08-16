@@ -7,7 +7,7 @@ Sets a variable to a value.
 ## Usage
 ```set VARIABLE_NAME VALUE;```
 
-## Preconditions
+## Requirements
 None.
 
 ## Result
@@ -22,14 +22,11 @@ Test Test:
     Description:
         Demonstrates the "set" keyword.
     
-    Preconditions:
+    Requirements:
         None.
 
     Result:
-        Ends with 0.
-
-    Postconditions:
-        The current thread is ended.
+        The current thread ends with 0.
 */
 
 /**
@@ -38,13 +35,11 @@ Main Test::Main:
     Description:
         Sets x to 0.
 
-    Preconditions:
+    Requirements:
         None.
 
     Result:
         X is 0.
-
-    Postconditions:
         The code is ended.
 */
 mn Test::Main

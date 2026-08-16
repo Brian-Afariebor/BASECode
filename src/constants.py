@@ -2,7 +2,8 @@ class Constants:
 
     class ExecutionModes:
 
-        DOCSTRINGS = "-d"
+        DEBUG = "DEBUG"
+        DOCSTRINGS = "DOCSTRINGS"
 
     class Files:
 
@@ -12,6 +13,7 @@ class Constants:
 
     class Flags:
 
+        DEBUG = "-db"
         FILE = "-f"
         HELP = "-h"
         NAME = "-n"
@@ -26,6 +28,7 @@ class Constants:
 
         ADD = "add"
         CALL = "call"
+        DEBUG = "dbg"
         DELETE = "del"
         ELSE = "else"
         END = "end"
@@ -78,6 +81,7 @@ class Constants:
         ADD = "ADD"
         CALL = "CALL"
         COMMENT = "COMMENT"
+        DEBUG = "DEBUG"
         DELETE = "DELETE"
         DOCSTRING = "DOCSTRING"
         DUMMY = "DUMMY"

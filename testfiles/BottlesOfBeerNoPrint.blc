@@ -38,16 +38,16 @@ fn BottlesOfBeer::Loop
     }
     else
     {
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer on the wall,\n");
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer.\n");
-        out("Take one down, and pass it around,\n");
+        
+        
+        
+        
+        
         
         set BottlesOfBeer::LoopStart = add(BottlesOfBeer::LoopStart,-1);
         
-        out(BottlesOfBeer::LoopStart);
-        out(" bottles of beer.\n\n");
+        
+        
         
         jmp(function::BottlesOfBeer::Loop);
     }
@@ -70,10 +70,10 @@ Function BottlesOfBeer::End:
 */
 fn BottlesOfBeer::End
 {
-    out("No more bottles of beer on the wall,\n");
-    out("No more bottles of beer.\n");
-    out("Go to the store, and buy some more,\n");
-    out("99 bottles of beer...");
+    
+    
+    
+    
     
     end(0);
 }

@@ -1,0 +1,38 @@
+/**
+Test HelloWorld:
+
+    Description:
+        A test for Hello World.
+
+    Preconditions:
+        None
+
+    Result:
+        Should print "Hello, World!" and return 0.
+
+    Postconditions:
+        "Hello, World!" is printed to the console.
+
+*/
+
+/**
+Main HelloWorld::Main:
+
+    Description:
+        Prints "Hello, World!".
+
+    Preconditions:
+        None
+
+    Result:
+        Prints "Hello, World!" and returns 0.
+
+    Postconditions:
+        "Hello, World!" is printed to the console.
+
+*/
+mn HelloWorld::Main
+{
+    out("Hello, World!");
+    end(0);
+}

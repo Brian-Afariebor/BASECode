@@ -86,6 +86,7 @@ class Parser:
                         column,
                     ),
                 )
+                continue
 
             line += token_string.count("\n")
             lines = token_string.splitlines()

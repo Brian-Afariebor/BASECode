@@ -3,16 +3,21 @@ type Type = str
 type Regex = str
 type Keyword = str
 
+
+
 class ExecutionModes:
 
     DEBUG = "DEBUG"
     DOCSTRINGS = "DOCSTRINGS"
 
+
 class Files:
 
-    STANDARD_LIBRARY_PATH = "lib/"
+    STANDARD_LIBRARY_PATH = "lib"
+    TEST_FILE_PATH = "testfiles"
     UNLINKED_BASECODE_ENDING = ".bc"
     LINKED_BASECODE_ENDING = ".blc"
+    BASECODE_DIRECTORY = "/".join(__file__.split("/")[:-2])
 
 class Flags:
 
@@ -26,6 +31,7 @@ class Flags:
     SAVE_LINK = "-sl"
     SAVE_PARSE = "-sp"
     SAVE_TRIMMINGS = "-st"
+
 
 class Keywords:
 
@@ -57,6 +63,7 @@ class Keywords:
     START = "start"
     STOP = "stop"
 
+
 class Regexes:
 
     COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
@@ -71,15 +78,18 @@ class Regexes:
     UNMAPPED = "."
     WHITESPACE = r"[\s]+"
 
+
 class Null:
 
     def __repr__(self):
 
         return "NULL"
 
+
 NULL = Null()
 
 type BASECodeValue = int | float | str | Null
+
 
 class Types:
 
@@ -117,7 +127,14 @@ class Types:
     UNMAPPED = "UNMAPPED"
     WHITESPACE = "WHITESPACE"
 
-@staticmethod
+
+
 def reference(variable: str):
 
     return variable + Keywords.REFERENCE_OPERATOR
+
+
+def sub_directory(directory: str, sub_directory: str):
+
+    # TODO: Add Windows version
+    return directory + "/" + sub_directory

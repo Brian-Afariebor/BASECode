@@ -6,6 +6,7 @@ from constants import Keywords
 from constants import Null
 from constants import NULL
 from constants import reference
+from constants import Type
 from constants import Types
 
 from re import sub
@@ -20,7 +21,7 @@ from typing import Any
 
 type Context = dict[str, BASECodeValue]
 type PositionId = str
-type FunctionMap = dict[str, Callable[[Token, PositionId], None]]
+type FunctionMap = dict[Type, Callable[[Token, PositionId], None]]
 
 
 class Executable:
@@ -105,7 +106,7 @@ class Executable:
                 + str(pos)
             ] = arg
 
-        self._run_pos_id(Keywords.MAIN_NAME, 0)
+        self._run_pos_id(Keywords.MAIN_NAME)
         return self._last_return_value
 
     def _add(self, token: Token, pos_id: PositionId):
@@ -181,7 +182,7 @@ class Executable:
         self._eval_pos(pos_id)
         self._step_pos(pos_id)
 
-        # * We have to account for the parenthesis and semicolon
+        # NOTE: We have to account for the parenthesis and semicolon
         return_pos = self._positions[pos_id] + 1
         new_position = self._pop_from_stack()
 
@@ -522,7 +523,7 @@ class Executable:
 
         self._step_pos(pos_id)
 
-    def _run_pos_id(self, pos_id: PositionId, start: int):
+    def _run_pos_id(self, pos_id: PositionId, start: int = 0):
 
         self._positions[pos_id] = start
 

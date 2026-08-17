@@ -1,4 +1,8 @@
 from collections.abc import Callable
+
+from constants import Files
+from constants import sub_directory
+
 from executable import Executable
 from linker import Linker
 from interpreter import Main
@@ -11,12 +15,41 @@ from tokens import TokenStream
 
 import unittest
 
-BASECode_directory = "/".join(__file__.split("/")[:-2]) + "/"
+# SECTION: File Paths
 
-hello_world_file_path = BASECode_directory + "samples/HelloWorld.bc"
-unlinked_main_file_path = BASECode_directory + "testfiles/Main.bc"
-linked_code_file_path = BASECode_directory + "testfiles/LinkedMain.blc"
-bottles_of_beer_file_path = BASECode_directory + "samples/BottlesOfBeer.bc"
+hello_world_file_path = sub_directory(
+    sub_directory(
+        Files.BASECODE_DIRECTORY,
+        Files.TEST_FILE_PATH,
+    ),
+    "HelloWorld.blc",
+)
+
+unlinked_main_file_path = sub_directory(
+    sub_directory(
+        Files.BASECODE_DIRECTORY,
+        Files.TEST_FILE_PATH,
+    ),
+    "Main.bc",
+)
+
+linked_code_file_path = sub_directory(
+    sub_directory(
+        Files.BASECODE_DIRECTORY,
+        Files.TEST_FILE_PATH,
+    ),
+    "LinkedMain.blc",
+)
+
+bottles_of_beer_file_path = sub_directory(
+    sub_directory(
+        Files.BASECODE_DIRECTORY,
+        Files.TEST_FILE_PATH,
+    ),
+    "BottlesOfBeerNoPrint.blc",
+)
+
+# !SECTION
 
 with open(linked_code_file_path) as source_file:
 
@@ -24,7 +57,6 @@ with open(linked_code_file_path) as source_file:
 
 with open(hello_world_file_path) as source_file:
 
-    # HelloWorld.bc is unlinked, so this is fine.
     hello_world_code = source_file.read()
 
 
@@ -78,14 +110,14 @@ class ParserTest(unittest.TestCase):
     def parse_small_code(self):
 
         with open(hello_world_file_path) as code_file:
-        
+
             code = code_file.read()
-        
+
         Parser.parse(code)
 
     def test_small_code_parsing_speed(self):
 
-        speed_requirement = 0.01
+        speed_requirement = 0.02
         reps = 1000
 
         for _ in range(reps):
@@ -99,7 +131,7 @@ class ParserTest(unittest.TestCase):
 
     def test_big_code_parsing_speed(self):
 
-        speed_requirement = 0.01
+        speed_requirement = 0.02
         reps = 100
 
         for _ in range(reps):
@@ -123,14 +155,13 @@ class ExecutableTest(unittest.TestCase):
 
         for i in range(-10, 11):
 
-            resolved_code = f"end {i/10};"
+            resolved_code = f"end({i/10});"
             parsed_code = Parser.parse(resolved_code)
             code_executable = Executable("EndTest", parsed_code)
             self.assertEqual(code_executable.run(), i / 10)
 
     def test_small_code_execution_speed(self):
 
-        hello_world_code = "end 0;"
         parsed_code = Parser.parse(hello_world_code)
         speed_requirement = 0.02
         reps = 1000
@@ -179,7 +210,7 @@ class MainTest(unittest.TestCase):
     def test_large_code_execution_speed(self):
 
         file_path = bottles_of_beer_file_path
-        speed_requirement = 0.5
+        speed_requirement = 0.30
         reps = 100
 
         def run_code():

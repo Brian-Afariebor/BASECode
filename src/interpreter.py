@@ -1,5 +1,6 @@
 from collections.abc import Callable
-from constants import Constants
+from constants import ExecutionModes
+from constants import Flags
 from executable import Executable
 from linker import Linker
 from parser import Parser
@@ -56,7 +57,7 @@ class Main:
 
     def _docstring(self):
 
-        self._execution_modes.append(Constants.ExecutionModes.DOCSTRINGS)
+        self._execution_modes.append(ExecutionModes.DOCSTRINGS)
 
     def _enable_no_link(self):
 
@@ -73,7 +74,7 @@ class Main:
         if self._current_flag >= len(self.ARGS):
 
             raise FileNotFoundError(
-                f"File missing; see {Constants.Flags.HELP} for details."
+                f"File missing; see {Flags.HELP} for details."
             ) from None
 
         self._save_linked_code_flag = True
@@ -86,7 +87,7 @@ class Main:
         if self._current_flag >= len(self.ARGS):
 
             raise FileNotFoundError(
-                f"File missing; see {Constants.Flags.HELP} for details."
+                f"File missing; see {Flags.HELP} for details."
             ) from None
 
         self._save_parsed_code_flag = True
@@ -99,7 +100,7 @@ class Main:
         if self._current_flag >= len(self.ARGS):
 
             raise FileNotFoundError(
-                f"File missing; see {Constants.Flags.HELP} for details."
+                f"File missing; see {Flags.HELP} for details."
             ) from None
 
         self._save_trimmed_code_flag = True
@@ -108,15 +109,15 @@ class Main:
     def _eval(self):
 
         MAPPINGS: dict[str, Callable[[], None]] = {
-            Constants.Flags.FILE: self._file,
-            Constants.Flags.HELP: self._help,
-            Constants.Flags.NAME: self._name,
-            Constants.Flags.NO_LINK: self._enable_no_link,
-            Constants.Flags.NO_RUN: self._enable_no_run,
-            Constants.Flags.PRINT_DOCSTRINGS: self._docstring,
-            Constants.Flags.SAVE_LINK: self._enable_save_link,
-            Constants.Flags.SAVE_PARSE: self._enable_save_parse,
-            Constants.Flags.SAVE_TRIMMINGS: self._enable_save_trimmings,
+            Flags.FILE: self._file,
+            Flags.HELP: self._help,
+            Flags.NAME: self._name,
+            Flags.NO_LINK: self._enable_no_link,
+            Flags.NO_RUN: self._enable_no_run,
+            Flags.PRINT_DOCSTRINGS: self._docstring,
+            Flags.SAVE_LINK: self._enable_save_link,
+            Flags.SAVE_PARSE: self._enable_save_parse,
+            Flags.SAVE_TRIMMINGS: self._enable_save_trimmings,
         }
 
         current_flag = self.ARGS[self._current_flag]
@@ -125,7 +126,7 @@ class Main:
 
             raise SyntaxError(
                 f"Unknown flag '{current_flag}'; "
-                + f"see {Constants.Flags.HELP} for details."
+                + f"see {Flags.HELP} for details."
             ) from None
 
         function = MAPPINGS[current_flag]
@@ -139,7 +140,7 @@ class Main:
         if self._current_flag >= len(self.ARGS):
 
             raise FileNotFoundError(
-                f"File missing; see {Constants.Flags.HELP} for details."
+                f"File missing; see {Flags.HELP} for details."
             ) from None
 
         self._file_path = self.ARGS[self._current_flag]
@@ -173,7 +174,7 @@ class Main:
         if self._current_flag >= len(self.ARGS):
 
             raise SyntaxError(
-                f"Name missing; see {Constants.Flags.HELP} for details."
+                f"Name missing; see {Flags.HELP} for details."
             ) from None
 
         self._code_name = self.ARGS[self._current_flag]

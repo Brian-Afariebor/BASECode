@@ -1,13 +1,22 @@
 from collections.abc import Callable
-from re import sub
-from threading import Thread
-from typing import Any
 
-from constants import Constants
+from constants import BASECodeValue
+from constants import ExecutionModes
+from constants import Keywords
+from constants import Null
+from constants import NULL
+from constants import reference
+from constants import Types
+
+from re import sub
+
+from threading import Thread
+
 from tokens import Token
 from tokens import TokenStream
 
-type BASECodeValue = Constants.Null | int | float | str
+from typing import Any
+
 
 type Context = dict[str, BASECodeValue]
 type PositionId = str
@@ -27,34 +36,34 @@ class Executable:
 
         self.modes = args
 
-        self._last_return_value = Constants.NULL
+        self._last_return_value = NULL
 
-        name_ref = Constants.reference(Constants.Keywords.MAIN_NAME) + "name"
+        name_ref = reference(Keywords.MAIN_NAME) + "name"
 
         self._variables: Context = {name_ref: self.NAME}
 
         self._positions: dict[PositionId, int] = {
-            Constants.Keywords.MAIN_NAME: 0,
+            Keywords.MAIN_NAME: 0,
         }
 
         tokens = list(
             filter(
                 lambda token: token.TYPE
                 not in [
-                    Constants.Types.WHITESPACE,
-                    Constants.Types.SHEBANG,
-                    Constants.Types.COMMENT,
-                    Constants.Types.DUMMY,
+                    Types.WHITESPACE,
+                    Types.SHEBANG,
+                    Types.COMMENT,
+                    Types.DUMMY,
                 ],
                 tokens,
             ),
         )
 
-        if Constants.ExecutionModes.DOCSTRINGS in self.modes:
+        if ExecutionModes.DOCSTRINGS in self.modes:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE == Constants.Types.DOCSTRING,
+                    lambda token: token.TYPE == Types.DOCSTRING,
                     tokens,
                 )
             )
@@ -63,7 +72,7 @@ class Executable:
 
             tokens = list(
                 filter(
-                    lambda token: token.TYPE != Constants.Types.DOCSTRING,
+                    lambda token: token.TYPE != Types.DOCSTRING,
                     tokens,
                 )
             )
@@ -87,16 +96,16 @@ class Executable:
         for pos, arg in enumerate(args):
 
             self._variables[
-                Constants.reference(
-                    Constants.reference(
-                        Constants.Keywords.MAIN_NAME,
+                reference(
+                    reference(
+                        Keywords.MAIN_NAME,
                     )
                     + "args",
                 )
                 + str(pos)
             ] = arg
 
-        self._run_pos_id(Constants.Keywords.MAIN_NAME, 0)
+        self._run_pos_id(Keywords.MAIN_NAME, 0)
         return self._last_return_value
 
     def _add(self, token: Token, pos_id: PositionId):
@@ -105,7 +114,7 @@ class Executable:
         self._eval_pos(pos_id)
         item1 = self._pop_from_stack()
 
-        if isinstance(item1, Constants.Null):
+        if isinstance(item1, Null):
 
             raise ValueError(
                 "Null was given as an addition value at:"
@@ -116,7 +125,7 @@ class Executable:
         self._eval_pos(pos_id)
         item2 = self._pop_from_stack()
 
-        if isinstance(item2, Constants.Null):
+        if isinstance(item2, Null):
 
             raise ValueError(
                 "Null was given as an addition value at:"
@@ -139,11 +148,11 @@ class Executable:
     def _append_to_stack(
         self,
         value: Any,
-        stack_name: str = Constants.Keywords.MAIN_NAME,
+        stack_name: str = Keywords.MAIN_NAME,
     ):
 
-        first_value = Constants.reference(stack_name) + "0"
-        top_pointer = Constants.reference(stack_name) + "tp"
+        first_value = reference(stack_name) + "0"
+        top_pointer = reference(stack_name) + "tp"
 
         if first_value not in self._variables:
 
@@ -158,7 +167,7 @@ class Executable:
 
         self._variables[top_pointer] += 1  # pyright: ignore[reportOperatorIssue]
         self._variables[
-            Constants.reference(
+            reference(
                 stack_name,
             )
             + str(
@@ -176,7 +185,7 @@ class Executable:
         return_pos = self._positions[pos_id] + 1
         new_position = self._pop_from_stack()
 
-        if isinstance(new_position, Constants.Null):
+        if isinstance(new_position, Null):
 
             raise ValueError(
                 f"Null was given as a jump position at:\n\t"
@@ -232,7 +241,7 @@ class Executable:
         return_value = self._pop_from_stack("main")
         self._last_return_value = return_value
 
-        if pos_id == Constants.Keywords.MAIN_NAME:
+        if pos_id == Keywords.MAIN_NAME:
 
             self._positions.clear()
             print(
@@ -244,30 +253,30 @@ class Executable:
     def _eval_pos(self, pos_id: PositionId) -> None:
 
         MAPPINGS: FunctionMap = {
-            Constants.Types.ADD: self._add,
-            Constants.Types.CALL: self._call,
-            Constants.Types.DELETE: self._delete,
-            Constants.Types.DOCSTRING: self._docstring,
-            Constants.Types.END: self._end,
-            Constants.Types.FLOAT: self._float,
-            Constants.Types.FUNCTION: self._function,
-            Constants.Types.IDENTIFIER: self._identifier,
-            Constants.Types.IF: self._if,
-            Constants.Types.INPUT: self._input,
-            Constants.Types.INT_CAST: self._int_cast,
-            Constants.Types.INTEGER: self._int,
-            Constants.Types.JUMP: self._jump,
-            Constants.Types.LINE_TERMINATOR: self._line_terminator,
-            Constants.Types.MAIN: self._main,
-            Constants.Types.OUT: self._out,
-            Constants.Types.POP: self._pop,
-            Constants.Types.PUSH: self._push,
-            Constants.Types.RAW_SET: self._raw_set,
-            Constants.Types.REFERENCE: self._reference,
-            Constants.Types.SET: self._set,
-            Constants.Types.START: self._start,
-            Constants.Types.STOP: self._stop,
-            Constants.Types.STRING: self._string,
+            Types.ADD: self._add,
+            Types.CALL: self._call,
+            Types.DELETE: self._delete,
+            Types.DOCSTRING: self._docstring,
+            Types.END: self._end,
+            Types.FLOAT: self._float,
+            Types.FUNCTION: self._function,
+            Types.IDENTIFIER: self._identifier,
+            Types.IF: self._if,
+            Types.INPUT: self._input,
+            Types.INT_CAST: self._int_cast,
+            Types.INTEGER: self._int,
+            Types.JUMP: self._jump,
+            Types.LINE_TERMINATOR: self._line_terminator,
+            Types.MAIN: self._main,
+            Types.OUT: self._out,
+            Types.POP: self._pop,
+            Types.PUSH: self._push,
+            Types.RAW_SET: self._raw_set,
+            Types.REFERENCE: self._reference,
+            Types.SET: self._set,
+            Types.START: self._start,
+            Types.STOP: self._stop,
+            Types.STRING: self._string,
         }
 
         position = self._positions[pos_id]
@@ -297,8 +306,8 @@ class Executable:
             raise NameError(f"Missing function name at:\t\n{token}")
 
         self._variables[
-            Constants.reference(
-                Constants.Keywords.FUNCTION_NAME,
+            reference(
+                Keywords.FUNCTION_NAME,
             )
             + name_token.VALUE
         ] = (
@@ -306,7 +315,7 @@ class Executable:
         )
 
         while ((next := self._step_pos(pos_id)) is not None) and (
-            next.TYPE not in [Constants.Types.FUNCTION, Constants.Types.MAIN]
+            next.TYPE not in [Types.FUNCTION, Types.MAIN]
         ):
             pass
 
@@ -322,7 +331,7 @@ class Executable:
 
         else:
 
-            self._append_to_stack(Constants.NULL)
+            self._append_to_stack(NULL)
 
     def _if(self, token: Token, pos_id: PositionId):
 
@@ -342,7 +351,7 @@ class Executable:
             return
 
         while ((next := self._step_pos(pos_id)) is not None) and (
-            next.TYPE != Constants.Types.ELSE
+            next.TYPE != Types.ELSE
         ):
             pass
 
@@ -362,7 +371,7 @@ class Executable:
 
         value = self._pop_from_stack()
 
-        if isinstance(value, Constants.Null):
+        if isinstance(value, Null):
 
             raise ValueError(
                 "Null was given as an int cast value at:" + f"\n\t{token}",
@@ -378,7 +387,7 @@ class Executable:
 
         new_position = self._pop_from_stack()
 
-        if isinstance(new_position, Constants.Null):
+        if isinstance(new_position, Null):
 
             raise ValueError(
                 "Null was given as a jump position at:\n\t"
@@ -418,8 +427,8 @@ class Executable:
             )
 
         self._variables[
-            Constants.reference(
-                Constants.Keywords.MAIN_NAME,
+            reference(
+                Keywords.MAIN_NAME,
             )
             + main_token.VALUE
         ] = self._positions[pos_id]
@@ -442,16 +451,16 @@ class Executable:
         self._step_pos(pos_id)
 
     def _pop_from_stack(
-        self, stack_name: str = Constants.Keywords.MAIN_NAME
-    ) -> Constants.Null | int | float | str:
+        self, stack_name: str = Keywords.MAIN_NAME
+    ) -> Null | int | float | str:
 
-        stack_reference = Constants.reference(stack_name)
+        stack_reference = reference(stack_name)
 
         top_pointer = stack_reference + "tp"
 
         if top_pointer not in self._variables:
 
-            return Constants.NULL
+            return NULL
 
         top_value_pointer = stack_reference + str(self._variables[top_pointer])
 
@@ -553,7 +562,7 @@ class Executable:
 
         function_location = self._pop_from_stack()
 
-        if isinstance(function_location, Constants.Null):
+        if isinstance(function_location, Null):
 
             raise ValueError(f"Null was given as a jump target at:\n\t{token}")
 
@@ -575,7 +584,7 @@ class Executable:
 
         if old_position + 1 >= len(self.TOKENS):
 
-            if Constants.ExecutionModes.DOCSTRINGS in self.modes:
+            if ExecutionModes.DOCSTRINGS in self.modes:
 
                 del self._positions[pos_id]
                 return

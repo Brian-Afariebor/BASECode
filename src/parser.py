@@ -2,52 +2,60 @@ from re import finditer
 
 from tokens import Token
 from tokens import TokenStream
-from constants import Constants
+from constants import Types
+from constants import Keywords
 
-type BASECode = str
-type Regex = str
-
+from constants import Regexes
+from constants import Type
+from constants import Regex
+from constants import BASECode
 
 class Parser:
 
-    MAPPINGS: dict[BASECode, Regex] = {
-        # Keywords
-        Constants.Types.ADD: Constants.Keywords.ADD,
-        Constants.Types.CALL: Constants.Keywords.CALL,
-        Constants.Types.DELETE: Constants.Keywords.DELETE,
-        Constants.Types.ELSE: Constants.Keywords.ELSE,
-        Constants.Types.END: Constants.Keywords.END,
-        Constants.Types.FUNCTION: Constants.Keywords.FUNCTION,
-        Constants.Types.IF: Constants.Keywords.IF,
-        # int needs to go before in in order for the parser to parse correctly
-        Constants.Types.INT_CAST: Constants.Keywords.INT_CAST,
-        Constants.Types.INPUT: Constants.Keywords.INPUT,
-        Constants.Types.JUMP: Constants.Keywords.JUMP,
-        Constants.Types.LINE_TERMINATOR: Constants.Keywords.LINE_TERMINATOR,
-        Constants.Types.MAIN: Constants.Keywords.MAIN,
-        Constants.Types.OUT: Constants.Keywords.OUT,
-        Constants.Types.POP: Constants.Keywords.POP,
-        Constants.Types.PUSH: Constants.Keywords.PUSH,
-        Constants.Types.RAW_SET: Constants.Keywords.RAW_SET,
-        Constants.Types.RAW_STACK_SET: Constants.Keywords.RAW_STACK_SET,
-        Constants.Types.REFERENCE: Constants.Keywords.REFERENCE,
-        Constants.Types.SET: Constants.Keywords.SET,
-        Constants.Types.START: Constants.Keywords.START,
-        Constants.Types.STOP: Constants.Keywords.STOP,
-        # Regexes
-        Constants.Types.DOCSTRING: Constants.Regexes.DOCSTRING,
-        Constants.Types.COMMENT: Constants.Regexes.COMMENT,
-        Constants.Types.DUMMY: Constants.Regexes.DUMMY,
-        Constants.Types.FLOAT: Constants.Regexes.FLOAT,
-        Constants.Types.FUNCTION_TERMINATOR: Constants.Regexes.FUNCTION_TERMINATOR,
-        # * Fixes bugs with integer parsing
-        Constants.Types.INTEGER: Constants.Regexes.INTEGER,
-        Constants.Types.IDENTIFIER: Constants.Regexes.IDENTIFIER,
-        Constants.Types.SHEBANG: Constants.Regexes.SHEBANG,
-        Constants.Types.STRING: Constants.Regexes.STRING,
-        Constants.Types.WHITESPACE: Constants.Regexes.WHITESPACE,
-        # Unmapped
-        Constants.Types.UNMAPPED: Constants.Regexes.UNMAPPED,
+    MAPPINGS: dict[Type, Regex] = {
+        # SECTION: Keywords
+        Types.ADD: Keywords.ADD,
+        Types.CALL: Keywords.CALL,
+        Types.DEBUG: Keywords.DEBUG,
+        Types.DELETE: Keywords.DELETE,
+        Types.ELSE: Keywords.ELSE,
+        Types.END: Keywords.END,
+        Types.FUNCTION: Keywords.FUNCTION,
+        Types.IF: Keywords.IF,
+        # NOTE: 'int' needs to go before 'in'
+        # in order for the parser to parse correctly
+        Types.INT_CAST: Keywords.INT_CAST,
+        Types.INPUT: Keywords.INPUT,
+        Types.JUMP: Keywords.JUMP,
+        Types.LINE_TERMINATOR: Keywords.LINE_TERMINATOR,
+        Types.MAIN: Keywords.MAIN,
+        Types.OUT: Keywords.OUT,
+        Types.POP: Keywords.POP,
+        Types.PUSH: Keywords.PUSH,
+        Types.RAW_SET: Keywords.RAW_SET,
+        Types.RAW_STACK_SET: Keywords.RAW_STACK_SET,
+        Types.REFERENCE: Keywords.REFERENCE,
+        Types.SET: Keywords.SET,
+        Types.START: Keywords.START,
+        Types.STOP: Keywords.STOP,
+        # !SECTION
+        # SECTION: Regexes
+        # NOTE: Comments need to go after
+        # docstrings in order to parse correctly
+        Types.DOCSTRING: Regexes.DOCSTRING,
+        Types.COMMENT: Regexes.COMMENT,
+        Types.DUMMY: Regexes.DUMMY,
+        Types.FLOAT: Regexes.FLOAT,
+        Types.FUNCTION_TERMINATOR: Regexes.FUNCTION_TERMINATOR,
+        Types.INTEGER: Regexes.INTEGER,
+        Types.IDENTIFIER: Regexes.IDENTIFIER,
+        Types.SHEBANG: Regexes.SHEBANG,
+        Types.STRING: Regexes.STRING,
+        Types.WHITESPACE: Regexes.WHITESPACE,
+        # !SECTION
+        # SECTION: Unmapped
+        Types.UNMAPPED: Regexes.UNMAPPED,
+        # !SECTION
     }
 
     @staticmethod
@@ -56,7 +64,7 @@ class Parser:
         buffer: TokenStream = []
 
         regex_string: Regex = "|".join(
-            f"(?P<{name}>{regex})" for name, regex in Parser.MAPPINGS.items()
+            f"(?P<{type}>{regex})" for type, regex in Parser.MAPPINGS.items()
         )
 
         line = 1
@@ -68,17 +76,24 @@ class Parser:
             token_type = str(match.lastgroup)
             column = match.start() - line_start + 1
 
-            if "\n" in token_string:
+            if "\n" not in token_string:
 
-                line += token_string.count("\n")
-                lines = token_string.split("\n")
-                line_start = match.end()
+                buffer.append(
+                    Token(
+                        token_type,
+                        token_string,
+                        line,
+                        column,
+                    ),
+                )
 
-                if len(lines) >= 1:
+            line += token_string.count("\n")
+            lines = token_string.splitlines()
+            line_start = match.end()
 
-                    line_start -= len(lines[-1])
+            if len(lines) >= 1:
 
-                column = 0
+                line_start -= len(lines[-1])
 
             buffer.append(
                 Token(

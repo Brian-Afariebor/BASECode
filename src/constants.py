@@ -3,7 +3,6 @@ from enum import StrEnum
 type BASECode = str
 
 
-
 class ExecutionMode(StrEnum):
 
     DEBUG = "DEBUG"

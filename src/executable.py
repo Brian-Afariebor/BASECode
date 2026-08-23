@@ -18,7 +18,6 @@ from tokens import TokenStream
 
 from typing import Any
 
-
 type Context = dict[str, BASECodeValue]
 type PositionId = str
 type FunctionMap = dict[Type, Callable[[Token, PositionId], None]]
@@ -186,10 +185,10 @@ class Executable:
         return_pos = self._positions[pos_id] + 1
         new_position = self._pop_from_stack()
 
-        if isinstance(new_position, Null):
+        if not isinstance(new_position, int):
 
             raise ValueError(
-                f"Null was given as a jump position at:\n\t"
+                f"Non-int '{new_position}' was given as a jump position at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
             ) from None
 
@@ -274,6 +273,7 @@ class Executable:
             Type.PUSH: self._push,
             Type.RAW_SET: self._raw_set,
             Type.REFERENCE: self._reference,
+            Type.RETURN: self._return,
             Type.SET: self._set,
             Type.START: self._start,
             Type.STOP: self._stop,
@@ -288,7 +288,7 @@ class Executable:
 
         if type not in MAPPINGS:
 
-            raise SyntaxError(f"Invalid token at:\n{token}")
+            raise SyntaxError(f"Invalid token at:\n\t{token}")
 
         function = MAPPINGS[type]
 
@@ -304,7 +304,7 @@ class Executable:
 
         if name_token is None:
 
-            raise NameError(f"Missing function name at:\t\n{token}")
+            raise NameError(f"Missing function name at:\n\t{token}")
 
         self._variables[
             reference(
@@ -388,10 +388,10 @@ class Executable:
 
         new_position = self._pop_from_stack()
 
-        if isinstance(new_position, Null):
+        if not isinstance(new_position, int):
 
             raise ValueError(
-                "Null was given as a jump position at:\n\t"
+                f"Non-int '{new_position}' was given as a jump position at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
             ) from None
 
@@ -522,6 +522,21 @@ class Executable:
         self._append_to_stack(self._variables[name])
 
         self._step_pos(pos_id)
+
+    def _return(self, token: Token, pos_id: PositionId):
+
+        return_position = self._pop_from_stack()
+
+        if not isinstance(return_position, int):
+
+            raise ValueError(
+                f"Non-int return position '{return_position}'given at:\n\t"
+                + f"{self._token_at_pos_id(pos_id)}"
+            )
+        
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+        self._positions[pos_id] = return_position
 
     def _run_pos_id(self, pos_id: PositionId, start: int = 0):
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from constants import Type
 type BASECode = str
 type TokenStream = list[Token]
 
@@ -8,7 +8,7 @@ class Token:
 
     def __init__(
         self,
-        type: str,
+        type: Type,
         contents: BASECode,
         line: int,
         column: int,

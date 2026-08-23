@@ -1,5 +1,5 @@
-from constants import Keywords
-from constants import Files
+from constants import Keyword
+from constants import File
 
 from re import finditer
 from re import sub
@@ -29,7 +29,7 @@ class Linker:
         buffer = text
 
         for match in finditer(
-            rf"{Keywords.IMPORT}\s+\"(?P<name>[^\"]+)\"", text
+            rf"{Keyword.IMPORT}\s+\"(?P<name>[^\"]+)\"", text
         ):
 
             replacement_path = match.group("name")
@@ -45,7 +45,7 @@ class Linker:
             )
 
         for match in finditer(
-            rf"{Keywords.IMPORT}\s+<(?P<name>[^>]+)>", text
+            rf"{Keyword.IMPORT}\s+<(?P<name>[^>]+)>", text
         ):
 
             library_file_name = match.group("name")
@@ -54,7 +54,7 @@ class Linker:
 
             replacement_text = Linker.link(
                 BASECode_directory
-                + Files.STANDARD_LIBRARY_PATH
+                + File.STANDARD_LIBRARY_PATH
                 + library_file_name
                 + ".bc"
             )

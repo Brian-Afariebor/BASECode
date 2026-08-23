@@ -2,59 +2,60 @@ from re import finditer
 
 from tokens import Token
 from tokens import TokenStream
-from constants import Types
-from constants import Keywords
+from constants import Type
+from constants import Keyword
 
-from constants import Regexes
+from constants import Regex
 from constants import Type
 from constants import Regex
 from constants import BASECode
 
 class Parser:
 
-    MAPPINGS: dict[Type, Regex] = {
+    MAPPINGS: dict[Type, Regex|Keyword] = {
         # SECTION: Keywords
-        Types.ADD: Keywords.ADD,
-        Types.CALL: Keywords.CALL,
-        Types.DEBUG: Keywords.DEBUG,
-        Types.DELETE: Keywords.DELETE,
-        Types.ELSE: Keywords.ELSE,
-        Types.END: Keywords.END,
-        Types.FUNCTION: Keywords.FUNCTION,
-        Types.IF: Keywords.IF,
+        Type.ADD: Keyword.ADD,
+        Type.CALL: Keyword.CALL,
+        Type.DEBUG: Keyword.DEBUG,
+        Type.DELETE: Keyword.DELETE,
+        Type.ELSE: Keyword.ELSE,
+        Type.END: Keyword.END,
+        Type.FUNCTION: Keyword.FUNCTION,
+        Type.IF: Keyword.IF,
         # NOTE: 'int' needs to go before 'in'
         # in order for the parser to parse correctly
-        Types.INT_CAST: Keywords.INT_CAST,
-        Types.INPUT: Keywords.INPUT,
-        Types.JUMP: Keywords.JUMP,
-        Types.LINE_TERMINATOR: Keywords.LINE_TERMINATOR,
-        Types.MAIN: Keywords.MAIN,
-        Types.OUT: Keywords.OUT,
-        Types.POP: Keywords.POP,
-        Types.PUSH: Keywords.PUSH,
-        Types.RAW_SET: Keywords.RAW_SET,
-        Types.RAW_STACK_SET: Keywords.RAW_STACK_SET,
-        Types.REFERENCE: Keywords.REFERENCE,
-        Types.SET: Keywords.SET,
-        Types.START: Keywords.START,
-        Types.STOP: Keywords.STOP,
+        Type.INT_CAST: Keyword.INT_CAST,
+        Type.INPUT: Keyword.INPUT,
+        Type.JUMP: Keyword.JUMP,
+        Type.LINE_TERMINATOR: Keyword.LINE_TERMINATOR,
+        Type.MAIN: Keyword.MAIN,
+        Type.OUT: Keyword.OUT,
+        Type.POP: Keyword.POP,
+        Type.PUSH: Keyword.PUSH,
+        Type.RAW_SET: Keyword.RAW_SET,
+        Type.RAW_STACK_SET: Keyword.RAW_STACK_SET,
+        Type.REFERENCE: Keyword.REFERENCE,
+        Type.RETURN: Keyword.RETURN,
+        Type.SET: Keyword.SET,
+        Type.START: Keyword.START,
+        Type.STOP: Keyword.STOP,
         # !SECTION
         # SECTION: Regexes
         # NOTE: Comments need to go after
         # docstrings in order to parse correctly
-        Types.DOCSTRING: Regexes.DOCSTRING,
-        Types.COMMENT: Regexes.COMMENT,
-        Types.DUMMY: Regexes.DUMMY,
-        Types.FLOAT: Regexes.FLOAT,
-        Types.FUNCTION_TERMINATOR: Regexes.FUNCTION_TERMINATOR,
-        Types.INTEGER: Regexes.INTEGER,
-        Types.IDENTIFIER: Regexes.IDENTIFIER,
-        Types.SHEBANG: Regexes.SHEBANG,
-        Types.STRING: Regexes.STRING,
-        Types.WHITESPACE: Regexes.WHITESPACE,
+        Type.DOCSTRING: Regex.DOCSTRING,
+        Type.COMMENT: Regex.COMMENT,
+        Type.DUMMY: Regex.DUMMY,
+        Type.FLOAT: Regex.FLOAT,
+        Type.FUNCTION_TERMINATOR: Regex.FUNCTION_TERMINATOR,
+        Type.INTEGER: Regex.INTEGER,
+        Type.IDENTIFIER: Regex.IDENTIFIER,
+        Type.SHEBANG: Regex.SHEBANG,
+        Type.STRING: Regex.STRING,
+        Type.WHITESPACE: Regex.WHITESPACE,
         # !SECTION
         # SECTION: Unmapped
-        Types.UNMAPPED: Regexes.UNMAPPED,
+        Type.UNMAPPED: Regex.UNMAPPED,
         # !SECTION
     }
 
@@ -63,7 +64,7 @@ class Parser:
 
         buffer: TokenStream = []
 
-        regex_string: Regex = "|".join(
+        regex_string = "|".join(
             f"(?P<{type}>{regex})" for type, regex in Parser.MAPPINGS.items()
         )
 
@@ -80,7 +81,7 @@ class Parser:
 
                 buffer.append(
                     Token(
-                        token_type,
+                        token_type, # pyright: ignore[reportArgumentType]
                         token_string,
                         line,
                         column,
@@ -98,7 +99,7 @@ class Parser:
 
             buffer.append(
                 Token(
-                    token_type,
+                    token_type, # pyright: ignore[reportArgumentType]
                     token_string,
                     line,
                     column,

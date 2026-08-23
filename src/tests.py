@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from constants import Files
+from constants import File
 from constants import sub_directory
 
 from executable import Executable
@@ -19,32 +19,32 @@ import unittest
 
 hello_world_file_path = sub_directory(
     sub_directory(
-        Files.BASECODE_DIRECTORY,
-        Files.TEST_FILE_PATH,
+        File.BASECODE_DIRECTORY,
+        File.TEST_FILE_PATH,
     ),
     "HelloWorld.blc",
 )
 
 unlinked_main_file_path = sub_directory(
     sub_directory(
-        Files.BASECODE_DIRECTORY,
-        Files.TEST_FILE_PATH,
+        File.BASECODE_DIRECTORY,
+        File.TEST_FILE_PATH,
     ),
     "Main.bc",
 )
 
 linked_code_file_path = sub_directory(
     sub_directory(
-        Files.BASECODE_DIRECTORY,
-        Files.TEST_FILE_PATH,
+        File.BASECODE_DIRECTORY,
+        File.TEST_FILE_PATH,
     ),
     "LinkedMain.blc",
 )
 
 bottles_of_beer_file_path = sub_directory(
     sub_directory(
-        Files.BASECODE_DIRECTORY,
-        Files.TEST_FILE_PATH,
+        File.BASECODE_DIRECTORY,
+        File.TEST_FILE_PATH,
     ),
     "BottlesOfBeerNoPrint.blc",
 )

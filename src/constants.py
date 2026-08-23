@@ -1,17 +1,16 @@
+from enum import StrEnum
+
 type BASECode = str
-type Type = str
-type Regex = str
-type Keyword = str
 
 
 
-class ExecutionModes:
+class ExecutionMode(StrEnum):
 
     DEBUG = "DEBUG"
     DOCSTRINGS = "DOCSTRINGS"
 
 
-class Files:
+class File(StrEnum):
 
     STANDARD_LIBRARY_PATH = "lib"
     TEST_FILE_PATH = "testfiles"
@@ -19,7 +18,7 @@ class Files:
     LINKED_BASECODE_ENDING = ".blc"
     BASECODE_DIRECTORY = "/".join(__file__.split("/")[:-2])
 
-class Flags:
+class Flag(StrEnum):
 
     DEBUG = "-db"
     FILE = "-f"
@@ -33,7 +32,7 @@ class Flags:
     SAVE_TRIMMINGS = "-st"
 
 
-class Keywords:
+class Keyword(StrEnum):
 
     ADD = "add"
     CALL = "call"
@@ -64,7 +63,7 @@ class Keywords:
     STOP = "stop"
 
 
-class Regexes:
+class Regex(StrEnum):
 
     COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
     DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
@@ -91,7 +90,7 @@ NULL = Null()
 type BASECodeValue = int | float | str | Null
 
 
-class Types:
+class Type(StrEnum):
 
     ADD = "ADD"
     CALL = "CALL"
@@ -119,6 +118,7 @@ class Types:
     RAW_SET = "RAW_SET"
     RAW_STACK_SET = "RAW_STACK_SET"
     REFERENCE = "REFERENCE"
+    RETURN = "RETURN"
     SET = "SET"
     SHEBANG = "SHEBANG"
     START = "START"
@@ -131,7 +131,7 @@ class Types:
 
 def reference(variable: str):
 
-    return variable + Keywords.REFERENCE_OPERATOR
+    return variable + Keyword.REFERENCE_OPERATOR
 
 
 def sub_directory(directory: str, sub_directory: str):

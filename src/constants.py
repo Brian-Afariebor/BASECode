@@ -17,6 +17,7 @@ class File(StrEnum):
     LINKED_BASECODE_ENDING = ".blc"
     BASECODE_DIRECTORY = "/".join(__file__.split("/")[:-2])
 
+
 class Flag(StrEnum):
 
     DEBUG = "-db"
@@ -125,7 +126,6 @@ class Type(StrEnum):
     STRING = "STRING"
     UNMAPPED = "UNMAPPED"
     WHITESPACE = "WHITESPACE"
-
 
 
 def reference(variable: str):

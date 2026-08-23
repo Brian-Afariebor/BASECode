@@ -1,5 +1,6 @@
 from __future__ import annotations
 from constants import Type
+
 type BASECode = str
 type TokenStream = list[Token]
 

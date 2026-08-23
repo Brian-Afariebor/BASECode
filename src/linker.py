@@ -29,7 +29,10 @@ class Linker:
 
         buffer = text
 
-        for match in finditer(rf"{Keyword.IMPORT}\s+\"(?P<name>[^\"]+)\"", text):
+        for match in finditer(
+            rf"{Keyword.IMPORT}\s+\"(?P<name>[^\"]+)\"",
+            text,
+        ):
 
             replacement_path = match.group("name")
 

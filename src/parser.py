@@ -10,9 +10,10 @@ from constants import Type
 from constants import Regex
 from constants import BASECode
 
+
 class Parser:
 
-    MAPPINGS: dict[Type, Regex|Keyword] = {
+    MAPPINGS: dict[Type, Regex | Keyword] = {
         # SECTION: Keywords
         Type.ADD: Keyword.ADD,
         Type.CALL: Keyword.CALL,
@@ -81,7 +82,7 @@ class Parser:
 
                 buffer.append(
                     Token(
-                        token_type, # pyright: ignore[reportArgumentType]
+                        token_type,  # pyright: ignore[reportArgumentType]
                         token_string,
                         line,
                         column,
@@ -99,7 +100,7 @@ class Parser:
 
             buffer.append(
                 Token(
-                    token_type, # pyright: ignore[reportArgumentType]
+                    token_type,  # pyright: ignore[reportArgumentType]
                     token_string,
                     line,
                     column,

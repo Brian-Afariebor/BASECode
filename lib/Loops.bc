@@ -1,16 +1,55 @@
-/***/
+/**
+Program Loops:
 
-/***/
-fn Loops::Repeat
+    Description:
+        Standard methods for iteration.
+
+    Requirements:
+        None.
+
+    Result:
+        Defines methods for iteration.
+*/
+
+
+/**
+Function Loops::Repeat:
+
+    Description:
+        Repeats an action a certain amount of times.
+
+    Requirements:
+        Loops::Iterations is the amount of iterations.
+        Loops::Function is the function to call.
+        
+    Result:
+        Calls the function as often as specified.
+
+*/
+fn Loops::Repeat 
 {
-    set Loops::Iterations = pop(main);
-    set Loops::Function = pop(main);
-
     jmp(function::Loops::Repeat::Loop);
 }
 
 
-/***/
+/**
+Function Loops::Repeat::Loop:
+
+    Description:
+        Runs the next iteration of a repeat loop.
+
+    Requirements:
+        Loops::Iterations is the amount of iterations.
+        Loops::Function is the function to call.
+        
+    Result:
+        If Loops::Iterations is not 0,
+            calls Loops::Function
+                and jumps to Loops::Repeat::Loop
+        Otherwise,
+            jumps to Loops::Repeat::End
+
+*/
 fn Loops::Repeat::Loop
 {
     if(Loops::Iterations == 0)
@@ -28,11 +67,24 @@ fn Loops::Repeat::Loop
 }
 
 
-/***/
+/**
+Function Loops::Repeat::End:
+
+    Description:
+        Ends a repeat loop.
+
+    Requirements:
+        None.
+
+    Result:
+        Returns Null.
+
+        Deletes Loops::Iterations and Loops::Function. 
+*/
 fn Loops::Repeat::End
 {
     del(Loops::Iterations);
     del(Loops::Function);
 
-    ret(null);
+    ret(null());
 }

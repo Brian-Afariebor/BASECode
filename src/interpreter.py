@@ -32,7 +32,7 @@ class Main:
         self._run_code_flag = True
         self._file_path = ""
         self._code_name = ""
-        self._execution_modes: list[str] = []
+        self._execution_modes: list[ExecutionMode] = []
         self._code_args: list[str] = []
 
         # * Pre-execution

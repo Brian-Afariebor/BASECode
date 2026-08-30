@@ -1,14 +1,14 @@
-from re import finditer
-
-from tokens import Token
-from tokens import TokenStream
 from constants import Type
 from constants import Keyword
-
 from constants import Regex
 from constants import Type
 from constants import Regex
 from constants import BASECode
+
+from re import finditer
+
+from tokens import Token
+from tokens import TokenStream
 
 
 class Parser:

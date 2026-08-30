@@ -36,6 +36,7 @@ class Parser:
         Type.RAW_SET: Keyword.RAW_SET,
         Type.RAW_STACK_SET: Keyword.RAW_STACK_SET,
         Type.REFERENCE: Keyword.REFERENCE,
+        Type.REMOVE: Keyword.REMOVE,
         Type.RETURN: Keyword.RETURN,
         Type.SET: Keyword.SET,
         Type.START: Keyword.START,

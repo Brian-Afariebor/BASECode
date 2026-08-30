@@ -45,6 +45,8 @@ class Executable:
         self._positions: dict[PositionId, int] = {
             Keyword.MAIN_NAME: 0,
         }
+        """Positions are zero-indexed
+        """
 
         tokens = list(
             filter(
@@ -252,47 +254,102 @@ class Executable:
 
     def _eval_pos(self, pos_id: PositionId) -> None:
 
-        MAPPINGS: FunctionMap = {
-            Type.ADD: self._add,
-            Type.CALL: self._call,
-            Type.DELETE: self._delete,
-            Type.DOCSTRING: self._docstring,
-            Type.END: self._end,
-            Type.FLOAT: self._float,
-            Type.FUNCTION: self._function,
-            Type.IDENTIFIER: self._identifier,
-            Type.IF: self._if,
-            Type.INPUT: self._input,
-            Type.INT_CAST: self._int_cast,
-            Type.INTEGER: self._int,
-            Type.JUMP: self._jump,
-            Type.LINE_TERMINATOR: self._line_terminator,
-            Type.MAIN: self._main,
-            Type.OUT: self._out,
-            Type.POP: self._pop,
-            Type.PUSH: self._push,
-            Type.RAW_SET: self._raw_set,
-            Type.REFERENCE: self._reference,
-            Type.RETURN: self._return,
-            Type.SET: self._set,
-            Type.START: self._start,
-            Type.STOP: self._stop,
-            Type.STRING: self._string,
-        }
-
         position = self._positions[pos_id]
 
         token = self._token_at_pos(position)
 
         type = token.TYPE
 
-        if type not in MAPPINGS:
+        # NOTE: Using a match makes it less likely to miss a type
+        match type:
+            # SECTION: Valid types
+            case Type.ADD:
+                return self._add(token, pos_id)
+            case Type.CALL:
+                return self._call(token, pos_id)
+            case Type.DELETE:
+                return self._delete(token, pos_id)
+            case Type.DOCSTRING:
+                return self._docstring(token, pos_id)
+            case Type.END:
+                return self._end(token, pos_id)
+            case Type.FLOAT:
+                return self._float(token, pos_id)
+            case Type.FUNCTION:
+                return self._function(token, pos_id)
+            case Type.IDENTIFIER:
+                return self._identifier(token, pos_id)
+            case Type.IF:
+                return self._if(token, pos_id)
+            case Type.INPUT:
+                return self._input(token, pos_id)
+            case Type.INT_CAST:
+                return self._int_cast(token, pos_id)
+            case Type.INTEGER:
+                return self._int(token, pos_id)
+            case Type.JUMP:
+                return self._jump(token, pos_id)
+            case Type.LINE_TERMINATOR:
+                return self._line_terminator(token, pos_id)
+            case Type.MAIN:
+                return self._main(token, pos_id)
+            case Type.OUT:
+                return self._out(token, pos_id)
+            case Type.POP:
+                return self._pop(token, pos_id)
+            case Type.PUSH:
+                return self._push(token, pos_id)
+            case Type.RAW_SET:
+                return self._raw_set(token, pos_id)
+            case Type.REFERENCE:
+                return self._reference(token, pos_id)
+            case Type.RETURN:
+                return self._return(token, pos_id)
+            case Type.SET:
+                return self._set(token, pos_id)
+            case Type.START:
+                return self._start(token, pos_id)
+            case Type.STOP:
+                return self._stop(token, pos_id)
+            case Type.STRING:
+                return self._string(token, pos_id)
 
-            raise SyntaxError(f"Invalid token at:\n\t{token}")
+            # !SECTION
+            # SECTION: Invalid types
+            case Type.COMMENT:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
 
-        function = MAPPINGS[type]
+            case Type.DUMMY:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
 
-        return function(token, pos_id)
+            case Type.ELSE:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
+
+            case Type.FUNCTION_TERMINATOR:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
+
+            case Type.SHEBANG:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
+
+            case Type.WHITESPACE:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
+
+            case Type.UNMAPPED:
+                raise SyntaxError(
+                    f"Given non-runnable keyword token at:\n\t{token}",
+                )
 
     def _float(self, token: Token, pos_id: PositionId):
 
@@ -533,7 +590,7 @@ class Executable:
                 f"Non-int return position '{return_position}'given at:\n\t"
                 + f"{self._token_at_pos_id(pos_id)}"
             )
-        
+
         self._step_pos(pos_id)
         self._eval_pos(pos_id)
         self._positions[pos_id] = return_position

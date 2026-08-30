@@ -60,6 +60,8 @@ fn Loops::Repeat::Loop
     {
         call(Loops::Function);
 
+
+        // NOTE - Remove is not defined yet
         set Loops::Iterations = rem(Loops::Iterations, 1);
 
         jmp(function::Loops::Repeat::Loop)

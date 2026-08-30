@@ -1,3 +1,5 @@
+from enum import auto
+from enum import Enum
 from enum import StrEnum
 
 type BASECode = str
@@ -57,6 +59,7 @@ class Keyword(StrEnum):
     RAW_STACK_SET = "rsks"
     REFERENCE = "ref"
     REFERENCE_OPERATOR = "::"
+    REMOVE = "rem"
     RETURN = "ret"
     SET = "set"
     START = "start"
@@ -90,42 +93,43 @@ NULL = Null()
 type BASECodeValue = int | float | str | Null
 
 
-class Type(StrEnum):
+class Type(Enum):
 
-    ADD = "ADD"
-    CALL = "CALL"
-    COMMENT = "COMMENT"
-    DEBUG = "DEBUG"
-    DELETE = "DELETE"
-    DOCSTRING = "DOCSTRING"
-    DUMMY = "DUMMY"
-    ELSE = "ELSE"
-    END = "END"
-    FLOAT = "FLOAT"
-    FUNCTION_TERMINATOR = "FUNCTION_TERMINATOR"
-    FUNCTION = "FUNCTION"
-    IDENTIFIER = "IDENTIFIER"
-    IF = "IF"
-    INPUT = "INPUT"
-    INT_CAST = "INT_CAST"
-    INTEGER = "INTEGER"
-    JUMP = "JUMP"
-    LINE_TERMINATOR = "LINE_TERMINATOR"
-    MAIN = "MAIN"
-    OUT = "OUT"
-    POP = "POP"
-    PUSH = "PUSH"
-    RAW_SET = "RAW_SET"
-    RAW_STACK_SET = "RAW_STACK_SET"
-    REFERENCE = "REFERENCE"
-    RETURN = "RETURN"
-    SET = "SET"
-    SHEBANG = "SHEBANG"
-    START = "START"
-    STOP = "STOP"
-    STRING = "STRING"
-    UNMAPPED = "UNMAPPED"
-    WHITESPACE = "WHITESPACE"
+    ADD = auto()
+    CALL = auto()
+    COMMENT = auto()
+    DEBUG = auto()
+    DELETE = auto()
+    DOCSTRING = auto()
+    DUMMY = auto()
+    ELSE = auto()
+    END = auto()
+    FLOAT = auto()
+    FUNCTION_TERMINATOR = auto()
+    FUNCTION = auto()
+    IDENTIFIER = auto()
+    IF = auto()
+    INPUT = auto()
+    INT_CAST = auto()
+    INTEGER = auto()
+    JUMP = auto()
+    LINE_TERMINATOR = auto()
+    MAIN = auto()
+    OUT = auto()
+    POP = auto()
+    PUSH = auto()
+    RAW_SET = auto()
+    RAW_STACK_SET = auto()
+    REFERENCE = auto()
+    REMOVE = auto()
+    RETURN = auto()
+    SET = auto()
+    SHEBANG = auto()
+    START = auto()
+    STOP = auto()
+    STRING = auto()
+    UNMAPPED = auto()
+    WHITESPACE = auto()
 
 
 def reference(variable: str):

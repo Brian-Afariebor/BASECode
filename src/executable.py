@@ -91,7 +91,7 @@ class Executable:
 
         return self._variables.copy()
 
-    def run(self, *args: BASECodeValue):
+    def run(self, *args: BASECodeValue)-> BASECodeValue:
 
         self._variables.clear()
 
@@ -108,6 +108,7 @@ class Executable:
             ] = arg
 
         self._run_pos_id(Keyword.MAIN_NAME)
+
         return self._last_return_value
 
     def _add(self, token: Token, pos_id: PositionId):
@@ -260,95 +261,121 @@ class Executable:
 
         type = token.TYPE
 
-        # NOTE: Using a match makes it less likely to miss a type
+        # NOTE: Using a match makes it easier to see the unmapped types 
         match type:
             # SECTION: Valid types
             case Type.ADD:
+
                 return self._add(token, pos_id)
+
             case Type.CALL:
+
                 return self._call(token, pos_id)
+            
             case Type.DELETE:
+
                 return self._delete(token, pos_id)
+            
             case Type.DOCSTRING:
+
                 return self._docstring(token, pos_id)
+            
             case Type.END:
+
                 return self._end(token, pos_id)
+
             case Type.FLOAT:
+
                 return self._float(token, pos_id)
+            
             case Type.FUNCTION:
+
                 return self._function(token, pos_id)
+            
             case Type.IDENTIFIER:
+
                 return self._identifier(token, pos_id)
+            
             case Type.IF:
+
                 return self._if(token, pos_id)
+            
             case Type.INPUT:
+
                 return self._input(token, pos_id)
+            
             case Type.INT_CAST:
+
                 return self._int_cast(token, pos_id)
+            
             case Type.INTEGER:
+
                 return self._int(token, pos_id)
+
             case Type.JUMP:
+
                 return self._jump(token, pos_id)
+            
             case Type.LINE_TERMINATOR:
+
                 return self._line_terminator(token, pos_id)
+
             case Type.MAIN:
+
                 return self._main(token, pos_id)
+
             case Type.OUT:
+
                 return self._out(token, pos_id)
+
             case Type.POP:
+
                 return self._pop(token, pos_id)
+            
             case Type.PUSH:
+
                 return self._push(token, pos_id)
+
             case Type.RAW_SET:
+
                 return self._raw_set(token, pos_id)
+
             case Type.REFERENCE:
+
                 return self._reference(token, pos_id)
+
+            case Type.REMOVE:
+
+                return self._remove(token, pos_id)
+
             case Type.RETURN:
+
                 return self._return(token, pos_id)
+
             case Type.SET:
+
                 return self._set(token, pos_id)
+
             case Type.START:
+
                 return self._start(token, pos_id)
+
             case Type.STOP:
+
                 return self._stop(token, pos_id)
+
             case Type.STRING:
+
                 return self._string(token, pos_id)
 
             # !SECTION
             # SECTION: Invalid types
-            case Type.COMMENT:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
+            case invalid:
 
-            case Type.DUMMY:
                 raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
-
-            case Type.ELSE:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
-
-            case Type.FUNCTION_TERMINATOR:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
-
-            case Type.SHEBANG:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
-
-            case Type.WHITESPACE:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
-                )
-
-            case Type.UNMAPPED:
-                raise SyntaxError(
-                    f"Given non-runnable keyword token at:\n\t{token}",
+                    f"Invalid token at:\n\t{token};\n"+
+                    f"the type '{invalid}' has not been registered.\n"
+                    +"Check the installation of BASECode and the code.",
                 )
 
     def _float(self, token: Token, pos_id: PositionId):
@@ -579,6 +606,49 @@ class Executable:
         self._append_to_stack(self._variables[name])
 
         self._step_pos(pos_id)
+
+    def _remove(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item1 = self._pop_from_stack()
+
+        if isinstance(item1, Null):
+
+            raise ValueError(
+                "Null was given as an subtraction value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}",
+            )
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item2 = self._pop_from_stack()
+
+        if isinstance(item2, Null):
+
+            raise ValueError(
+                "Null was given as a subtraction value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}",
+            )
+
+        if isinstance(item1, str):
+
+            parts_without_item2 = item1.split(str(item2))
+
+            self._append_to_stack("".join(parts_without_item2))
+
+            return
+
+        if isinstance(item2, str):
+
+            raise ValueError(
+                    f"'{item2}' was given as a numeric subtraction value at:"
+                    + f"\n\t{self._token_at_pos_id(pos_id)}",
+                )
+
+        self._append_to_stack(item1-item2)
 
     def _return(self, token: Token, pos_id: PositionId):
 

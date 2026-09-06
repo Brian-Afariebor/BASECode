@@ -61,19 +61,22 @@ class Parser:
         # !SECTION
     }
 
+    REGEX: str = "|".join(
+        f"(?P<{type}>{regex})"
+        for type, regex
+        in MAPPINGS.items()
+    )
+
+
     @staticmethod
     def parse(basecode: BASECode) -> TokenStream:
 
         buffer: TokenStream = []
 
-        regex_string = "|".join(
-            f"(?P<{type}>{regex})" for type, regex in Parser.MAPPINGS.items()
-        )
-
         line = 1
         line_start = 0
 
-        for match in finditer(regex_string, basecode):
+        for match in finditer(Parser.REGEX, basecode):
 
             token_string = match.group()
             token_type = str(match.lastgroup)

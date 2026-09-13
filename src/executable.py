@@ -7,7 +7,6 @@ from constants import Null
 from constants import NULL
 from constants import reference
 from constants import Type
-from constants import Type
 
 from re import sub
 
@@ -91,7 +90,7 @@ class Executable:
 
         return self._variables.copy()
 
-    def run(self, *args: BASECodeValue)-> BASECodeValue:
+    def run(self, *args: BASECodeValue) -> BASECodeValue:
 
         self._variables.clear()
 
@@ -121,7 +120,9 @@ class Executable:
 
             raise ValueError(
                 "Null was given as an addition value at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}",
+                + f"\n\t{self._token_at_pos_id(pos_id)};"
+                + "perhaps you are trying to add an undefined variable?\n"
+                + "Check your code.",
             )
 
         self._step_pos(pos_id)
@@ -132,7 +133,9 @@ class Executable:
 
             raise ValueError(
                 "Null was given as an addition value at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}",
+                + f"\n\t{self._token_at_pos_id(pos_id)};"
+                + "perhaps you are trying to add an undefined variable?\n"
+                + "Check your code.",
             )
 
         if isinstance(item1, str):
@@ -166,7 +169,11 @@ class Executable:
 
         if not isinstance(self._variables[top_pointer], int):
 
-            raise ValueError(f"Non-int top pointer found on stack {stack_name}")
+            raise ValueError(
+                f"Non-int top pointer found on stack {stack_name};\n"
+                + "maybe you changed the value of the top pointer?\n"
+                + "Check your code."
+            )
 
         self._variables[top_pointer] += 1  # pyright: ignore[reportOperatorIssue]
         self._variables[
@@ -193,23 +200,31 @@ class Executable:
             raise ValueError(
                 f"Non-int '{new_position}' was given as a jump position at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
-            ) from None
+            )
 
         adjusted_position = int(new_position) - 1
 
         if adjusted_position < 0:
 
             raise ValueError(
-                f"Given jump position {new_position} was too small. "
-                + f"Given at:\n\t{self._token_at_pos_id(pos_id)}"
-            ) from None
+                f"Given jump position {new_position} was too small at:\n\t"
+                + repr(self._token_at_pos_id(pos_id))
+                + ";\n"
+                + "all jump positions must be greater than zero "
+                + "and less than the length of tokens.\n"
+                + "Check your code."
+            )
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given jump position {new_position} was too big at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}"
-            ) from None
+                f"Given jump position {new_position} was too big at:\n\t"
+                + repr(self._token_at_pos_id(pos_id))
+                + ";\n"
+                + "all jump positions must be greater than zero "
+                + "and less than the length of tokens.\n"
+                + "Check your code."
+            )
 
         self._positions[pos_id] = adjusted_position
         self._append_to_stack(return_pos)
@@ -261,7 +276,7 @@ class Executable:
 
         type = token.TYPE
 
-        # NOTE: Using a match makes it easier to see the unmapped types 
+        # NOTE: Using a match makes it easier to see the unmapped types
         match type:
             # SECTION: Valid types
             case Type.ADD:
@@ -271,15 +286,15 @@ class Executable:
             case Type.CALL:
 
                 return self._call(token, pos_id)
-            
+
             case Type.DELETE:
 
                 return self._delete(token, pos_id)
-            
+
             case Type.DOCSTRING:
 
                 return self._docstring(token, pos_id)
-            
+
             case Type.END:
 
                 return self._end(token, pos_id)
@@ -287,27 +302,27 @@ class Executable:
             case Type.FLOAT:
 
                 return self._float(token, pos_id)
-            
+
             case Type.FUNCTION:
 
                 return self._function(token, pos_id)
-            
+
             case Type.IDENTIFIER:
 
                 return self._identifier(token, pos_id)
-            
+
             case Type.IF:
 
                 return self._if(token, pos_id)
-            
+
             case Type.INPUT:
 
                 return self._input(token, pos_id)
-            
+
             case Type.INT_CAST:
 
                 return self._int_cast(token, pos_id)
-            
+
             case Type.INTEGER:
 
                 return self._int(token, pos_id)
@@ -315,7 +330,7 @@ class Executable:
             case Type.JUMP:
 
                 return self._jump(token, pos_id)
-            
+
             case Type.LINE_TERMINATOR:
 
                 return self._line_terminator(token, pos_id)
@@ -331,7 +346,7 @@ class Executable:
             case Type.POP:
 
                 return self._pop(token, pos_id)
-            
+
             case Type.PUSH:
 
                 return self._push(token, pos_id)
@@ -370,12 +385,43 @@ class Executable:
 
             # !SECTION
             # SECTION: Invalid types
+            case Type.ELSE:
+
+                raise SyntaxError(
+                    f"Attempted to run else keyword 'else' at:\n\t{token};\n"
+                    + "maybe you have not ended or moved to another scope?\n"
+                    + "Here is how it works:\n"
+                    + r"""
+                    if(X == Y)
+                    {
+                        STUFF;
+                        MOVE();
+                    }
+                    else
+                    {
+                        STUFF;
+                        MOVE();
+                    }
+                    """
+                    + "\n\nMOVE() can be jmp or end.\n"
+                    + "To avoid errors, all BASECode scopes "
+                    + "(written with '{}') "
+                    + "should always have some kind of MOVE() call."
+                )
+
+            case Type.FUNCTION_TERMINATOR:
+
+                raise SyntaxError(
+                    f"Attempted to run function terminator ')' at:\n\t{token};"
+                    + "\nperhaps you have an extra parenthesis?"
+                )
+
             case invalid:
 
                 raise SyntaxError(
-                    f"Invalid token at:\n\t{token};\n"+
-                    f"the type '{invalid}' has not been registered.\n"
-                    +"Check the installation of BASECode and the code.",
+                    f"Invalid token at:\n\t{token};\n"
+                    + f"the type '{invalid}' has not been registered.\n"
+                    + "Check the installation of BASECode and the code.",
                 )
 
     def _float(self, token: Token, pos_id: PositionId):
@@ -384,11 +430,37 @@ class Executable:
 
     def _function(self, token: Token, pos_id: PositionId):
 
-        name_token = self._step_pos(pos_id)
+        try:
+
+            name_token = self._step_pos(pos_id)
+
+        except SyntaxError as e:
+
+            raise NameError(
+                f"Missing function name at:\n\t{token};\n"
+                + "functions are defined like this:"
+                + r"""
+                fn FUNCTION_NAME
+                {
+                    STUFF;
+                }
+                """
+                + "\nCheck your code."
+            ) from e
 
         if name_token is None:
 
-            raise NameError(f"Missing function name at:\n\t{token}")
+            raise NameError(
+                f"Missing function name at:\n\t{token};\n"
+                + "functions are defined like this:"
+                + r"""
+                fn FUNCTION_NAME
+                {
+                    STUFF;
+                }
+                """
+                + "\nCheck your code."
+            )
 
         self._variables[
             reference(
@@ -459,7 +531,10 @@ class Executable:
         if isinstance(value, Null):
 
             raise ValueError(
-                "Null was given as an int cast value at:" + f"\n\t{token}",
+                "Null was given as an int cast value at:"
+                + f"\n\t{token};\n"
+                + "perhaps you are trying to cast an undefined variable?\n"
+                + "Check your code.",
             )
 
         self._append_to_stack(int(value))
@@ -484,16 +559,24 @@ class Executable:
         if adjusted_position < 0:
 
             raise ValueError(
-                f"Given jump position '{new_position}' was too small at:\n\t"
+                f"Given jump position {new_position} was too small at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
-            ) from None
+                + ";\n"
+                + "all jump positions must be greater than zero "
+                + "and less than the length of tokens.\n"
+                + "Check your code."
+            )
 
         if adjusted_position >= len(self.TOKENS):
 
             raise ValueError(
-                f"Given jump position '{new_position}' was too big at:\n\t"
+                f"Given jump position {new_position} was too big at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
-            ) from None
+                + ";\n"
+                + "all jump positions must be greater than zero "
+                + "and less than the length of tokens.\n"
+                + "Check your code."
+            )
 
         self._positions[pos_id] = adjusted_position
 
@@ -644,11 +727,11 @@ class Executable:
         if isinstance(item2, str):
 
             raise ValueError(
-                    f"'{item2}' was given as a numeric subtraction value at:"
-                    + f"\n\t{self._token_at_pos_id(pos_id)}",
-                )
+                f"'{item2}' was given as a numeric subtraction value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}",
+            )
 
-        self._append_to_stack(item1-item2)
+        self._append_to_stack(item1 - item2)
 
     def _return(self, token: Token, pos_id: PositionId):
 
@@ -707,7 +790,12 @@ class Executable:
 
         if isinstance(function_location, Null):
 
-            raise ValueError(f"Null was given as a jump target at:\n\t{token}")
+            raise ValueError(
+                f"Null was given as a jump target at:\n\t{token};\n"
+                + "perhaps you have tried to move to "
+                + "an undefined function or main?"
+                + "Check that all of your functions and mains are defined."
+            )
 
         Thread(
             target=self._run_pos_id,
@@ -734,8 +822,20 @@ class Executable:
 
             raise EOFError(
                 f"End of Code reached by thread {pos_id} "
-                + f"at:\n\t{self._token_at_pos(old_position)}"
-            ) from None
+                + f"at:\n\t{self._token_at_pos(old_position)};\n"
+                + "perhaps you have not moved out of a scope?\n"
+                + "Here is how it works:\n"
+                + r"""
+                {
+                    STUFF;
+                    MOVE();
+                }
+                """
+                + "\n\nMOVE() can be jmp or end.\n"
+                + "To avoid errors, all BASECode scopes "
+                + "(written with '{}') "
+                + "should always have some kind of MOVE() call."
+            )
 
         self._positions[pos_id] += 1
 
@@ -764,9 +864,13 @@ class Executable:
 
     def _token_at_pos(self, pos: int):
 
-        if pos >= len(self.TOKENS):
+        if pos >= len(self.TOKENS) or pos < 0:
 
-            raise EOFError(f"No tokens at position {pos+1}") from None
+            raise EOFError(
+                f"No tokens at position {pos};\n"
+                + "perhaps you have moved to an invalid adress?\n"
+                + "Check your code."
+            )
 
         return self.TOKENS[pos]
 

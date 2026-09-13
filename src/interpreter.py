@@ -216,7 +216,7 @@ class Main:
             except Exception as runtime_error:
 
                 print("\n"*5+"The following error was raised:")
-                print(f"\n\t{runtime_error}")
+                print(f"{runtime_error}")
                 print("\nThe variables were: ")
 
                 for var_name, value in code_executable.variables.items():

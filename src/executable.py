@@ -395,18 +395,19 @@ class Executable:
                     if(X == Y)
                     {
                         STUFF;
-                        MOVE();
+                        MOVE(POSITION);
                     }
                     else
                     {
                         STUFF;
-                        MOVE();
+                        MOVE(POSITION);
                     }
                     """
-                    + "\n\nMOVE() can be jmp or end.\n"
+                    + "\n\nMOVE can be jmp, ret, or end.\n"
                     + "To avoid errors, all BASECode scopes "
                     + "(written with '{}') "
-                    + "should always have some kind of MOVE() call."
+                    + "should always have some kind of MOVE() call.\n"
+                    + "Check your code."
                 )
 
             case Type.FUNCTION_TERMINATOR:
@@ -552,9 +553,12 @@ class Executable:
             raise ValueError(
                 f"Non-int '{new_position}' was given as a jump position at:\n\t"
                 + repr(self._token_at_pos_id(pos_id))
+                + ";\n"
+                + "perhaps a function or main was not defined?\n"
+                + "Check your code."
             ) from None
 
-        adjusted_position = int(new_position) - 1
+        adjusted_position = new_position - 1
 
         if adjusted_position < 0:
 
@@ -640,7 +644,7 @@ class Executable:
 
             raise ValueError(f"Non-int top pointer found on stack {stack_name}")
 
-        # We know that self._variables[top_pointer] is an int;
+        # NOTE - We know that self._variables[top_pointer] is an int;
         # so this will not fail.
 
         self._variables[top_pointer] -= 1  # pyright: ignore[reportOperatorIssue]
@@ -701,7 +705,10 @@ class Executable:
 
             raise ValueError(
                 "Null was given as an subtraction value at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}",
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "perhaps you have tried to add an undefined variable?\n"
+                + "Check your code."
             )
 
         self._step_pos(pos_id)
@@ -712,8 +719,11 @@ class Executable:
         if isinstance(item2, Null):
 
             raise ValueError(
-                "Null was given as a subtraction value at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}",
+                "Null was given as an subtraction value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "maybe you tried to add an undefined variable?\n"
+                + "Check your code."
             )
 
         if isinstance(item1, str):
@@ -728,7 +738,11 @@ class Executable:
 
             raise ValueError(
                 f"'{item2}' was given as a numeric subtraction value at:"
-                + f"\n\t{self._token_at_pos_id(pos_id)}",
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "strings cannot be added to integers.\n"
+                + "Perhaps you forgot an int cast?"
+                + "Check your code."
             )
 
         self._append_to_stack(item1 - item2)
@@ -742,6 +756,9 @@ class Executable:
             raise ValueError(
                 f"Non-int return position '{return_position}'given at:\n\t"
                 + f"{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "perhaps a function or main was jumped to and not called?\n"
+                + "Check your code."
             )
 
         self._step_pos(pos_id)
@@ -764,7 +781,10 @@ class Executable:
         if next_token is None:
 
             raise SyntaxError(
-                f"Name of variable not found at:\n\t{token}.",
+                f"Name of variable not found at:\n\t{token};\n"
+                +"the 'set' keyword works like this:\n"
+                +"set VARIABLE_NAME = VALUE;\n"
+                + "Check your code.",
             ) from None
 
         variable_name = next_token.VALUE
@@ -793,8 +813,8 @@ class Executable:
             raise ValueError(
                 f"Null was given as a jump target at:\n\t{token};\n"
                 + "perhaps you have tried to move to "
-                + "an undefined function or main?"
-                + "Check that all of your functions and mains are defined."
+                + "an undefined function or main?\n"
+                + "Check your code."
             )
 
         Thread(
@@ -828,13 +848,14 @@ class Executable:
                 + r"""
                 {
                     STUFF;
-                    MOVE();
+                    MOVE(POSITION);
                 }
                 """
-                + "\n\nMOVE() can be jmp or end.\n"
+                + "\n\nMOVE can be jmp, ret, or end.\n"
                 + "To avoid errors, all BASECode scopes "
                 + "(written with '{}') "
-                + "should always have some kind of MOVE() call."
+                + "should always have some kind of MOVE() call.\n"
+                + "Check your code."
             )
 
         self._positions[pos_id] += 1

@@ -125,8 +125,7 @@ class Main:
         if current_flag not in MAPPINGS:
 
             raise SyntaxError(
-                f"Unknown flag '{current_flag}'; "
-                + f"see {Flag.HELP} for details."
+                f"Unknown flag '{current_flag}'; " + f"see {Flag.HELP} for details."
             ) from None
 
         function = MAPPINGS[current_flag]
@@ -173,9 +172,7 @@ class Main:
 
         if self._current_flag >= len(self.ARGS):
 
-            raise SyntaxError(
-                f"Name missing; see {Flag.HELP} for details."
-            ) from None
+            raise SyntaxError(f"Name missing; see {Flag.HELP} for details.") from None
 
         self._code_name = self.ARGS[self._current_flag]
 
@@ -215,21 +212,21 @@ class Main:
 
             except Exception as runtime_error:
 
-                print("\n"*5+"The following error was raised:")
-                print(f"{runtime_error}")
-                print("\nThe variables were: ")
+                error_text = "\n" * 5 + "The following error was raised:"+"\n"*2
+                error_text += f"{runtime_error}\n"
+                error_text += "\nThe variables were:\n"
 
                 for var_name, value in code_executable.variables.items():
 
-                    print(f"{var_name}: {repr(value)}")
+                    error_text += f"{var_name}: {repr(value)}\n"
 
-
-                print("\nThe positions were: ")
+                error_text += "\nThe positions were:\n"
 
                 for pos_name, location in code_executable.positions.items():
 
-                    # Easier to count
-                    print(f"{pos_name}: {location+1}")
+                    error_text += f"{pos_name}: {location}\n"
+
+                raise RuntimeError(error_text) from None
 
     def _run_flags(self):
 

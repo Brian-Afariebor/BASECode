@@ -140,16 +140,18 @@ class Executable:
 
         if isinstance(item1, str):
 
-            item2 = str(item2)
-
-            self._append_to_stack(item1 + item2)
+            self._append_to_stack(item1 + str(item2))
+            self._step_pos(pos_id)
             return
 
         if isinstance(item2, str):
 
-            item2 = float(item2)
+            self._append_to_stack(str(item1) + item2)
+            self._step_pos(pos_id)
+            return
 
         self._append_to_stack(item1 + item2)
+        self._step_pos(pos_id)
 
     def _append_to_stack(
         self,
@@ -746,6 +748,7 @@ class Executable:
             )
 
         self._append_to_stack(item1 - item2)
+        self._step_pos(pos_id)
 
     def _return(self, token: Token, pos_id: PositionId):
 

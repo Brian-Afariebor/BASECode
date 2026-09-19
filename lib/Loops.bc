@@ -59,9 +59,8 @@ fn Loops::Repeat::Loop
     else
     {
         call(Loops::Function);
-
-
-        // NOTE - Remove is not defined yet
+        
+        set Loops::Dummy = pop(main);
         set Loops::Iterations = rem(Loops::Iterations, 1);
 
         jmp(function::Loops::Repeat::Loop)

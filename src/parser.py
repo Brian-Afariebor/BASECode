@@ -30,6 +30,7 @@ class Parser:
         Type.JUMP: Keyword.JUMP,
         Type.LINE_TERMINATOR: Keyword.LINE_TERMINATOR,
         Type.MAIN: Keyword.MAIN,
+        Type.MULTIPLY: Keyword.MUL,
         Type.OUT: Keyword.OUT,
         Type.POP: Keyword.POP,
         Type.PUSH: Keyword.PUSH,

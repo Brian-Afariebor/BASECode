@@ -341,6 +341,10 @@ class Executable:
 
                 return self._main(token, pos_id)
 
+            case Type.MULTIPLY:
+
+                self._mul(token, pos_id)
+
             case Type.OUT:
 
                 return self._out(token, pos_id)
@@ -607,6 +611,58 @@ class Executable:
             + main_token.VALUE
         ] = self._positions[pos_id]
 
+    def _mul(self, token: Token, pos_id: PositionId):
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item1 = self._pop_from_stack()
+
+        if isinstance(item1, Null):
+
+            raise ValueError(
+                "Null was given as an multiplication value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "perhaps you have tried to add an undefined variable?\n"
+                + "Check your code."
+            )
+
+        self._step_pos(pos_id)
+        self._eval_pos(pos_id)
+
+        item2 = self._pop_from_stack()
+
+        if isinstance(item2, Null):
+
+            raise ValueError(
+                "Null was given as an multiplication value at:"
+                + f"\n\t{self._token_at_pos_id(pos_id)}"
+                + ";\n"
+                + "perhaps you have tried to add an undefined variable?\n"
+                + "Check your code."
+            )
+
+        if isinstance(item1, int):
+
+            self._append_to_stack(item1 * item2)
+            self._step_pos(pos_id)
+            return
+
+        if isinstance(item2, int):
+
+            self._append_to_stack(item2 * item1)
+            self._step_pos(pos_id)
+            return
+
+        if isinstance(item1, float) and isinstance(item2, float):
+
+            self._append_to_stack(item1 * item2)
+            self._step_pos(pos_id)
+            return
+
+        # TODO - Add str * float case
+
     def _out(self, token: Token, pos_id: PositionId):
 
         self._step_pos(pos_id)
@@ -743,7 +799,7 @@ class Executable:
                 + f"\n\t{self._token_at_pos_id(pos_id)}"
                 + ";\n"
                 + "strings cannot be added to integers.\n"
-                + "Perhaps you forgot an int cast?"
+                + "Perhaps you forgot an int cast?\n"
                 + "Check your code."
             )
 
@@ -785,8 +841,8 @@ class Executable:
 
             raise SyntaxError(
                 f"Name of variable not found at:\n\t{token};\n"
-                +"the 'set' keyword works like this:\n"
-                +"set VARIABLE_NAME = VALUE;\n"
+                + "the 'set' keyword works like this:\n"
+                + "set VARIABLE_NAME = VALUE;\n"
                 + "Check your code.",
             ) from None
 

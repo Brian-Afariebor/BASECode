@@ -4,6 +4,7 @@ from tokens import TokenStream
 from typing import Self
 
 type TokenFilter = Callable[[TokenStream], TokenStream]
+type FilteredTokenStream = TokenStream
 
 
 class Filter:
@@ -25,10 +26,10 @@ class Filter:
         cls,
         mode: ExecutionMode,
         tokens: TokenStream,
-    ) -> TokenStream | None:
+    ) -> FilteredTokenStream | None:
 
-        if mode in cls._filters:
+        if mode not in cls._filters:
 
-            return cls._filters[mode](tokens)
+            return None
 
-        return None
+        return cls._filters[mode](tokens)

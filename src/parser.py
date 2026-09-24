@@ -28,7 +28,6 @@ class Parser:
 
         return alligned_regex
 
-    # TODO -  Implement this method
     @classmethod
     def parse(cls, code: BASECodeCode) -> TokenStream:
 
@@ -81,12 +80,3 @@ class Parser:
 
         cls._mappings[type] = regex
         return cls
-
-if __name__ == "__main__":
-
-    print(
-        Parser.register_regex(
-            Type.UNMAPPED,
-            Regex.UNMAPPED,
-        ).parse("Hello, World!"),
-    )

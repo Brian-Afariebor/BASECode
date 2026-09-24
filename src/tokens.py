@@ -1,13 +1,17 @@
 from dataclasses import dataclass
 from token_types import Type
 
+type TokenValue = str
+type Column = int
+type Row = int
+
 @dataclass
 class Token:
 
-    value: str
+    value: TokenValue
     type: Type
-    row: int
-    column: int
+    row: Row
+    column: Column
 
 
 type TokenStream = list[Token]

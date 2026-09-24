@@ -13,7 +13,7 @@ class State:
     tokens: Final[FilteredTokenStream]
     mode: Final[ExecutionMode]
 
-    _vars: dict[VariableName, VariableValue]
+    _variables: dict[VariableName, VariableValue]
     _positions: dict[PositionId, Position]
 
     def __init__(
@@ -26,7 +26,29 @@ class State:
         self.mode = mode
 
         self._positions = {}
-        self._vars = {}
+        self._variables = {}
+
+    def get_position(
+        self,
+        position_id: PositionId,
+    ) -> Position | None:
+
+        if position_id not in self._positions:
+
+            return None
+
+        return self._positions[position_id]
+
+    def get_variable(
+        self,
+        variable_name: VariableName,
+    ) -> VariableValue | None:
+
+        if variable_name not in self._variables:
+
+            return None
+
+        return self._variables[variable_name]
 
     def set_position(
         self,
@@ -36,10 +58,14 @@ class State:
 
         self._positions[position_id] = position
 
-    def get_position(self, position_id: PositionId) -> Position | None:
+        return self
 
-        if position_id not in self._positions:
+    def set_variable(
+        self,
+        variable_name: VariableName,
+        variable_value: VariableValue,
+    ):
 
-            return None
+        self._variables[variable_name] = variable_value
 
-        return self._positions[position_id]
+        return self

@@ -64,14 +64,14 @@ class Parser:
 
                 line_start -= len(lines[-1])
 
-                buffer.append(
-                    Token(
-                        token_string,
-                        token_type,
-                        line,
-                        column,
-                    ),
-                )
+            buffer.append(
+                Token(
+                    token_string,
+                    token_type,
+                    line,
+                    column,
+                ),
+            )
 
         return buffer
 

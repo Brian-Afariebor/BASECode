@@ -59,7 +59,7 @@ class State:
                 Is None if the position id is not registered.
         """
 
-        if not self._registered_position_id(position_id):
+        if not self.registered_position_id(position_id):
 
             return None
 
@@ -80,11 +80,29 @@ class State:
                 Returns none if the variable has not been defined. 
         """
 
-        if not self._registered_variable_name(variable_name):
+        if not self.registered_variable_name(variable_name):
 
             return None
 
         return self._variables[variable_name]
+
+    def get_token_at_position_id(self, position_id: PositionId):
+
+        position = self.get_position(position_id)
+
+        if position is None:
+
+            return None
+
+        return self.tokens[position]
+
+    def registered_position_id(self, position_id: PositionId):
+
+        return position_id in self._positions
+
+    def registered_variable_name(self, variable_name: VariableName):
+
+        return variable_name in self._variables
 
     def set_position(
         self,
@@ -103,7 +121,7 @@ class State:
                 Returns None if the position is not valid.
         """
 
-        if not self._valid_position(position):
+        if not self.valid_position(position):
 
             return None
 
@@ -116,7 +134,7 @@ class State:
         position_id: PositionId,
     ) -> bool:
 
-        if not self._registered_position_id(position_id):
+        if not self.registered_position_id(position_id):
 
             return False
 
@@ -136,14 +154,7 @@ class State:
 
         return self
 
-    def _registered_position_id(self, position_id: PositionId):
-
-        return position_id in self._positions
-
-    def _registered_variable_name(self, variable_name: VariableName):
-
-        return variable_name in self._variables
-
-    def _valid_position(self, adress: Position):
+    def valid_position(self, adress: Position):
 
         return adress in range(0,len(self.tokens))
+    

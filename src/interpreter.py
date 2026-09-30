@@ -1,7 +1,10 @@
+from abc import ABC
+
+from collections.abc import Callable
+
 from errors import PositionError
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
-from implementations import Implementation
 
 from states import Position
 from states import PositionId
@@ -12,7 +15,9 @@ from tokens import Token
 from token_types import Type
 
 
-class Interpreter:
+class Interpreter(ABC):
+
+    type Implementation = Callable[[PositionId, State, Interpreter], State]
 
     _mappings: dict[tuple[ExecutionMode, Type], Implementation] = {}
 
@@ -103,38 +108,46 @@ class Interpreter:
 
         return cls
 
-    # TODO - Implement this method
     @classmethod
-    def run(
-        cls,
-        tokens: FilteredTokenStream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
-    ) -> VariableValue:
+    def run(cls, tokens: FilteredTokenStream, mode: ExecutionMode,):
 
         state = cls.generate_state(tokens, mode)
 
-        main_id = cls.MAIN_POSITION_ID
+        interpreter = Interpreter()
+        
+        interpreter.run_position(cls.MAIN_POSITION_ID, state)
 
-        while state.get_position(main_id) is not None:
+    def run_position(self, position_id: PositionId, state: State):
 
-            token = state.get_token_at_position_id(main_id)
+        while state.registered_position_id(position_id):
+
+            token = state.get_token_at_position_id(position_id)
 
             if token is None:
 
-                raise PositionError(
-                    f"Invalid Main Position {state.get_position(main_id)}",
+                raise RuntimeError(
+                    f"Position {position_id} did not sync with tokens.",
                 )
 
-            implementation = cls.get_implemenation_from_token(token, mode)
+            implementation = self.get_implemenation_from_token(
+                token,
+                state.mode,
+            )
 
             if implementation is None:
 
-                type = token.type
-
-                raise NotImplementedError(
-                    f"Function for type {type} and mode {mode} is not defined",
+                raise SyntaxError(
+                    f"Implementation of '{token.value}' is not registered.",
                 )
 
-            state = implementation(state, token)
+            state = implementation(position_id, state, self)
 
-            state.step_position(main_id)
+            new_state = state.step_position(position_id)
+
+            if new_state is None:
+
+                raise RuntimeError(
+                    f"End of code reached for position_id {position_id}",
+                )
+
+            state = new_state

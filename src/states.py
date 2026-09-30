@@ -44,6 +44,15 @@ class State:
         self._positions = {}
         self._variables = {}
 
+        # TODO - Add Null
+        self._return_value: VariableValue = 0
+
+
+    @property
+    def return_value(self):
+
+        return self._return_value
+
     def get_position(
         self,
         position_id: PositionId,
@@ -65,6 +74,17 @@ class State:
 
         return self._positions[position_id]
 
+
+    def get_token_at_position_id(self, position_id: PositionId):
+
+        position = self.get_position(position_id)
+
+        if position is None:
+
+            return None
+
+        return self.tokens[position]
+
     def get_variable(
         self,
         variable_name: VariableName,
@@ -85,16 +105,6 @@ class State:
             return None
 
         return self._variables[variable_name]
-
-    def get_token_at_position_id(self, position_id: PositionId):
-
-        position = self.get_position(position_id)
-
-        if position is None:
-
-            return None
-
-        return self.tokens[position]
 
     def registered_position_id(self, position_id: PositionId):
 
@@ -132,17 +142,17 @@ class State:
     def step_position(
         self,
         position_id: PositionId,
-    ) -> bool:
+    ) -> None | Self:
 
         if not self.registered_position_id(position_id):
 
-            return False
+            return None
 
         current_adress = self._positions[position_id]
 
         new_adress: Position = current_adress + 1
 
-        return self.set_position(position_id, new_adress) is None
+        return self.set_position(position_id, new_adress)
 
     def set_variable(
         self,

@@ -114,6 +114,14 @@ class State:
 
         return variable_name in self._variables
 
+    def remove_position(self, position_id: PositionId):
+
+        if self.registered_position_id(position_id):
+
+          del self._positions[position_id]
+
+        return self  
+
     def set_position(
         self,
         position_id: PositionId,
@@ -167,4 +175,3 @@ class State:
     def valid_position(self, adress: Position):
 
         return adress in range(0,len(self.tokens))
-    

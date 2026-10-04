@@ -2,14 +2,14 @@ from abc import ABC
 
 from collections.abc import Callable
 
-from errors import PositionError
+from errors import PositionError  # pyright: ignore[reportUnusedImport]
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
 
 from states import Position
 from states import PositionId
 from states import State
-from states import VariableValue
+from states import VariableValue  # pyright: ignore[reportUnusedImport]
 
 from tokens import Token
 from token_types import Type
@@ -109,12 +109,16 @@ class Interpreter(ABC):
         return cls
 
     @classmethod
-    def run(cls, tokens: FilteredTokenStream, mode: ExecutionMode,):
+    def run(
+        cls,
+        tokens: FilteredTokenStream,
+        mode: ExecutionMode = ExecutionMode.NORMAL,
+    ):
 
         state = cls.generate_state(tokens, mode)
 
         interpreter = Interpreter()
-        
+
         interpreter.run_position(cls.MAIN_POSITION_ID, state)
 
     def run_position(self, position_id: PositionId, state: State):
@@ -144,10 +148,15 @@ class Interpreter(ABC):
 
             new_state = state.step_position(position_id)
 
-            if new_state is None:
+            if new_state is not None:
+
+                state = new_state
+                continue
+
+            if state.registered_position_id(position_id):
 
                 raise RuntimeError(
                     f"End of code reached for position_id {position_id}",
                 )
 
-            state = new_state
+        return state.return_value

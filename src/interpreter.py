@@ -127,18 +127,14 @@ class Interpreter(ABC):
 
             token = state.get_token_at_position_id(position_id)
 
-            self.raise_null_token_error(position_id, token)
-
-            assert token is not None
+            token = self.raise_null_token_error(position_id, token)
 
             implementation = self.get_implemenation_from_token(
                 token,
                 state.mode,
             )
 
-            self.raise_unimplemented_error(token, implementation)
-
-            assert implementation is not None
+            implementation = self.raise_unimplemented_error(token, implementation)
 
             state = implementation(position_id, state, self)
 
@@ -165,6 +161,8 @@ class Interpreter(ABC):
                 f"Implementation of '{token.value}' is not registered.",  # pyright: ignore[reportOptionalMemberAccess]
             )
 
+        return implementation
+
     def raise_null_token_error(
         self,
         position_id: PositionId,
@@ -174,3 +172,5 @@ class Interpreter(ABC):
             raise RuntimeError(
                 f"Position {position_id} did not sync with tokens.",
             )
+
+        return token

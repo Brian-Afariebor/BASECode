@@ -15,7 +15,7 @@ class State:
 
     Attributes:
         tokens (Final[FilteredTokenStream]): The tokenized code.
-        mode(Final[ExecutionMode]): THe mode to run the code with. 
+        mode(Final[ExecutionMode]): THe mode to run the code with.
     """
 
     tokens: Final[FilteredTokenStream]
@@ -23,6 +23,7 @@ class State:
 
     _variables: dict[VariableName, VariableValue]
     _positions: dict[PositionId, Position]
+    _return_value: VariableValue
 
     def __init__(
         self,
@@ -45,8 +46,7 @@ class State:
         self._variables = {}
 
         # TODO - Add Null
-        self._return_value: VariableValue = 0
-
+        self._return_value = 0
 
     @property
     def return_value(self):
@@ -63,7 +63,7 @@ class State:
             position_id (PositionId): The position id to get the value of.
 
         Returns:
-            Position | None: 
+            Position | None:
                 The value of the position id.
                 Is None if the position id is not registered.
         """
@@ -73,7 +73,6 @@ class State:
             return None
 
         return self._positions[position_id]
-
 
     def get_token_at_position_id(self, position_id: PositionId):
 
@@ -97,7 +96,7 @@ class State:
         Returns:
             VariableValue | None:
                 The value of the variable.
-                Returns none if the variable has not been defined. 
+                Returns none if the variable has not been defined.
         """
 
         if not self.registered_variable_name(variable_name):
@@ -118,9 +117,21 @@ class State:
 
         if self.registered_position_id(position_id):
 
-          del self._positions[position_id]
+            del self._positions[position_id]
 
-        return self  
+        return self
+
+    def return_value_from_position(
+        self,
+        value: VariableValue,
+        position_id: PositionId,
+    ):
+
+        self._return_value = value
+
+        self.remove_position(position_id)
+
+        return self
 
     def set_position(
         self,
@@ -134,7 +145,7 @@ class State:
             position (Position): The position to set the position id to.
 
         Returns:
-            None | Self: 
+            None | Self:
                 Sets the value of the position.
                 Returns None if the position is not valid.
         """
@@ -174,4 +185,4 @@ class State:
 
     def valid_position(self, adress: Position):
 
-        return adress in range(0,len(self.tokens))
+        return adress >= 0 and adress < len(self.tokens)

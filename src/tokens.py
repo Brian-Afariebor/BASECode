@@ -14,4 +14,4 @@ class Token:
     column: Column
 
 
-type TokenStream = list[Token]
+class TokenStream(list[Token]): ...

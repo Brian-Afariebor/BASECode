@@ -3,8 +3,11 @@ from execution_modes import ExecutionMode
 from tokens import TokenStream
 from typing import Self
 
-type TokenFilter = Callable[[TokenStream], TokenStream]
-type FilteredTokenStream = TokenStream
+class FilteredTokenStream(TokenStream): ...
+
+type TokenFilter = Callable[[TokenStream], FilteredTokenStream]
+
+
 
 
 class Filter:

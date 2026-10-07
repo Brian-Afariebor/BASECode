@@ -138,7 +138,10 @@ class Interpreter(ABC):
                 state.mode,
             )
 
-            implementation = self.raise_unimplemented_error(token, implementation)
+            implementation = self.raise_unimplemented_error(
+                token,
+                implementation,
+            )
 
             state = implementation(position_id, state, self)
 

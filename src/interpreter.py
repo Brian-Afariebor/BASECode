@@ -121,7 +121,11 @@ class Interpreter(ABC):
 
         interpreter.run_position(cls.MAIN_POSITION_ID, state)
 
-    def run_position(self, position_id: PositionId, state: State):
+    def run_position(
+        self,
+        position_id: PositionId,
+        state: State,
+    ):
 
         while state.registered_position_id(position_id):
 
@@ -154,11 +158,14 @@ class Interpreter(ABC):
         return state.return_value
 
     def raise_unimplemented_error(
-        self, token: Token, implementation: Implementation | None
+        self,
+        token: Token,
+        implementation: Implementation | None,
     ):
         if implementation is None:
             raise SyntaxError(
-                f"Implementation of '{token.value}' is not registered.",  # pyright: ignore[reportOptionalMemberAccess]
+                f"Token '{token}' has an unregistered type;\n"
+                + "check your installation of BASECode and your code.",  # pyright: ignore[reportOptionalMemberAccess]
             )
 
         return implementation

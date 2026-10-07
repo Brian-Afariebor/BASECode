@@ -1,8 +1,9 @@
-from enum import StrEnum
+from enum import Enum
 
 
 # Yes, we will have to explicitly write out keywords,
 # but that doesn't really matter
-class Regex(StrEnum):
+class Regex(Enum):
 
+    END = "end"
     UNMAPPED = "."

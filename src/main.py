@@ -1,13 +1,13 @@
 from filter import FilteredTokenStream
-
-from implementations import end
 from interpreter import Interpreter
+from mappings import register_all
 from tokens import Token
 from token_types import Type
 
 if __name__ == "__main__":
 
-    Interpreter.register(end, Type.END)
+    register_all()
+    
     Interpreter.run(
         FilteredTokenStream(
             [

@@ -17,21 +17,21 @@ class Parser:
     @classmethod
     def get_regex_string(cls):
 
-        regex = ""
+        regex_string = ""
 
         for type, regex in cls._mappings.items():
 
-            regex += f"(?P<{type._name_}>{regex})"
-            regex += "|"
+            regex_string += f"(?P<{type.name}>{regex.value})"
+            regex_string += "|"
 
-        alligned_regex = regex[:-1]
+        alligned_regex = regex_string[:-1]
 
         return alligned_regex
 
     @classmethod
     def parse(cls, code: BASECodeCode) -> TokenStream:
 
-        buffer: TokenStream = []
+        buffer: TokenStream = TokenStream()
 
         regex_string = cls.get_regex_string()
 

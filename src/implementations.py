@@ -19,11 +19,10 @@ def end(
 
     state = new_state
 
+    # TODO - Replace with pop from stack
     return_value = interpreter.run_position(position_id, state)
 
-    _ = state.return_value_from_position(return_value, position_id)
-
-    return state
+    return state.return_value_from_position(return_value, position_id)
 
 
 def integer(

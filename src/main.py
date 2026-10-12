@@ -1,18 +1,19 @@
 from filter import FilteredTokenStream
 from interpreter import Interpreter
+from linker import LinkedCode
 from mappings import register_all
-from tokens import Token
-from token_types import Type
+from parser import Parser
 
 if __name__ == "__main__":
 
     register_all()
-    
+
+    # TODO - Add linking
+    tokens = Parser.parse(LinkedCode("end0"))
+
+    # TODO - Add filtering
+    filtered_tokens = FilteredTokenStream(tokens)
+
     Interpreter.run(
-        FilteredTokenStream(
-            [
-                Token("end", Type.END, 0, 0),
-                Token(")", Type.UNMAPPED, 0, 0),
-            ]
-        )
+        filtered_tokens
     )

@@ -119,7 +119,7 @@ class Interpreter(ABC):
 
         interpreter = Interpreter()
 
-        interpreter.run_position(cls.MAIN_POSITION_ID, state)
+        return interpreter.run_position(cls.MAIN_POSITION_ID, state)
 
     def run_position(
         self,

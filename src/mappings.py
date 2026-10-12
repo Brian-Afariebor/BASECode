@@ -13,9 +13,10 @@ from token_types import Type
 
 def register_all():
 
+    # NOTE - These have to go in a specific order to not cause problems
     register_end()
-    register_unmapped()
     register_integer()
+    register_unmapped()
 
 
 def register_end():

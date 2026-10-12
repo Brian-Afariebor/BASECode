@@ -1,5 +1,8 @@
+from linker import LinkedCode
+
 from re import finditer
 
+from regexes import Keyword
 from regexes import Regex
 
 from tokens import Token
@@ -7,12 +10,10 @@ from tokens import TokenStream
 
 from token_types import Type
 
-type BASECodeCode = str
-
 
 class Parser:
 
-    _mappings: dict[Type, Regex] = {}
+    _mappings: dict[Type, Regex|Keyword] = {}
 
     @classmethod
     def get_regex_string(cls):
@@ -29,7 +30,7 @@ class Parser:
         return alligned_regex
 
     @classmethod
-    def parse(cls, code: BASECodeCode) -> TokenStream:
+    def parse(cls, code: LinkedCode) -> TokenStream:
 
         buffer: TokenStream = TokenStream()
 
@@ -76,7 +77,7 @@ class Parser:
         return buffer
 
     @classmethod
-    def register_regex(cls, type: Type, regex: Regex):
+    def register_regex(cls, type: Type, regex: Regex | Keyword):
 
         cls._mappings[type] = regex
         return cls

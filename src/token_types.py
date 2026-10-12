@@ -1,7 +1,43 @@
 from enum import auto
 from enum import Enum
+from enum import unique
 
+@unique
 class Type(Enum):
 
+    ADD = auto()
+    CALL = auto()
+    COMMENT = auto()
+    DEBUG = auto()
+    DELETE = auto()
+    DOCSTRING = auto()
+    DUMMY = auto()
+    ELSE = auto()
     END = auto()
+    FLOAT = auto()
+    FUNCTION_TERMINATOR = auto()
+    FUNCTION = auto()
+    IDENTIFIER = auto()
+    IF = auto()
+    INPUT = auto()
+    INT_CAST = auto()
+    INTEGER = auto()
+    JUMP = auto()
+    LINE_TERMINATOR = auto()
+    MAIN = auto()
+    MULTIPLY = auto()
+    OUT = auto()
+    POP = auto()
+    PUSH = auto()
+    RAW_SET = auto()
+    RAW_STACK_SET = auto()
+    REFERENCE = auto()
+    REMOVE = auto()
+    RETURN = auto()
+    SET = auto()
+    SHEBANG = auto()
+    START = auto()
+    STOP = auto()
+    STRING = auto()
     UNMAPPED = auto()
+    WHITESPACE = auto()

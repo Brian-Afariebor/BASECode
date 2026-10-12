@@ -1,11 +1,26 @@
 from enum import Enum
+from enum import unique
 
 
-# Yes, we will have to explicitly write out keywords,
-# but that doesn't really matter
+@unique
 class Regex(Enum):
 
-    # SECTION - Keywords
+    COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
+    DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
+    DUMMY = r"\(|{|}|,|="
+    FLOAT = r"-?\d+?\.\d+(e\d+)?"
+    FUNCTION_TERMINATOR = r"\)"
+    IDENTIFIER = r"[\w:]+"
+    INTEGER = r"-?\d+(e\d+)?"
+    SHEBANG = r"#!.*\n"
+    STRING = r"\"(?:[^\"]*)\""
+    UNMAPPED = "."
+    WHITESPACE = r"[\s]+"
+
+
+@unique
+class Keyword(Enum):
+
     ADD = "add"
     CALL = "call"
     DEBUG = "dbg"
@@ -35,18 +50,3 @@ class Regex(Enum):
     SET = "set"
     START = "start"
     STOP = "stop"
-    # !SECTION
-
-    # SECTION - Regexes
-    COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
-    DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
-    DUMMY = r"\(|{|}|,|="
-    FLOAT = r"-?\d+?\.\d+(e\d+)?"
-    FUNCTION_TERMINATOR = r"\)"
-    IDENTIFIER = r"[\w:]+"
-    INTEGER = r"-?\d+(e\d+)?"
-    SHEBANG = r"#!.*\n"
-    STRING = r"\"(?:[^\"]*)\""
-    UNMAPPED = "."
-    WHITESPACE = r"[\s]+"
-    # !SECTION

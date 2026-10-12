@@ -1,6 +1,8 @@
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
-from typing import Final, Self
+from regexes import Keyword
+from typing import Final
+from typing import Self
 
 type VariableName = str
 
@@ -48,10 +50,58 @@ class State:
         # TODO - Add Null
         self._return_value = 0
 
+    # SECTION - Properties
     @property
     def return_value(self):
 
         return self._return_value
+
+    #!SECTION
+
+    # SECTION - Public methods
+    def append_to_stack(
+        self,
+        value: VariableValue,
+        stack_name: str = Keyword.MAIN_NAME.value,
+    ):
+
+        first_value = reference(stack_name) + "0"
+        top_pointer = reference(stack_name) + "tp"
+
+        if first_value not in self._variables:
+
+            return self.set_variable(
+                first_value,
+                value,
+            ).set_variable(
+                top_pointer,
+                0,
+            )
+
+        top_pointer_value = self.get_variable(top_pointer)
+
+        if not isinstance(top_pointer_value, int):
+
+            raise ValueError(
+                f"Non-int top pointer found on stack {stack_name};\n"
+                + "maybe you changed the value of the top pointer?\n"
+                + "Check your code."
+            )
+
+        new_top_pointer_value = top_pointer_value + 1
+
+        return self.set_variable(
+            top_pointer,
+            new_top_pointer_value,
+        ).set_variable(
+            reference(
+                stack_name,
+            )
+            + str(
+                new_top_pointer_value,
+            ),
+            value,
+        )
 
     def get_position(
         self,
@@ -129,9 +179,7 @@ class State:
 
         self._return_value = value
 
-        self.remove_position(position_id)
-
-        return self
+        return self.remove_position(position_id)
 
     def set_position(
         self,
@@ -186,3 +234,10 @@ class State:
     def valid_position(self, adress: Position):
 
         return adress >= 0 and adress < len(self.tokens)
+
+    #!SECTION
+
+
+def reference(variable: str):
+
+    return variable + Keyword.REFERENCE_OPERATOR.value

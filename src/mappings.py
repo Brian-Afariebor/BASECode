@@ -1,4 +1,7 @@
-from implementations import end
+# NOTE - Using a wildcard import here will help with registry;
+# we use almost all of the methods in implementations anyway
+from implementations import *
+
 from interpreter import Interpreter
 from parser import Parser
 
@@ -12,12 +15,21 @@ def register_all():
 
     register_end()
     register_unmapped()
+    register_integer()
+
 
 def register_end():
 
     Interpreter.register(end, Type.END)
     Parser.register_regex(Type.END, Keyword.END)
 
+
 def register_unmapped():
 
     Parser.register_regex(Type.UNMAPPED, Regex.UNMAPPED)
+
+
+def register_integer():
+
+    Parser.register_regex(Type.INTEGER, Regex.INTEGER)
+    Interpreter.register(integer, Type.INTEGER)

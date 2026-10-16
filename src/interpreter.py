@@ -184,3 +184,34 @@ class Interpreter(ABC):
             )
 
         return token
+
+    def step_position(
+        self,
+        state: State,
+        position_id: PositionId,
+    ) -> State | None:
+
+        stepped_state = state.step_position(position_id)
+
+        if stepped_state is None:
+
+            return None
+
+        state = stepped_state
+
+        token = state.get_token_at_position_id(position_id)
+
+        if token is None:
+
+            return None
+
+        implementation = Interpreter.get_implemenation_from_token(
+            token,
+            state.mode,
+        )
+
+        if implementation is None:
+
+            return None
+
+        return implementation(position_id, state, self)

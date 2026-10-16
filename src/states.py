@@ -103,6 +103,14 @@ class State:
             value,
         )
 
+    def delete_variable(self, variable_name: VariableName):
+
+        if self.registered_variable_name(variable_name):
+
+            del self._variables[variable_name]
+
+        return self
+
     def get_position(
         self,
         position_id: PositionId,
@@ -154,6 +162,36 @@ class State:
             return None
 
         return self._variables[variable_name]
+
+    def pop_from_stack(
+            self,
+            stack_name: VariableName = Keyword.MAIN_NAME.value,
+        ) -> VariableValue | None:
+
+        stack_reference = reference(stack_name)
+
+        top_pointer_name = stack_reference + "tp"
+
+        top_pointer_value = self.get_variable(top_pointer_name)
+
+        if not isinstance(top_pointer_value, int):
+
+            return None
+
+        top_value_pointer_name = stack_reference + str(top_pointer_value)
+
+        top_value = self.get_variable(top_value_pointer_name)
+
+        self.delete_variable(top_value_pointer_name).set_variable(
+            top_pointer_name,
+              top_pointer_value -1,
+            )
+
+        if top_pointer_value <= 0:
+
+            self.delete_variable(top_pointer_name)
+
+        return top_value
 
     def registered_position_id(self, position_id: PositionId):
 
@@ -238,6 +276,6 @@ class State:
     #!SECTION
 
 
-def reference(variable: str):
+def reference(variable: VariableName)->str:
 
     return variable + Keyword.REFERENCE_OPERATOR.value

@@ -10,7 +10,10 @@ def end(
     interpreter: Interpreter,
 ):
 
-    new_state = state.step_position(position_id)
+    new_state = interpreter.step_position(
+        state,
+        position_id,
+    )
 
     if new_state is None:
 
@@ -19,8 +22,11 @@ def end(
 
     state = new_state
 
-    # TODO - Replace with pop from stack
-    return_value = interpreter.run_position(position_id, state)
+    return_value = state.pop_from_stack()
+
+    if return_value is None:
+
+        return state.return_value_from_position(0, position_id)
 
     return state.return_value_from_position(return_value, position_id)
 
@@ -51,6 +57,6 @@ def integer(
         # but if it does there's an error
 
         # TODO - Improve error message
-        raise RuntimeError(f"Error {e} raised")
+        raise RuntimeError(f"Error '{e}' raised")
 
     return state.append_to_stack(int_value)

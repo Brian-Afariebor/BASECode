@@ -2,7 +2,12 @@ from interpreter import Interpreter
 
 from states import PositionId
 from states import State
+from token_types import Type
 
+def register_all():
+
+    Interpreter.register(end, Type.END)
+    Interpreter.register(integer, Type.INTEGER)
 
 def end(
     position_id: PositionId,

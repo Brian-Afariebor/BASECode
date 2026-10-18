@@ -3,11 +3,13 @@ from execution_modes import ExecutionMode
 from tokens import TokenStream
 from typing import Self
 
+
+type UnfilteredTokenSream = TokenStream
+
 class FilteredTokenStream(TokenStream): ...
 
-type TokenFilter = Callable[[TokenStream], FilteredTokenStream]
 
-
+type TokenFilter = Callable[[UnfilteredTokenSream], FilteredTokenStream]
 
 
 class Filter:
@@ -28,7 +30,7 @@ class Filter:
     def filter(
         cls,
         mode: ExecutionMode,
-        tokens: TokenStream,
+        tokens: UnfilteredTokenSream,
     ) -> FilteredTokenStream | None:
 
         if mode not in cls._filters:

@@ -3,22 +3,6 @@ from enum import unique
 
 
 @unique
-class Regex(Enum):
-
-    COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
-    DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
-    DUMMY = r"\(|{|}|,|="
-    FLOAT = r"-?\d+?\.\d+(e\d+)?"
-    FUNCTION_TERMINATOR = r"\)"
-    IDENTIFIER = r"[\w:]+"
-    INTEGER = r"-?\d+(e\d+)?"
-    SHEBANG = r"#!.*\n"
-    STRING = r"\"(?:[^\"]*)\""
-    UNMAPPED = "."
-    WHITESPACE = r"[\s]+"
-
-
-@unique
 class Keyword(Enum):
 
     ADD = "add"
@@ -50,3 +34,19 @@ class Keyword(Enum):
     SET = "set"
     START = "start"
     STOP = "stop"
+
+
+@unique
+class Regex(Enum):
+
+    COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
+    DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
+    DUMMY = r"\(|{|}|,|="
+    FLOAT = r"-?\d+?\.\d+(e\d+)?"
+    FUNCTION_TERMINATOR = r"\)"
+    IDENTIFIER = rf"[\w_{repr(Keyword.REFERENCE_OPERATOR)}]+"
+    INTEGER = r"-?\d+(e\d+)?"
+    SHEBANG = r"#!.*\n"
+    STRING = r"\"(?:[^\"]*)\""
+    UNMAPPED = "."
+    WHITESPACE = r"[\s]+"

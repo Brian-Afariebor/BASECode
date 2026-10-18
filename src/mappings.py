@@ -13,9 +13,19 @@ def register_all():
 
     register_all_filters()
     register_all_implementations()
+    register_all_regexes()
 
-def register_regexes():
+def register_all_regexes():
 
-    Parser.register_regex(Type.END, Keyword.END)
+    register_keywords()
+    register_non_unmapped_regexes()
+    register_unmapped_regex()
+
+def register_unmapped_regex():
     Parser.register_regex(Type.UNMAPPED, Regex.UNMAPPED)
+
+def register_non_unmapped_regexes():
     Parser.register_regex(Type.INTEGER, Regex.INTEGER)
+
+def register_keywords():
+    Parser.register_regex(Type.END, Keyword.END)

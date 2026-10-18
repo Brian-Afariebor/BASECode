@@ -29,8 +29,8 @@ class Filter:
     @classmethod
     def filter(
         cls,
-        mode: ExecutionMode,
         tokens: UnfilteredTokenSream,
+        mode: ExecutionMode = ExecutionMode.NORMAL,
     ) -> FilteredTokenStream | None:
 
         if mode not in cls._filters:

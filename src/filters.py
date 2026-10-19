@@ -8,6 +8,7 @@ from token_types import Type
 
 NORMAL_FIlTER_TYPES = [
     Type.DUMMY,
+    Type.WHITESPACE,
 ]
 
 

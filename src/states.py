@@ -1,13 +1,20 @@
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
+
+from intrinsics import Integer
+from intrinsics import Float
+from intrinsics import String
+from intrinsics import Null
+from intrinsics import NULL
+
 from regexes import Keyword
+
 from typing import Final
 from typing import Self
 
 type VariableName = str
 
-# TODO - Add null class
-type VariableValue = str | int | float
+type VariableValue = String | Integer | Float | Null
 type Position = int
 type PositionId = str
 
@@ -46,9 +53,7 @@ class State:
 
         self._positions = {}
         self._variables = {}
-
-        # TODO - Add Null
-        self._return_value = 0
+        self._return_value = NULL
 
     # SECTION - Properties
     @property
@@ -75,12 +80,12 @@ class State:
                 value,
             ).set_variable(
                 top_pointer,
-                0,
+                Integer(0),
             )
 
         top_pointer_value = self.get_variable(top_pointer)
 
-        if not isinstance(top_pointer_value, int):
+        if not isinstance(top_pointer_value, Integer):
 
             raise ValueError(
                 f"Non-int top pointer found on stack {stack_name};\n"
@@ -88,7 +93,7 @@ class State:
                 + "Check your code."
             )
 
-        new_top_pointer_value = top_pointer_value + 1
+        new_top_pointer_value = Integer(top_pointer_value + 1)
 
         return self.set_variable(
             top_pointer,
@@ -174,7 +179,7 @@ class State:
 
         top_pointer_value = self.get_variable(top_pointer_name)
 
-        if not isinstance(top_pointer_value, int):
+        if not isinstance(top_pointer_value, Integer):
 
             return None
 
@@ -184,7 +189,7 @@ class State:
 
         self.delete_variable(top_value_pointer_name).set_variable(
             top_pointer_name,
-              top_pointer_value -1,
+              Integer(top_pointer_value -1),
             )
 
         if top_pointer_value <= 0:

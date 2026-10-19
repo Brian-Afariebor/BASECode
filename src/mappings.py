@@ -22,10 +22,19 @@ def register_all_regexes():
     register_unmapped_regex()
 
 def register_unmapped_regex():
+
     Parser.register_regex(Type.UNMAPPED, Regex.UNMAPPED)
 
 def register_non_unmapped_regexes():
+
+    Parser.register_regex(Type.FLOAT, Regex.FLOAT)
+
+    # NOTE - Floats have to go before integers to fi passing issues
     Parser.register_regex(Type.INTEGER, Regex.INTEGER)
+    
+    Parser.register_regex(Type.DUMMY, Regex.DUMMY)
+    Parser.register_regex(Type.WHITESPACE, Regex.WHITESPACE)
 
 def register_keywords():
+
     Parser.register_regex(Type.END, Keyword.END)

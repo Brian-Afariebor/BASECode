@@ -1,7 +1,7 @@
 from filter import Filter
 from interpreter import Interpreter
 from linker import LinkedCode
-from mappings import register_all
+from mappings import register_all 
 from parser import Parser
 
 def main():
@@ -9,7 +9,7 @@ def main():
     register_all()
 
     # TODO - Add linking
-    tokens = Parser.parse(LinkedCode("end-1"))
+    tokens = Parser.parse(LinkedCode("end(-3.141);"))
 
     filtered_tokens = Filter.filter(tokens)
 

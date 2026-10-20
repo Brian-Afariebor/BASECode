@@ -20,7 +20,7 @@ def end(
     interpreter: Interpreter,
 ):
 
-    new_state = interpreter.step_position(
+    new_state = interpreter.step_and_run_position(
         state,
         position_id,
     )

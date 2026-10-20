@@ -1,15 +1,11 @@
 from abc import ABC
-
 from collections.abc import Callable
-
-from errors import PositionError  # pyright: ignore[reportUnusedImport]
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
 
 from states import Position
 from states import PositionId
 from states import State
-from states import VariableValue  # pyright: ignore[reportUnusedImport]
 
 from tokens import Token
 from token_types import Type
@@ -185,7 +181,7 @@ class Interpreter(ABC):
 
         return token
 
-    def step_position(
+    def step_and_run_position(
         self,
         state: State,
         position_id: PositionId,

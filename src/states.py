@@ -73,7 +73,7 @@ class State:
         first_value = reference(stack_name) + "0"
         top_pointer = reference(stack_name) + "tp"
 
-        if first_value not in self._variables:
+        if not self.registered_variable_name(first_value):
 
             return self.set_variable(
                 first_value,
@@ -150,7 +150,7 @@ class State:
     def get_variable(
         self,
         variable_name: VariableName,
-    ) -> VariableValue | None:
+    ) -> VariableValue:
         """Gets the value of a variable.
 
         Args:
@@ -164,7 +164,7 @@ class State:
 
         if not self.registered_variable_name(variable_name):
 
-            return None
+            return NULL
 
         return self._variables[variable_name]
 

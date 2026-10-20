@@ -80,11 +80,22 @@ class StackError(BASECodeError):
     You can safely use stacks like this:
 
         set VariableName = pop(StackName);
-        /* Do note that if the stack has no elements, NULL is returned */
+        /* Do note that if the stack has no elements, NULL is returned. */
 
         push(StackName, Value);
-        /* This will create a stack if it does not exist */
+        /* This will create a stack if it does not exist. */
+
+        rsks("StackName",Index,Value);
+        /* Note that you can make the index a non-int,
+            as it is cast to a string by the interpreter.
+            However, it is not recommeded unless you know what you are doing. */
     
+        set VariableName = rskg("StackName",Index);
+        /* Note that here too, the index can be a non-int. */
+
+        clr(StackName);
+        rclr("StackName");
+
     """.strip()
 
 class BASECodeTypeError(BASECodeError):

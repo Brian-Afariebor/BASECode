@@ -53,6 +53,6 @@ class String(str):
 
         if reverse:
 
-            return result[::-1]
+            return String(result[::-1])
 
         return String(result)

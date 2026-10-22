@@ -13,12 +13,13 @@ def register_all():
     Interpreter.register(end, Type.END)
     Interpreter.register(raw_float, Type.FLOAT)
     Interpreter.register(integer, Type.INTEGER)
+    Interpreter.register(identifier, Type.IDENTIFIER)
 
 def end(
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
-):
+) -> State:
 
     new_state = interpreter.step_and_run_position(
         state,
@@ -44,7 +45,7 @@ def raw_float(
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
-):
+) -> State:
 
     self = state.get_token_at_position_id(position_id)
 
@@ -69,6 +70,29 @@ def raw_float(
         raise RuntimeError(f"Error '{e}' raised")
 
     return state.append_to_stack(float_value)
+
+
+def identifier(
+    position_id: PositionId,
+    state: State,
+    interpreter: Interpreter,
+) -> State:
+
+    self = state.get_token_at_position_id(position_id)
+
+    if self is None:
+
+        # NOTE - This should never get reached,
+        # but if it somehow happens there's an error
+
+        # TODO - Add error message
+        raise RuntimeError()
+
+    self_name = self.value
+
+    self_value = state.get_variable(self_name)
+
+    return state.append_to_stack(self_value)
 
 
 def integer(

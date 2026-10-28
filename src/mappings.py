@@ -48,3 +48,4 @@ def register_non_unmapped_regexes():
 def register_keywords():
 
     Parser.register_regex(Type.END, Keyword.END)
+    Parser.register_regex(Type.SET, Keyword.SET)

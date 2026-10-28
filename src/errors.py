@@ -1,3 +1,5 @@
+from typing import Any
+
 type ErrorText = str
 type HelpText = str
 
@@ -5,9 +7,11 @@ class BASECodeError(RuntimeError):
 
     NOTE: HelpText
 
-    def __post__init__(self):
+    def __init__(self, *args: Any, **kwargs: Any):
 
-        self.add_note(f"Note:\n\n{self.NOTE}")
+        super().__init__(*args, **kwargs)
+
+        self.add_note(f"\nNote:\n\n{self.NOTE}")
     
 class PositionError(BASECodeError):
 
@@ -143,3 +147,20 @@ class BASECodeTypeError(BASECodeError):
                 STUFF;
             }
         """
+
+
+class BASECodeRuntimeError(BASECodeError):
+
+    NOTE = "Check the documentation of implementations for their usage."
+
+class MissingSelfError(BASECodeError):
+
+    NOTE = "Implementations must be called from a valid state."
+
+class MissingArgumentError(BASECodeError):
+
+    NOTE = "Check the standard library for standard library function usage."
+
+class MissingTerminatorError(BASECodeError):
+
+    NOTE = "All statements must end in a terminator; the semicolon ';'."

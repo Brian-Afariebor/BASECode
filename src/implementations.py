@@ -1,8 +1,8 @@
 from errors import BASECodeRuntimeError
-from errors import MissingArgumentError
+from errors import InvalidEndError
+from errors import InvalidSetError
 from errors import MissingSelfError
 from errors import MissingTerminatorError
-from errors import PositionError
 
 from interpreter import Interpreter
 
@@ -32,6 +32,7 @@ def end(
 
     self = state.get_token_at_position_id(position_id)
 
+    # TODO - Make a decorator of some sort to fix this
     if self is None:
 
         # NOTE - This should never get reached,
@@ -45,8 +46,7 @@ def end(
 
     if new_state is None:
 
-        # TODO - Add error message
-        raise MissingArgumentError(f"""Missing end value at:
+        raise InvalidEndError(f"""Missing end value at:
             
             {self}""".strip())
 
@@ -69,6 +69,7 @@ def raw_float(
 
     self = state.get_token_at_position_id(position_id)
 
+    # TODO - Make a decorator of some sort to fix this
     if self is None:
 
         # NOTE - This should never get reached,
@@ -106,6 +107,7 @@ def identifier(
 
     self = state.get_token_at_position_id(position_id)
 
+    # TODO - Make a decorator of some sort to fix this
     if self is None:
 
         # NOTE - This should never get reached,
@@ -127,6 +129,7 @@ def integer(
 
     self = state.get_token_at_position_id(position_id)
 
+    # TODO - Make a decorator of some sort to fix this
     if self is None:
 
         # NOTE - This should never get reached,
@@ -163,19 +166,19 @@ def set_variable(
     interpreter: Interpreter,
 ) -> State:
 
+    def missing_variable_value_error():
+        return InvalidSetError(f"""Missing a variable value at token:
+
+            {state.get_token_at_position_id(position_id)}
+            """.strip())
+
     new_state = state.step_position(position_id)
 
     if new_state is None:
 
-        raise MissingArgumentError(f"""Missing a variable name at token:
+        raise InvalidSetError(f"""Missing a variable name at token:
         
             {state.get_token_at_position_id(position_id)}
-            
-            set is used like this:
-
-            set VARIABLE_NAME = VALUE;
-            /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
-                so the = is not needed; just good practice.*/
             """.strip())
 
     state = new_state
@@ -184,7 +187,7 @@ def set_variable(
 
     if variable_token is None:
 
-        raise PositionError(f"""
+        raise InvalidSetError(f"""
             Variable name token was not found at position
             
             '{position_id}'
@@ -193,24 +196,14 @@ def set_variable(
 
     variable_name = variable_token.value
 
-    new_state = Interpreter.step_and_run_position(
-        interpreter,
+    new_state = interpreter.step_and_run_position(
         state,
         position_id,
     )
 
     if new_state is None:
 
-        raise MissingArgumentError(f"""Missing a variable value at token:
-        
-            {state.get_token_at_position_id(position_id)}
-            
-            set is used like this:
-
-            set VARIABLE_NAME = VALUE;
-            /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
-                so the = is not needed; just good practice.*/
-            """.strip())
+        raise missing_variable_value_error()
 
     state = new_state
 
@@ -218,16 +211,7 @@ def set_variable(
 
     if variable_value is None:
 
-        raise MissingArgumentError(f"""Missing a variable value at token:
-        
-            {state.get_token_at_position_id(position_id)}
-            
-            set is used like this:
-
-            set VARIABLE_NAME = VALUE;
-            /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
-                so the = is not needed; just good practice.*/
-            """.strip())
+        raise missing_variable_value_error()
 
     state = state.set_variable(variable_name, variable_value)
 

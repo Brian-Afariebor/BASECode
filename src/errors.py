@@ -3,6 +3,7 @@ from typing import Any
 type ErrorText = str
 type HelpText = str
 
+
 class BASECodeError(RuntimeError):
 
     NOTE: HelpText
@@ -12,7 +13,8 @@ class BASECodeError(RuntimeError):
         super().__init__(*args, **kwargs)
 
         self.add_note(f"\nNote:\n\n{self.NOTE}")
-    
+
+
 class PositionError(BASECodeError):
 
     NOTE = """
@@ -65,6 +67,7 @@ class PositionError(BASECodeError):
             as function::EndCode has not yet been defined by the interrpeter.
         """.strip()
 
+
 class StackError(BASECodeError):
 
     NOTE = """
@@ -101,6 +104,7 @@ class StackError(BASECodeError):
         rclr("StackName");
 
     """.strip()
+
 
 class BASECodeTypeError(BASECodeError):
 
@@ -153,13 +157,33 @@ class BASECodeRuntimeError(BASECodeError):
 
     NOTE = "Check the documentation of implementations for their usage."
 
+
 class MissingSelfError(BASECodeError):
 
     NOTE = "Implementations must be called from a valid state."
 
+
 class MissingArgumentError(BASECodeError):
 
     NOTE = "Check the standard library for standard library function usage."
+
+
+class InvalidSetError(MissingArgumentError):
+
+    NOTE = """set is used like this:
+
+        set VARIABLE_NAME = VALUE;
+        /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
+            so the = is not needed; just good practice.*/
+        """.strip()
+class InvalidEndError(MissingArgumentError):
+
+    NOTE = """end is used like this:
+
+        end(VALUE);
+        /*Due to the filtering process, this can be simplified to 'end VALUE',
+        but it's clearer when done this way*/
+    """
 
 class MissingTerminatorError(BASECodeError):
 

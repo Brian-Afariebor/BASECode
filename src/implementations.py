@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from errors import BASECodeRuntimeError
 from errors import InvalidEndError
 from errors import InvalidSetError
@@ -12,7 +14,20 @@ from intrinsics import Float
 from states import PositionId
 from states import State
 
+from tokens import Token
 from token_types import Type
+
+type Implementation = Interpreter.Implementation
+type SelfImplementation = Callable[
+    [
+        Token,
+        PositionId,
+        State,
+        Interpreter,
+    ],
+    State,
+]
+
 
 
 def register_all():
@@ -24,20 +39,38 @@ def register_all():
     Interpreter.register(set_variable, Type.SET)
 
 
+def get_self(error_message: str = ""):
+
+    def get_self_decorator(self_implementation: SelfImplementation):
+
+        def new_implementation(
+            position_id: PositionId,
+            state: State,
+            interpreter: Interpreter,
+        ) -> State:
+
+            self = state.get_token_at_position_id(position_id)
+
+            if self is None:
+
+                # NOTE - This should never get reached,
+                # but if it somehow happens there's an error
+                raise MissingSelfError(error_message)
+
+            return self_implementation(self, position_id, state, interpreter)
+
+        return new_implementation
+
+    return get_self_decorator
+
+
+@get_self()
 def end(
+    self: Token,
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
 ) -> State:
-
-    self = state.get_token_at_position_id(position_id)
-
-    # TODO - Make a decorator of some sort to fix this
-    if self is None:
-
-        # NOTE - This should never get reached,
-        # but if it somehow happens there's an error
-        raise MissingSelfError()
 
     new_state = interpreter.step_and_run_position(
         state,
@@ -61,20 +94,13 @@ def end(
     return state.return_value_from_position(return_value, position_id)
 
 
+@get_self()
 def raw_float(
+    self: Token,
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
 ) -> State:
-
-    self = state.get_token_at_position_id(position_id)
-
-    # TODO - Make a decorator of some sort to fix this
-    if self is None:
-
-        # NOTE - This should never get reached,
-        # but if it somehow happens there's an error
-        raise MissingSelfError()
 
     try:
 
@@ -99,20 +125,13 @@ def raw_float(
     return state.append_to_stack(float_value)
 
 
+@get_self()
 def identifier(
+    self: Token,
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
 ) -> State:
-
-    self = state.get_token_at_position_id(position_id)
-
-    # TODO - Make a decorator of some sort to fix this
-    if self is None:
-
-        # NOTE - This should never get reached,
-        # but if it somehow happens there's an error
-        raise MissingSelfError()
 
     self_name = self.value
 
@@ -121,20 +140,13 @@ def identifier(
     return state.append_to_stack(self_value)
 
 
+@get_self()
 def integer(
+    self: Token,
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
 ) -> State:
-
-    self = state.get_token_at_position_id(position_id)
-
-    # TODO - Make a decorator of some sort to fix this
-    if self is None:
-
-        # NOTE - This should never get reached,
-        # but if it somehow happens there's an error
-        raise MissingSelfError()
 
     try:
 
@@ -167,6 +179,7 @@ def set_variable(
 ) -> State:
 
     def missing_variable_value_error():
+
         return InvalidSetError(f"""Missing a variable value at token:
 
             {state.get_token_at_position_id(position_id)}
@@ -177,9 +190,8 @@ def set_variable(
     if new_state is None:
 
         raise InvalidSetError(f"""Missing a variable name at token:
-        
-            {state.get_token_at_position_id(position_id)}
-            """.strip())
+                    {state.get_token_at_position_id(position_id)}
+                    """.strip())
 
     state = new_state
 
@@ -188,7 +200,7 @@ def set_variable(
     if variable_token is None:
 
         raise InvalidSetError(f"""
-            Variable name token was not found at position
+            Variable name token was not found at position:
             
             '{position_id}'
             

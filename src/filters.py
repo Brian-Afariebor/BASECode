@@ -15,6 +15,14 @@ NORMAL_FIlTER_TYPES = [
 def register_all():
 
     Filter.register(ExecutionMode.NORMAL, normal_filter)
+    Filter.register(ExecutionMode.DOCSTRINGS, debug_filter)
+
+
+def debug_filter(token_stream: UnfilteredTokenSream) -> FilteredTokenStream:
+
+    return FilteredTokenStream(
+        [token for token in token_stream if token.type == Type.DOCSTRING],
+    )
 
 
 def normal_filter(

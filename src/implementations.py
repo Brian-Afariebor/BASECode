@@ -4,7 +4,6 @@ from errors import BASECodeRuntimeError
 from errors import InvalidEndError
 from errors import InvalidSetError
 from errors import MissingSelfError
-from errors import MissingTerminatorError
 
 from interpreter import Interpreter
 
@@ -29,7 +28,6 @@ type SelfImplementation = Callable[
 ]
 
 
-
 def register_all():
 
     Interpreter.register(end, Type.END)
@@ -39,9 +37,13 @@ def register_all():
     Interpreter.register(set_variable, Type.SET)
 
 
-def get_self(error_message: str = ""):
+def get_self(
+    error_message: str = "",
+) -> Callable[[SelfImplementation], Implementation]:
 
-    def get_self_decorator(self_implementation: SelfImplementation):
+    def get_self_decorator(
+        self_implementation: SelfImplementation,
+    ) -> Implementation:
 
         def new_implementation(
             position_id: PositionId,
@@ -73,7 +75,6 @@ def end(
 ) -> State:
 
     new_state = interpreter.step_and_run_position(
-        state,
         position_id,
     )
 
@@ -172,26 +173,26 @@ def integer(
     return state.append_to_stack(int_value)
 
 
+@get_self()
 def set_variable(
+    self: Token,
     position_id: PositionId,
     state: State,
     interpreter: Interpreter,
 ) -> State:
 
-    def missing_variable_value_error():
+    def invalid_set_error():
 
-        return InvalidSetError(f"""Missing a variable value at token:
-
-            {state.get_token_at_position_id(position_id)}
+        return InvalidSetError(
+            f"""Invalid set statement at token:
+                '{self}'
             """.strip())
 
     new_state = state.step_position(position_id)
 
     if new_state is None:
 
-        raise InvalidSetError(f"""Missing a variable name at token:
-                    {state.get_token_at_position_id(position_id)}
-                    """.strip())
+        raise invalid_set_error()
 
     state = new_state
 
@@ -199,23 +200,17 @@ def set_variable(
 
     if variable_token is None:
 
-        raise InvalidSetError(f"""
-            Variable name token was not found at position:
-            
-            '{position_id}'
-            
-            """.strip())
+        raise invalid_set_error()
 
     variable_name = variable_token.value
 
     new_state = interpreter.step_and_run_position(
-        state,
         position_id,
     )
 
     if new_state is None:
 
-        raise missing_variable_value_error()
+        raise invalid_set_error()
 
     state = new_state
 
@@ -223,7 +218,7 @@ def set_variable(
 
     if variable_value is None:
 
-        raise missing_variable_value_error()
+        raise invalid_set_error()
 
     state = state.set_variable(variable_name, variable_value)
 
@@ -231,8 +226,6 @@ def set_variable(
 
     if new_state is None:
 
-        raise MissingTerminatorError(f"""
-            Missing terminator at position '{position_id}';
-            set statements are, in fact, statements.""".strip())
+        raise invalid_set_error()
 
     return new_state

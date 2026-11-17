@@ -39,8 +39,8 @@ class Keyword(Enum):
 @unique
 class Regex(Enum):
 
-    COMMENT = r"\/\*[\s\S]*?\*\/|\/\/.*"
-    DOCSTRING = r"\/\*\*[\s\S]*?\*\/|\/\/\/"
+    COMMENT = r"\/\*[\s\S]*\*\/"
+    DOCSTRING = r"\/\*\*[\s\S]*?\*\/"
     DUMMY = r"\(|{|}|,|="
     FLOAT = r"-?\d+?\.\d+(e\d+)?"
     FUNCTION_TERMINATOR = r"\)"

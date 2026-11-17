@@ -93,9 +93,7 @@ class StackError(BASECodeError):
         /* This will create a stack if it does not exist. */
 
         rsks("StackName",Index,Value);
-        /* Note that you can make the index a non-int,
-            as it is cast to a string by the interpreter.
-            However, it is not recommeded unless you know what you are doing. */
+        /* This also creates a stack if it does not exist. */
     
         set VariableName = rskg("StackName",Index);
         /* Note that here too, the index can be a non-int. */
@@ -176,6 +174,8 @@ class InvalidSetError(MissingArgumentError):
         /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
             so the = is not needed; just good practice.*/
         """.strip()
+
+
 class InvalidEndError(MissingArgumentError):
 
     NOTE = """end is used like this:
@@ -185,6 +185,16 @@ class InvalidEndError(MissingArgumentError):
         but it's clearer when done this way*/
     """
 
-class MissingTerminatorError(BASECodeError):
+class EndOfCodeError(BASECodeRuntimeError):
 
-    NOTE = "All statements must end in a terminator; the semicolon ';'."
+    NOTE = """All programs must end.
+    You can do that using the end() method.
+    It is used like this:
+
+        end(VALUE):
+        /**Ends the current thread with the current value.*/
+    """
+
+class InvalidTokenError(BASECodeRuntimeError):
+
+    NOTE = """Check the library for all valid BASECode functions and types."""

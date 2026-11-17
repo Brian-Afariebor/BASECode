@@ -35,7 +35,7 @@ def register_non_unmapped_regexes():
 
     Parser.register_regex(Type.FLOAT, Regex.FLOAT)
 
-    # NOTE - Floats have to go before integers to fi passing issues
+    # NOTE - Floats have to go before integers to fix passing issues
     Parser.register_regex(Type.INTEGER, Regex.INTEGER)
 
     # NOTE - Identifiers have to go before

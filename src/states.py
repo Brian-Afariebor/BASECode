@@ -15,8 +15,8 @@ from typing import Self
 type VariableName = str
 
 type VariableValue = String | Integer | Float | Null
-type Position = int
-type PositionId = str
+type ThreadPosition = int
+type ThreadId = str
 
 
 class State:
@@ -31,7 +31,7 @@ class State:
     mode: Final[ExecutionMode]
 
     _variables: dict[VariableName, VariableValue]
-    _positions: dict[PositionId, Position]
+    _thread_positions: dict[ThreadId, ThreadPosition]
     _return_value: VariableValue
 
     def __init__(
@@ -51,7 +51,7 @@ class State:
         self.tokens = tokens
         self.mode = mode
 
-        self._positions = {}
+        self._thread_positions = {}
         self._variables = {}
         self._return_value = NULL
 
@@ -116,30 +116,23 @@ class State:
 
         return self
 
-    def get_position(
+    def get_thread_position(
         self,
-        position_id: PositionId,
-    ) -> Position | None:
-        """Gets the position of a position id.
+        thread_id: ThreadId,
+    ) -> ThreadPosition | None:
 
-        Args:
-            position_id (PositionId): The position id to get the value of.
-
-        Returns:
-            Position | None:
-                The value of the position id.
-                Is None if the position id is not registered.
-        """
-
-        if not self.registered_position_id(position_id):
+        if not self.running_thread(thread_id):
 
             return None
 
-        return self._positions[position_id]
+        return self._thread_positions[thread_id]
 
-    def get_token_at_position_id(self, position_id: PositionId):
+    def token_at_thread_id(
+        self,
+        thread_id: ThreadId,
+    ):
 
-        position = self.get_position(position_id)
+        position = self.get_thread_position(thread_id)
 
         if position is None:
 
@@ -151,16 +144,6 @@ class State:
         self,
         variable_name: VariableName,
     ) -> VariableValue:
-        """Gets the value of a variable.
-
-        Args:
-            variable_name (VariableName): The variable to get the value of.
-
-        Returns:
-            VariableValue | None:
-                The value of the variable.
-                Returns none if the variable has not been defined.
-        """
 
         if not self.registered_variable_name(variable_name):
 
@@ -169,9 +152,9 @@ class State:
         return self._variables[variable_name]
 
     def pop_from_stack(
-            self,
-            stack_name: VariableName = Keyword.MAIN_NAME.value,
-        ) -> VariableValue | None:
+        self,
+        stack_name: VariableName = Keyword.MAIN_NAME.value,
+    ) -> VariableValue | None:
 
         stack_reference = reference(stack_name)
 
@@ -189,8 +172,8 @@ class State:
 
         self.delete_variable(top_value_pointer_name).set_variable(
             top_pointer_name,
-              Integer(top_pointer_value -1),
-            )
+            Integer(top_pointer_value - 1),
+        )
 
         if top_pointer_value <= 0:
 
@@ -198,71 +181,50 @@ class State:
 
         return top_value
 
-    def registered_position_id(self, position_id: PositionId):
+    def running_thread(self, thread_id: ThreadId):
 
-        return position_id in self._positions
+        return thread_id in self._thread_positions
 
     def registered_variable_name(self, variable_name: VariableName):
 
         return variable_name in self._variables
 
-    def remove_position(self, position_id: PositionId):
+    def remove_thread(self, thread_id: ThreadId):
 
-        if self.registered_position_id(position_id):
+        if self.running_thread(thread_id):
 
-            del self._positions[position_id]
-
-        return self
-
-    def return_value_from_position(
-        self,
-        value: VariableValue,
-        position_id: PositionId,
-    ):
-
-        self._return_value = value
-
-        return self.remove_position(position_id)
-
-    def set_position(
-        self,
-        position_id: PositionId,
-        position: Position,
-    ) -> None | Self:
-        """Sets the position of a position id.
-
-        Args:
-            position_id (PositionId) The position id to set the position of.
-            position (Position): The position to set the position id to.
-
-        Returns:
-            None | Self:
-                Sets the value of the position.
-                Returns None if the position is not valid.
-        """
-
-        if not self.valid_position(position):
-
-            return None
-
-        self._positions[position_id] = position
+            del self._thread_positions[thread_id]
 
         return self
 
-    def step_position(
+    def set_thread_position(
         self,
-        position_id: PositionId,
+        thread_id: ThreadId,
+        position: ThreadPosition,
     ) -> None | Self:
 
-        if not self.registered_position_id(position_id):
+        if not self.valid_thread_position(position):
 
             return None
 
-        current_adress = self._positions[position_id]
+        self._thread_positions[thread_id] = position
 
-        new_adress: Position = current_adress + 1
+        return self
 
-        return self.set_position(position_id, new_adress)
+    def step_thread(
+        self,
+        thread_id: ThreadId,
+    ) -> None | Self:
+
+        if not self.running_thread(thread_id):
+
+            return None
+
+        current_adress = self._thread_positions[thread_id]
+
+        new_adress: ThreadPosition = current_adress + 1
+
+        return self.set_thread_position(thread_id, new_adress)
 
     def set_variable(
         self,
@@ -274,13 +236,21 @@ class State:
 
         return self
 
-    def valid_position(self, adress: Position):
+    def valid_thread_position(self, adress: ThreadPosition):
 
         return adress >= 0 and adress < len(self.tokens)
 
-    #!SECTION
+  
+    def return_a_value(
+        self,
+        value: VariableValue,
+        thread_id: ThreadId,
+    ):
 
+        self._return_value = value
 
-def reference(variable: VariableName)->str:
+        return self.remove_thread(thread_id)
+  #!SECTION
+def reference(variable: VariableName) -> str:
 
     return variable + Keyword.REFERENCE_OPERATOR.value

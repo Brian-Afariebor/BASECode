@@ -10,8 +10,8 @@ from interpreter import Interpreter
 from intrinsics import Integer
 from intrinsics import Float
 
-from states import PositionId
-from states import State
+from states import ThreadId
+from states import VariableValue
 
 from tokens import Token
 from token_types import Type
@@ -20,11 +20,15 @@ type Implementation = Interpreter.Implementation
 type SelfImplementation = Callable[
     [
         Token,
-        PositionId,
-        State,
+        ThreadId,
         Interpreter,
     ],
-    State,
+    None,
+]
+
+type SimpleArgumentImplementation = Callable[
+    [list[VariableValue]],
+    VariableValue,
 ]
 
 
@@ -46,12 +50,11 @@ def get_self(
     ) -> Implementation:
 
         def new_implementation(
-            position_id: PositionId,
-            state: State,
+            thread_id: ThreadId,
             interpreter: Interpreter,
-        ) -> State:
+        ):
 
-            self = state.get_token_at_position_id(position_id)
+            self = interpreter.state.token_at_thread_id(thread_id)
 
             if self is None:
 
@@ -59,60 +62,121 @@ def get_self(
                 # but if it somehow happens there's an error
                 raise MissingSelfError(error_message)
 
-            return self_implementation(self, position_id, state, interpreter)
+            return self_implementation(
+                self,
+                thread_id,
+                interpreter,
+            )
 
         return new_implementation
 
     return get_self_decorator
 
 
+def get_args(
+    count: int,
+) -> Callable[
+    [SimpleArgumentImplementation],
+    Implementation,
+]:
+
+    def get_args_decorator(
+        simple_argument_implmentation: SimpleArgumentImplementation,
+    ) -> Implementation:
+
+        @get_self()
+        def new_implementation(
+            self: Token,
+            thread_id: ThreadId,
+            interpreter: Interpreter,
+        ):
+
+            arguments: list[VariableValue] = []
+
+            for i in range(count):
+
+                try:
+
+                    interpreter.step_and_run_thread(thread_id)
+
+                except Exception as e:
+
+                    raise BASECodeRuntimeError(
+                        f"""Missing argument number 
+                        '{i+1}'
+                        while calling the function at:
+                        {self}
+                        """,
+                    ) from e
+
+                argument_value = interpreter.state.pop_from_stack()
+
+                if argument_value is None:
+
+                    raise BASECodeRuntimeError(
+                        f"""Missing argument number 
+                        '{i+1}'
+                        while calling the function at:
+                        {self}
+                        """,
+                    )
+
+                arguments.append(argument_value)
+
+            simple_argument_implmentation(arguments)
+
+        return new_implementation
+
+    return get_args_decorator
+
+
 @get_self()
 def end(
     self: Token,
-    position_id: PositionId,
-    state: State,
+    thread_id: ThreadId,
     interpreter: Interpreter,
-) -> State:
+):
 
-    new_state = interpreter.step_and_run_position(
-        position_id,
-    )
+    try:
+        interpreter.step_and_run_thread(
+            thread_id,
+        )
 
-    if new_state is None:
+    except Exception as interpreter_error:
 
         raise InvalidEndError(f"""Missing end value at:
             
-            {self}""".strip())
+            {self}""".strip()) from interpreter_error
 
-    state = new_state
+    state = interpreter.state
 
     return_value = state.pop_from_stack()
 
     if return_value is None:
 
-        return state.return_value_from_position(Integer(0), position_id)
+        state.return_a_value(Integer(0), thread_id)
+        return
 
-    return state.return_value_from_position(return_value, position_id)
+    state.return_a_value(return_value, thread_id)
 
 
 @get_self()
 def raw_float(
     self: Token,
-    position_id: PositionId,
-    state: State,
+    thread_id: ThreadId,
     interpreter: Interpreter,
-) -> State:
+):
 
     try:
 
         float_value = Float(self.value)
 
-    except Exception as e:
+    except Exception as casting_error:
 
         # NOTE - This should never get reached,
         # but if it does there's an error
         raise BASECodeRuntimeError(f"""Error '''
-            {e}
+            {casting_error}
             '''
             
             raised while trying to create a float with the value
@@ -123,43 +187,43 @@ def raw_float(
 
             {self}""".strip())
 
-    return state.append_to_stack(float_value)
+    interpreter.state.append_to_stack(float_value)
 
 
 @get_self()
 def identifier(
     self: Token,
-    position_id: PositionId,
-    state: State,
+    thread_id: ThreadId,
     interpreter: Interpreter,
-) -> State:
+):
 
     self_name = self.value
 
+    state = interpreter.state
+
     self_value = state.get_variable(self_name)
 
-    return state.append_to_stack(self_value)
+    state.append_to_stack(self_value)
 
 
 @get_self()
 def integer(
     self: Token,
-    position_id: PositionId,
-    state: State,
+    thread_id: ThreadId,
     interpreter: Interpreter,
-) -> State:
+):
 
     try:
 
         string_representation = self.value.replace("_", "")
         int_value = Integer(string_representation)
 
-    except Exception as e:
+    except Exception as casting_error:
 
         # NOTE - This should never get reached,
         # but if it does there's an error
         raise BASECodeRuntimeError(f"""Error '''
-            {e}
+            {casting_error}
             '''
             
             raised while trying to create an int with the value
@@ -170,25 +234,25 @@ def integer(
 
             {self}""".strip())
 
-    return state.append_to_stack(int_value)
+    interpreter.state.append_to_stack(int_value)
 
 
 @get_self()
 def set_variable(
     self: Token,
-    position_id: PositionId,
-    state: State,
+    thread_id: ThreadId,
     interpreter: Interpreter,
-) -> State:
+):
 
     def invalid_set_error():
 
-        return InvalidSetError(
-            f"""Invalid set statement at token:
+        return InvalidSetError(f"""Invalid set statement at token:
                 '{self}'
             """.strip())
 
-    new_state = state.step_position(position_id)
+    state = interpreter.state
+
+    new_state = state.step_thread(thread_id)
 
     if new_state is None:
 
@@ -196,7 +260,7 @@ def set_variable(
 
     state = new_state
 
-    variable_token = state.get_token_at_position_id(position_id)
+    variable_token = state.token_at_thread_id(thread_id)
 
     if variable_token is None:
 
@@ -204,15 +268,14 @@ def set_variable(
 
     variable_name = variable_token.value
 
-    new_state = interpreter.step_and_run_position(
-        position_id,
-    )
+    try:
+        interpreter.step_and_run_thread(
+            thread_id,
+        )
 
-    if new_state is None:
+    except Exception as interpreter_error:
 
-        raise invalid_set_error()
-
-    state = new_state
+        raise invalid_set_error() from interpreter_error
 
     variable_value = state.pop_from_stack()
 
@@ -222,10 +285,8 @@ def set_variable(
 
     state = state.set_variable(variable_name, variable_value)
 
-    new_state = state.step_position(position_id)
+    new_state = state.step_thread(thread_id)
 
     if new_state is None:
 
         raise invalid_set_error()
-
-    return new_state

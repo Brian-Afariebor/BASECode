@@ -22,7 +22,8 @@ def main():
         LinkedCode(
     """
             set x = 1;
-            end
+            set y = 2;
+            end x
             """.strip()
         ),
     )

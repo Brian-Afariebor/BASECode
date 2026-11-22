@@ -21,9 +21,8 @@ def main():
     tokens = Parser.parse(
         LinkedCode(
     """
-            set x = 1;
-            set y = 2;
-            end x
+            set x = 1e10292;
+            end(x);
             """.strip()
         ),
     )

@@ -91,6 +91,18 @@ def get_args(
             interpreter: Interpreter,
         ):
 
+            def missing_argument_error(
+                self: Token,
+                i: int,
+            ):
+                return BASECodeRuntimeError(
+                    f"""Missing argument number 
+                    '{i+1}'
+                    while calling the function at:
+                    {self}
+                    """,
+                )
+
             arguments: list[VariableValue] = []
 
             for i in range(count):
@@ -101,25 +113,13 @@ def get_args(
 
                 except Exception as e:
 
-                    raise BASECodeRuntimeError(
-                        f"""Missing argument number 
-                        '{i+1}'
-                        while calling the function at:
-                        {self}
-                        """,
-                    ) from e
+                    raise missing_argument_error(self, i) from e
 
                 argument_value = interpreter.state.pop_from_stack()
 
                 if argument_value is None:
 
-                    raise BASECodeRuntimeError(
-                        f"""Missing argument number 
-                        '{i+1}'
-                        while calling the function at:
-                        {self}
-                        """,
-                    )
+                    raise missing_argument_error(self, i)
 
                 arguments.append(argument_value)
 
@@ -161,31 +161,53 @@ def end(
 
 
 @get_self()
+def integer(
+    self: Token,
+    thread_id: ThreadId,
+    interpreter: Interpreter,
+):
+
+    string_representation = self.value.replace("_", "")
+
+    try:
+
+        int_value = Integer(string_representation)
+
+    except Exception as casting_error:
+
+        raise BASECodeRuntimeError(
+            f"""The integer
+            
+            '{string_representation}'
+            
+            could not be created.""",
+        ) from casting_error
+
+    interpreter.state.append_to_stack(int_value)
+
+
+@get_self()
 def raw_float(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
 ):
 
+    string_representation = self.value
+
     try:
 
-        float_value = Float(self.value)
+        float_value = Float(string_representation)
 
-    except Exception as casting_error:
+    except Exception as creation_error:
 
-        # NOTE - This should never get reached,
-        # but if it does there's an error
-        raise BASECodeRuntimeError(f"""Error '''
-            {casting_error}
-            '''
+        raise BASECodeRuntimeError(
+            f"""The integer
             
-            raised while trying to create a float with the value
+            '{string_representation}'
             
-            '{self.value}'
-            
-            at:
-
-            {self}""".strip())
+            could not be created.""",
+        ) from creation_error
 
     interpreter.state.append_to_stack(float_value)
 
@@ -204,37 +226,6 @@ def identifier(
     self_value = state.get_variable(self_name)
 
     state.append_to_stack(self_value)
-
-
-@get_self()
-def integer(
-    self: Token,
-    thread_id: ThreadId,
-    interpreter: Interpreter,
-):
-
-    try:
-
-        string_representation = self.value.replace("_", "")
-        int_value = Integer(string_representation)
-
-    except Exception as casting_error:
-
-        # NOTE - This should never get reached,
-        # but if it does there's an error
-        raise BASECodeRuntimeError(f"""Error '''
-            {casting_error}
-            '''
-            
-            raised while trying to create an int with the value
-            
-            '{self.value}'
-
-            at:
-
-            {self}""".strip())
-
-    interpreter.state.append_to_stack(int_value)
 
 
 @get_self()
@@ -269,6 +260,7 @@ def set_variable(
     variable_name = variable_token.value
 
     try:
+
         interpreter.step_and_run_thread(
             thread_id,
         )

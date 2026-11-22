@@ -10,17 +10,24 @@ from errors import InvalidTokenError
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
 
+from states import State
 from states import ThreadPosition
 from states import ThreadId
-from states import State
+from states import VariableValue
 
 from tokens import Token
 from token_types import Type
 
+from typing import NoReturn
+from typing import Self
+
 
 class Interpreter(ABC):
 
-    type Implementation = Callable[[ThreadId, Interpreter], None]
+    type Implementation = Callable[
+        [ThreadId, Interpreter],
+        None | NoReturn,
+    ]
 
     MAIN_THREAD_ID: ThreadId = "main"
     MAIN_THREAD: ThreadPosition = 0
@@ -35,7 +42,7 @@ class Interpreter(ABC):
         cls,
         tokens: FilteredTokenStream,
         mode: ExecutionMode = ExecutionMode.NORMAL,
-    ):
+    ) -> State:
 
         state = State(tokens, mode).set_thread_position(
             cls.MAIN_THREAD_ID,
@@ -53,7 +60,7 @@ class Interpreter(ABC):
         cls,
         token: Token,
         mode: ExecutionMode = ExecutionMode.NORMAL,
-    ):
+    ) -> Implementation | None:
         """Gets the implentation of a token.
 
         Args:
@@ -96,7 +103,7 @@ class Interpreter(ABC):
         implementation: Implementation,
         type: Type,
         mode: ExecutionMode = ExecutionMode.NORMAL,
-    ):
+    ) -> type[Self]:
         """Registers a new implementation.
 
         Args:
@@ -119,7 +126,7 @@ class Interpreter(ABC):
         cls,
         tokens: FilteredTokenStream,
         mode: ExecutionMode = ExecutionMode.NORMAL,
-    ):
+    ) -> VariableValue | NoReturn:
 
         interpreter = Interpreter(tokens, mode)
 
@@ -132,7 +139,7 @@ class Interpreter(ABC):
         self,
         tokens: FilteredTokenStream,
         mode: ExecutionMode = ExecutionMode.NORMAL,
-    ):
+    ) -> None:
 
         self._state = Interpreter.generate_state(tokens, mode)
 
@@ -140,14 +147,14 @@ class Interpreter(ABC):
 
     # SECTION - Instance Methods
     @property
-    def state(self):
+    def state(self) -> State:
 
         return self._state
 
     def run_thread(
         self,
         thread_id: ThreadId,
-    ):
+    ) -> VariableValue:
 
         _ = self.run_token_at_thread(thread_id)
 
@@ -160,11 +167,12 @@ class Interpreter(ABC):
     def run_token_at_thread(
         self,
         thread_id: ThreadId,
-    ):
+    ) -> Self | NoReturn:
 
         token = self._state.token_at_thread_id(thread_id)
 
         if token is None:
+
             raise EndOfCodeError("Missing token at end of code")
 
         implementation = Interpreter.get_implemenation_from_token(
@@ -173,18 +181,30 @@ class Interpreter(ABC):
         )
 
         if implementation is None:
+
             raise InvalidTokenError(
-                f"No implementation found for token {token}",
+                f"No implementation found for token '{token}'",
             )
 
-        implementation(thread_id, self)
+        try:
+
+            implementation(thread_id, self)
+
+        except Exception as e:
+
+            raise BASECodeRuntimeError(
+                f"""An error was raised at:
+                
+                '{token}'
+                """,
+            ) from e
 
         return self
 
     def step_and_run_thread(
         self,
         thread_id: ThreadId,
-    ) -> Interpreter:
+    ) -> Interpreter | NoReturn:
 
         stepped_state = self._state.step_thread(thread_id)
 

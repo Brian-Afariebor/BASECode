@@ -1,21 +1,18 @@
+from basecode_math import FUNCTIONS as MATH_FUNCTIONS
 from collections.abc import Callable
 
-from errors import BASECodeRuntimeError
 from errors import InvalidEndError
 from errors import InvalidSetError
-from errors import MissingSelfError
 
+from implementation_uitls import get_self
 from interpreter import Interpreter
-
 from intrinsics import Integer
-from intrinsics import Float
 
 from states import ThreadId
 from states import VariableValue
 
 from tokens import Token
 from token_types import Type
-
 from typing import NoReturn
 
 type Implementation = Interpreter.Implementation
@@ -37,100 +34,13 @@ type SimpleArgumentImplementation = Callable[
 def register_all() -> None:
 
     Interpreter.register(end, Type.END)
-    Interpreter.register(raw_float, Type.FLOAT)
-    Interpreter.register(integer, Type.INTEGER)
+    
+    for implementation, function_type in MATH_FUNCTIONS:
+        
+        Interpreter.register(implementation, function_type)
+    
     Interpreter.register(identifier, Type.IDENTIFIER)
     Interpreter.register(set_variable, Type.SET)
-
-
-def get_self(
-    error_message: str = "",
-) -> Callable[[SelfImplementation], Implementation]:
-
-    def get_self_decorator(
-        self_implementation: SelfImplementation,
-    ) -> Implementation:
-
-        def new_implementation(
-            thread_id: ThreadId,
-            interpreter: Interpreter,
-        ):
-
-            self = interpreter.state.token_at_thread_id(thread_id)
-
-            if self is None:
-
-                # NOTE - This should never get reached,
-                # but if it somehow happens there's an error
-                raise MissingSelfError(error_message)
-
-            return self_implementation(
-                self,
-                thread_id,
-                interpreter,
-            )
-
-        return new_implementation
-
-    return get_self_decorator
-
-
-def get_args(
-    count: int,
-) -> Callable[
-    [SimpleArgumentImplementation],
-    Implementation,
-]:
-
-    def get_args_decorator(
-        simple_argument_implmentation: SimpleArgumentImplementation,
-    ) -> Implementation:
-
-        @get_self()
-        def new_implementation(
-            self: Token,
-            thread_id: ThreadId,
-            interpreter: Interpreter,
-        ):
-
-            def missing_argument_error(
-                self: Token,
-                i: int,
-            ):
-                return BASECodeRuntimeError(
-                    f"""Missing argument number 
-                    '{i+1}'
-                    while calling the function at:
-                    {self}
-                    """,
-                )
-
-            arguments: list[VariableValue] = []
-
-            for i in range(count):
-
-                try:
-
-                    interpreter.step_and_run_thread(thread_id)
-
-                except Exception as e:
-
-                    raise missing_argument_error(self, i) from e
-
-                argument_value = interpreter.state.pop_from_stack()
-
-                if argument_value is None:
-
-                    raise missing_argument_error(self, i)
-
-                arguments.append(argument_value)
-
-            simple_argument_implmentation(arguments)
-
-        return new_implementation
-
-    return get_args_decorator
-
 
 @get_self()
 def end(
@@ -160,58 +70,6 @@ def end(
         return
 
     state.return_a_value(return_value, thread_id)
-
-
-@get_self()
-def integer(
-    self: Token,
-    thread_id: ThreadId,
-    interpreter: Interpreter,
-) -> None | NoReturn:
-
-    string_representation = self.value.replace("_", "")
-
-    try:
-
-        int_value = Integer(string_representation)
-
-    except Exception as casting_error:
-
-        raise BASECodeRuntimeError(
-            f"""The integer
-            
-            '{string_representation}'
-            
-            could not be created.""",
-        ) from casting_error
-
-    interpreter.state.append_to_stack(int_value)
-
-
-@get_self()
-def raw_float(
-    self: Token,
-    thread_id: ThreadId,
-    interpreter: Interpreter,
-) -> None | NoReturn:
-
-    string_representation = self.value
-
-    try:
-
-        float_value = Float(string_representation)
-
-    except Exception as creation_error:
-
-        raise BASECodeRuntimeError(
-            f"""The integer
-            
-            '{string_representation}'
-            
-            could not be created.""",
-        ) from creation_error
-
-    interpreter.state.append_to_stack(float_value)
 
 
 @get_self()
@@ -251,8 +109,6 @@ def set_variable(
 
         raise invalid_set_error()
 
-    state = new_state
-
     variable_token = state.token_at_thread_id(thread_id)
 
     if variable_token is None:
@@ -277,7 +133,7 @@ def set_variable(
 
         raise invalid_set_error()
 
-    state = state.set_variable(variable_name, variable_value)
+    state.set_variable(variable_name, variable_value)
 
     new_state = state.step_thread(thread_id)
 

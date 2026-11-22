@@ -5,10 +5,25 @@ class Null: ...
 
 NULL = Null()
 
-class Integer(int): ...
+class Integer(int): 
 
+    def __add__(self, other: Any):
 
-class Float(float): ...
+        return Integer(super().__add__(other))
+
+    def __sub__(self, other: Any):
+    
+            return Integer(super().__sub__(other))
+
+class Float(float): 
+
+    def __add__(self, other: Any):
+
+        return Float(super().__add__(other))
+
+    def __sub__(self, other: Any):
+    
+        return Float(super().__sub__(other))
 
 
 class String(str):
@@ -21,7 +36,7 @@ class String(str):
 
     def __add__(self, other: Any):
 
-        return super().__add__(str(other))
+        return String(super().__add__(str(other)))
 
     def __sub__(self, other: Any):
         

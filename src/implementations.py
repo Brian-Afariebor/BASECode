@@ -16,6 +16,8 @@ from states import VariableValue
 from tokens import Token
 from token_types import Type
 
+from typing import NoReturn
+
 type Implementation = Interpreter.Implementation
 type SelfImplementation = Callable[
     [
@@ -23,16 +25,16 @@ type SelfImplementation = Callable[
         ThreadId,
         Interpreter,
     ],
-    None,
+    None | NoReturn,
 ]
 
 type SimpleArgumentImplementation = Callable[
     [list[VariableValue]],
-    VariableValue,
+    VariableValue | NoReturn,
 ]
 
 
-def register_all():
+def register_all() -> None:
 
     Interpreter.register(end, Type.END)
     Interpreter.register(raw_float, Type.FLOAT)
@@ -135,7 +137,7 @@ def end(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-):
+) -> None | NoReturn:
 
     try:
         interpreter.step_and_run_thread(
@@ -165,7 +167,7 @@ def integer(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-):
+) -> None | NoReturn:
 
     string_representation = self.value.replace("_", "")
 
@@ -191,7 +193,7 @@ def raw_float(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-):
+) -> None | NoReturn:
 
     string_representation = self.value
 
@@ -217,7 +219,7 @@ def identifier(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-):
+) -> None:
 
     self_name = self.value
 
@@ -233,7 +235,7 @@ def set_variable(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-):
+) -> None | NoReturn:
 
     def invalid_set_error():
 

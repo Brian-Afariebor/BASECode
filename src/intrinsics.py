@@ -3,34 +3,51 @@ from typing import Any
 
 class Null: ...
 
+
 NULL = Null()
 
-class Integer(int): 
+
+class Integer(int):
 
     def __add__(self, other: Any):
 
         return Integer(super().__add__(other))
 
     def __sub__(self, other: Any):
-    
-            return Integer(super().__sub__(other))
 
-class Float(float): 
+        return Integer(super().__sub__(other))
+
+
+class Float(float):
 
     def __add__(self, other: Any):
 
         return Float(super().__add__(other))
 
     def __sub__(self, other: Any):
-    
+
         return Float(super().__sub__(other))
 
 
 class String(str):
 
+    @classmethod
+    def makeFromLiteral(cls, literal: str):
+
+        trimmed_string = literal[1:-1]
+
+        new = (
+            trimmed_string.replace(r"\n", "\n")
+            .replace(r"\t", "\t")
+            .replace(r"\q", '"')
+            .replace(r"\\", "\\")
+        )
+        
+        return String(new)
+
     def remove(self, string: str):
 
-        result = "".join(self.split(string))
+        result = self.replace(string, "")
 
         return String(result)
 
@@ -39,13 +56,13 @@ class String(str):
         return String(super().__add__(str(other)))
 
     def __sub__(self, other: Any):
-        
+
         if isinstance(other, Null):
-            
+
             return self
-        
+
         if isinstance(other, str):
-            
+
             return self.remove(other)
 
         raise NameError()

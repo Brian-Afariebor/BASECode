@@ -50,3 +50,42 @@ class Regex(Enum):
     STRING = r"\"(?:[^\"]*)\""
     UNMAPPED = "."
     WHITESPACE = r"[\s]+"
+
+
+IMPORT_ORDER: list[Keyword | Regex] = [
+    Keyword.ADD,
+    Keyword.CALL,
+    Keyword.DEBUG,
+    Keyword.ELSE,
+    Keyword.END,
+    Keyword.FUNCTION,
+    Keyword.IF,
+    Keyword.INT_CAST,
+    Keyword.INPUT,
+    Keyword.JUMP,
+    Keyword.LINE_TERMINATOR,
+    Keyword.MAIN,
+    Keyword.MUL,
+    Keyword.OUT,
+    Keyword.POP,
+    Keyword.PUSH,
+    Keyword.RAW_SET,
+    Keyword.RAW_STACK_SET,
+    Keyword.REFERENCE,
+    Keyword.REMOVE,
+    Keyword.RETURN,
+    Keyword.SET,
+    Keyword.START,
+    Keyword.STOP,
+    Regex.DOCSTRING,
+    Regex.COMMENT,
+    Regex.DUMMY,
+    Regex.FLOAT,
+    Regex.FUNCTION_TERMINATOR,
+    Regex.INTEGER,
+    Regex.IDENTIFIER,
+    Regex.SHEBANG,
+    Regex.STRING,
+    Regex.WHITESPACE,
+    Regex.UNMAPPED,
+]

@@ -1,11 +1,7 @@
 from filters import register_all as register_all_filters
 from implementations import register_all as register_all_implementations
-
 from parser import Parser
-
-from regexes import Regex
-from regexes import Keyword
-
+from regexes import IMPORT_ORDER as REGEX_IMPORT_ORDER
 from token_types import Type
 
 
@@ -18,35 +14,10 @@ def register_all():
 
 def register_all_regexes():
 
-    register_keywords()
+    for regex in REGEX_IMPORT_ORDER:
 
-    # NOTE - Keywords have to go before the general regexes
-    # in order for them to parse correctly
-    register_non_unmapped_regexes()
-    register_unmapped_regex()
+        name = regex.name
 
-
-def register_unmapped_regex():
-
-    Parser.register_regex(Type.UNMAPPED, Regex.UNMAPPED)
-
-
-def register_non_unmapped_regexes():
-
-    Parser.register_regex(Type.FLOAT, Regex.FLOAT)
-
-    # NOTE - Floats have to go before integers to fix passing issues
-    Parser.register_regex(Type.INTEGER, Regex.INTEGER)
-
-    # NOTE - Identifiers have to go before
-    # floats and integers to fix parsing issues
-    Parser.register_regex(Type.IDENTIFIER, Regex.IDENTIFIER)
-    Parser.register_regex(Type.DUMMY, Regex.DUMMY)
-    Parser.register_regex(Type.WHITESPACE, Regex.WHITESPACE)
-
-
-def register_keywords():
-
-    Parser.register_regex(Type.ADD, Keyword.ADD)
-    Parser.register_regex(Type.END, Keyword.END)
-    Parser.register_regex(Type.SET, Keyword.SET)
+        type: Type = Type._member_map_[name] # pyright: ignore[reportAssignmentType]
+        
+        Parser.register_regex(type, regex)

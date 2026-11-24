@@ -25,7 +25,7 @@ class Type(Enum):
     JUMP = auto()
     LINE_TERMINATOR = auto()
     MAIN = auto()
-    MULTIPLY = auto()
+    MUL = auto()
     OUT = auto()
     POP = auto()
     PUSH = auto()

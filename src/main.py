@@ -11,7 +11,7 @@ def main():
     # TODO - Add linking
     tokens = Parser.parse(
         LinkedCode(
-    'end(rem("Hello, World!","Hello"));'
+    'end("Hello, World!");'
         ),
     )
     

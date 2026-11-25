@@ -4,7 +4,11 @@ from typing import Any
 from typing import Self
 
 
-class Null: ...
+class Null: 
+
+    def __repr__(self):
+
+        return "NULL"
 
 
 NULL = Null()

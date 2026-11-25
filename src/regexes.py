@@ -20,7 +20,8 @@ class Keyword(Enum):
     JUMP = "jmp"
     LINE_TERMINATOR = ";"
     MAIN = "mn"
-    MAIN_NAME = "main"
+    MAIN_STACK_NAME = "main::stack"
+    MAIN_THREAD_NAME = "main"
     MUL = "mul"
     OUT = "out"
     POP = "pop"
@@ -89,3 +90,9 @@ IMPORT_ORDER: list[Keyword | Regex] = [
     Regex.WHITESPACE,
     Regex.UNMAPPED,
 ]
+
+type VariableName = str
+
+def reference(variable: VariableName) -> str:
+
+    return variable + Keyword.REFERENCE_OPERATOR.value

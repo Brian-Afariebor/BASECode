@@ -8,8 +8,8 @@ from intrinsics import Null
 from intrinsics import NULL
 
 from regexes import Keyword
+from regexes import reference
 
-from typing import Final
 from typing import Self
 
 type VariableName = str
@@ -23,16 +23,9 @@ class State:
     """The state of a BASECode program.
 
     Attributes:
-        tokens (Final[FilteredTokenStream]): The tokenized code.
-        mode(Final[ExecutionMode]): THe mode to run the code with.
+        TOKENS (Final[FilteredTokenStream]): The tokenized code.
+        MODE (Final[ExecutionMode]): THe mode to run the code with.
     """
-
-    tokens: Final[FilteredTokenStream]
-    mode: Final[ExecutionMode]
-
-    _variables: dict[VariableName, VariableValue]
-    _thread_positions: dict[ThreadId, ThreadPosition]
-    _return_value: VariableValue
 
     def __init__(
         self,
@@ -48,12 +41,12 @@ class State:
                 Defaults to ExecutionMode.NORMAL.
         """
 
-        self.tokens = tokens
-        self.mode = mode
+        self.TOKENS = tokens
+        self.MODE = mode
 
-        self._thread_positions = {}
-        self._variables = {}
-        self._return_value = NULL
+        self._thread_positions: dict[ThreadId, ThreadPosition] = {}
+        self._variables: dict[VariableName, VariableValue] = {}
+        self._return_value: VariableValue = NULL
 
     # SECTION - Properties
     @property
@@ -67,7 +60,7 @@ class State:
     def append_to_stack(
         self,
         value: VariableValue,
-        stack_name: str = Keyword.MAIN_NAME.value,
+        stack_name: str = Keyword.MAIN_STACK_NAME.value,
     ):
 
         first_value = reference(stack_name) + "0"
@@ -138,7 +131,7 @@ class State:
 
             return None
 
-        return self.tokens[position]
+        return self.TOKENS[position]
 
     def get_variable(
         self,
@@ -153,7 +146,7 @@ class State:
 
     def pop_from_stack(
         self,
-        stack_name: VariableName = Keyword.MAIN_NAME.value,
+        stack_name: VariableName = Keyword.MAIN_STACK_NAME.value,
     ) -> VariableValue | None:
 
         stack_reference = reference(stack_name)
@@ -237,7 +230,7 @@ class State:
 
     def valid_thread_position(self, adress: ThreadPosition):
 
-        return adress >= 0 and adress < len(self.tokens)
+        return adress >= 0 and adress < len(self.TOKENS)
 
     def return_a_value(
         self,
@@ -250,15 +243,6 @@ class State:
         return self.remove_thread(thread_id)
 
     # !SECTION
-
-
-# !SECTION
-# SECTION - Non-class methods
-
-
-def reference(variable: VariableName) -> str:
-
-    return variable + Keyword.REFERENCE_OPERATOR.value
 
 
 # !SECTION

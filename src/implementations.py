@@ -33,12 +33,12 @@ type SimpleArgumentImplementation = Callable[
 
 def register_all() -> None:
 
-    Interpreter.register(end, Type.END)
-
     for implementation, function_type in MATH_FUNCTIONS:
 
         Interpreter.register(implementation, function_type)
 
+
+    Interpreter.register(end, Type.END)
     Interpreter.register(identifier, Type.IDENTIFIER)
     Interpreter.register(set_variable, Type.SET)
 

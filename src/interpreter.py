@@ -10,7 +10,6 @@ from errors import InvalidTokenError
 from execution_modes import ExecutionMode
 from filter import FilteredTokenStream
 
-from states import reference
 from states import State
 from states import ThreadPosition
 from states import ThreadId
@@ -30,7 +29,7 @@ class Interpreter(ABC):
         None | NoReturn,
     ]
 
-    MAIN_THREAD_ID: ThreadId = reference("main") + "stack"
+    MAIN_THREAD_ID: ThreadId = "main"
     MAIN_THREAD: ThreadPosition = 0
 
     _mappings: dict[tuple[ExecutionMode, Type], Implementation] = {}
@@ -178,7 +177,7 @@ class Interpreter(ABC):
 
         implementation = Interpreter.get_implemenation_from_token(
             token,
-            self._state.mode,
+            self._state.MODE,
         )
 
         if implementation is None:

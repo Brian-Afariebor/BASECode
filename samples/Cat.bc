@@ -16,22 +16,22 @@ Test Cat::Main:
 */
 
 /**
-    Main Cat::Main:
+Main Cat::Main:
 
-        Description:
-            Echos the input to the user.
+    Description:
+        Echos the input to the user.
 
-        Preconditions:
-            None.
+    Preconditions:
+        None.
 
-        Result:
-            Gets the input from the user,
-                prints it,
-                and returns 0.
+    Result:
+        Gets the input from the user,
+            prints it,
+            and returns 0.
 
-        Postconditions:
-            The code is ended,
-                and Cat::Input is deleted.
+    Postconditions:
+        The code is ended,
+            and Cat::Input is deleted.
 */
 mn Cat::Main
 {

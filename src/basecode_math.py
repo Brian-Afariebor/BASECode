@@ -27,11 +27,11 @@ def add(arguments: list[VariableValue]):
 
     if isinstance(first_argument, Null):
 
-        raise BASECodeTypeError("Null first-argument to add")
+        raise BASECodeTypeError("Cannot add to NULL")
 
     if isinstance(second_argument, Null):
 
-        raise BASECodeTypeError("Null second-argument to add")
+        raise BASECodeTypeError("Cannot add NULL")
 
     if isinstance(first_argument, String):
 
@@ -85,18 +85,49 @@ def raw_float(
     except Exception as creation_error:
 
         raise BASECodeRuntimeError(
-            f"""The integer
-            
-            '{string_representation}'
-            
-            could not be created.""",
+            f"Could not create the float '{string_representation}'",
         ) from creation_error
 
     interpreter.state.append_to_stack(float_value)
 
 
+@get_self()
+def string(
+    self: Token,
+    thread_id: ThreadId,
+    interpreter: Interpreter,
+) -> None | NoReturn:
+
+    string_literal = self.value
+
+    try:
+
+        float_value = String.from_literal(string_literal)
+
+    except Exception as creation_error:
+
+        raise BASECodeRuntimeError(
+            f"Could not create string '{string_literal}'",
+        ) from creation_error
+
+    interpreter.state.append_to_stack(float_value)
+
+@get_args(2)
+def remove(arguments: list[VariableValue]):
+
+    first_argument = arguments[0]
+    second_argument = arguments[1]
+
+    if isinstance(first_argument, Null):
+
+        raise BASECodeTypeError("Cannot subtract from NULL")
+
+    return first_argument - second_argument
+
 FUNCTIONS = [
     (integer, Type.INTEGER),
     (raw_float, Type.FLOAT),
+    (string, Type.STRING),
     (add, Type.ADD),
+    (remove, Type.REMOVE)
 ]

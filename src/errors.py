@@ -45,27 +45,7 @@ class PositionError(BASECodeError):
 
             call(function::FunctionName);
             call(main::MainName)
-
-
-        Note that the functions and mains must be defined before usage.
-
-        For example, this code:
-
-            <Main.blc>
-
-            mn Main
-            {
-                jmp(function::EndCode);
-            }
-
-            fn EndCode
-            {
-                end(0);
-            }
-
-        will cause an error; 
-            as function::EndCode has not yet been defined by the interrpeter.
-        """.strip()
+        """
 
 
 class StackError(BASECodeError):
@@ -80,11 +60,11 @@ class StackError(BASECodeError):
         StackName::n # let n be the greatest index
         (top)
 
-    In addition, this, assuming safe code, is true:
+    In addition, this is true:
 
         StackName::tp = n
 
-    You can safely use stacks like this:
+    You can use stacks like this:
 
         set VariableName = pop(StackName);
         /* Do note that if the stack has no elements, NULL is returned. */
@@ -101,7 +81,7 @@ class StackError(BASECodeError):
         clr(StackName);
         rclr("StackName");
 
-    """.strip()
+    """
 
 
 class BASECodeTypeError(BASECodeError):
@@ -118,36 +98,6 @@ class BASECodeTypeError(BASECodeError):
         
         Most functions do specific things when given certain types;
             check the docs for information!
-
-        As for user defined functions, the docstring convention is this:
-
-            /**
-            TypeOfFunction FunctionName:
-
-                Description:
-                    A description of the function.
-
-                Requirements:
-                    Everything required for the function to do its job.
-                    All preconditions go here.
-
-                Result:
-                    What happens after the function runs.
-                    All side effects and postconditions go here.
-            */
-
-        You can use the option '-pd' to print all the docstrings.
-
-        You can check the type of an object like this:
-
-            if(sametype(Variable, "") == true)
-            {
-                STUFF;
-            }
-            else
-            {
-                STUFF;
-            }
         """
 
 
@@ -166,25 +116,6 @@ class MissingArgumentError(BASECodeError):
     NOTE = "Check the standard library for standard library function usage."
 
 
-class InvalidSetError(MissingArgumentError):
-
-    NOTE = """set is used like this:
-
-        set VARIABLE_NAME = VALUE;
-        /*At the filtering stage this becomes set VARIABLE_NAME VALUE;
-            so the = is not needed; just good practice.*/
-        """.strip()
-
-
-class InvalidEndError(MissingArgumentError):
-
-    NOTE = """end is used like this:
-
-        end(VALUE);
-        /*Due to the filtering process, this can be simplified to 'end VALUE',
-        but it's clearer when done this way*/
-    """
-
 class EndOfCodeError(BASECodeRuntimeError):
 
     NOTE = """All programs must end.
@@ -198,3 +129,8 @@ class EndOfCodeError(BASECodeRuntimeError):
 class InvalidTokenError(BASECodeRuntimeError):
 
     NOTE = """Check the library for all valid BASECode functions and types."""
+
+class MissingTerminatorError(InvalidTokenError):
+
+    NOTE = """All functions need to be terminated.
+    You can do that using ')' and ';'."""

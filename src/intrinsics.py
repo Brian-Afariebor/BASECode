@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from typing import Any
+from typing import Self
 
 
 class Null: ...
@@ -9,30 +12,43 @@ NULL = Null()
 
 class Integer(int):
 
-    def __add__(self, other: Any):
+    @property
+    def original(self):
+
+        return super()
+
+    def __add__(self, other: Any) -> Integer:
 
         return Integer(super().__add__(other))
 
-    def __sub__(self, other: Any):
+    def __sub__(self, other: Any) -> Integer:
 
         return Integer(super().__sub__(other))
 
 
 class Float(float):
 
-    def __add__(self, other: Any):
+    @property
+    def original(self):
+
+        return super()
+
+    def __add__(self, other: Any) -> Float:
 
         return Float(super().__add__(other))
 
-    def __sub__(self, other: Any):
+    def __sub__(self, other: Any) -> Float:
 
         return Float(super().__sub__(other))
 
 
+type BASECodeLiteralString = str
+
+
 class String(str):
 
-    @classmethod
-    def makeFromLiteral(cls, literal: str):
+    @staticmethod
+    def from_literal(literal: BASECodeLiteralString) -> String:
 
         trimmed_string = literal[1:-1]
 
@@ -42,20 +58,25 @@ class String(str):
             .replace(r"\q", '"')
             .replace(r"\\", "\\")
         )
-        
+
         return String(new)
 
-    def remove(self, string: str):
+    @property
+    def original(self):
+
+        return super()
+
+    def remove(self, string: str) -> String:
 
         result = self.replace(string, "")
 
         return String(result)
 
-    def __add__(self, other: Any):
+    def __add__(self, other: Any) -> String:
 
         return String(super().__add__(str(other)))
 
-    def __sub__(self, other: Any):
+    def __sub__(self, other: Any) -> Self | String:
 
         if isinstance(other, Null):
 
@@ -65,25 +86,31 @@ class String(str):
 
             return self.remove(other)
 
-        raise NameError()
+        raise TypeError(
+            f"""Only strings or null can be subtracted from a BASECode string;
+            the type '{type(other)}' is not one of those."""
+        )
 
-    def __truediv__(self, other: Any):
+    def __truediv__(self, other: Any) -> Integer | String:
 
         if not isinstance(other, int | float | str):
 
-            return other / self
+            raise TypeError(
+                f"""Only strings or null can be divided from a BASECode string;
+                the type '{type(other)}' is not one of those."""
+            )
 
         if isinstance(other, str):
 
             return Integer(self.count(other))
 
-        reverse = other < 0
+        should_reverse = other < 0
 
         partition = abs(int(len(self) / other))
 
         result = self[0:partition]
 
-        if reverse:
+        if should_reverse:
 
             return String(result[::-1])
 

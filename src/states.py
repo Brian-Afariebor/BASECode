@@ -13,12 +13,12 @@ from typing import Final
 from typing import Self
 
 type VariableName = str
-
 type VariableValue = String | Integer | Float | Null
 type ThreadPosition = int
 type ThreadId = str
 
 
+# SECTION - Class methods
 class State:
     """The state of a BASECode program.
 
@@ -93,7 +93,7 @@ class State:
                 + "Check your code."
             )
 
-        new_top_pointer_value = Integer(top_pointer_value + 1)
+        new_top_pointer_value = top_pointer_value + 1
 
         return self.set_variable(
             top_pointer,
@@ -171,8 +171,7 @@ class State:
         top_value = self.get_variable(top_value_pointer_name)
 
         self.delete_variable(top_value_pointer_name).set_variable(
-            top_pointer_name,
-            Integer(top_pointer_value - 1),
+            top_pointer_name, top_pointer_value - 1
         )
 
         if top_pointer_value <= 0:
@@ -240,7 +239,6 @@ class State:
 
         return adress >= 0 and adress < len(self.tokens)
 
-  
     def return_a_value(
         self,
         value: VariableValue,
@@ -250,7 +248,17 @@ class State:
         self._return_value = value
 
         return self.remove_thread(thread_id)
-  #!SECTION
+
+    # !SECTION
+
+
+# !SECTION
+# SECTION - Non-class methods
+
+
 def reference(variable: VariableName) -> str:
 
     return variable + Keyword.REFERENCE_OPERATOR.value
+
+
+# !SECTION

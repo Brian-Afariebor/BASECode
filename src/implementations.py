@@ -1,12 +1,12 @@
 from basecode_math import FUNCTIONS as MATH_FUNCTIONS
 from collections.abc import Callable
 
-from errors import InvalidEndError
-from errors import InvalidSetError
+from errors import BASECodeRuntimeError
+from errors import EndOfCodeError
+from errors import MissingTerminatorError
 
 from implementation_uitls import get_self
 from interpreter import Interpreter
-from intrinsics import Integer
 
 from states import ThreadId
 from states import VariableValue
@@ -34,40 +34,37 @@ type SimpleArgumentImplementation = Callable[
 def register_all() -> None:
 
     Interpreter.register(end, Type.END)
-    
+
     for implementation, function_type in MATH_FUNCTIONS:
-        
+
         Interpreter.register(implementation, function_type)
-    
+
     Interpreter.register(identifier, Type.IDENTIFIER)
     Interpreter.register(set_variable, Type.SET)
 
-@get_self()
+
 def end(
-    self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
 ) -> None | NoReturn:
 
+    state = interpreter.state
+
     try:
+
         interpreter.step_and_run_thread(
             thread_id,
         )
 
     except Exception as interpreter_error:
 
-        raise InvalidEndError(f"""Missing end value at:
-            
-            {self}""".strip()) from interpreter_error
-
-    state = interpreter.state
+        raise BASECodeRuntimeError(f"Missing end value") from interpreter_error
 
     return_value = state.pop_from_stack()
 
     if return_value is None:
 
-        state.return_a_value(Integer(0), thread_id)
-        return
+        raise BASECodeRuntimeError("Missing end value")
 
     state.return_a_value(return_value, thread_id)
 
@@ -88,18 +85,10 @@ def identifier(
     state.append_to_stack(self_value)
 
 
-@get_self()
 def set_variable(
-    self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
 ) -> None | NoReturn:
-
-    def invalid_set_error():
-
-        return InvalidSetError(f"""Invalid set statement at token:
-                '{self}'
-            """.strip())
 
     state = interpreter.state
 
@@ -107,31 +96,26 @@ def set_variable(
 
     if new_state is None:
 
-        raise invalid_set_error()
+        raise EndOfCodeError("Missing variable assignment token")
 
     variable_token = state.token_at_thread_id(thread_id)
 
+    # NOTE - This should never happen
     if variable_token is None:
 
-        raise invalid_set_error()
+        raise BASECodeRuntimeError("Missing variable assignment token")
 
     variable_name = variable_token.value
 
-    try:
-
-        interpreter.step_and_run_thread(
-            thread_id,
-        )
-
-    except Exception as interpreter_error:
-
-        raise invalid_set_error() from interpreter_error
+    interpreter.step_and_run_thread(
+        thread_id,
+    )
 
     variable_value = state.pop_from_stack()
 
     if variable_value is None:
 
-        raise invalid_set_error()
+        raise BASECodeRuntimeError("Missing assignment value")
 
     state.set_variable(variable_name, variable_value)
 
@@ -139,4 +123,4 @@ def set_variable(
 
     if new_state is None:
 
-        raise invalid_set_error()
+        raise MissingTerminatorError("Missing ending semicolon ';'")

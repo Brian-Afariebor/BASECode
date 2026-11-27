@@ -1,4 +1,4 @@
-from execution_modes import ExecutionMode
+from execution_modes import Mode
 from filter import FilteredTokenStream
 
 from intrinsics import Integer
@@ -30,7 +30,7 @@ class State:
     def __init__(
         self,
         tokens: FilteredTokenStream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ):
         """The constructor for a State.
 
@@ -53,6 +53,11 @@ class State:
     def return_value(self):
 
         return self._return_value
+
+    @property
+    def variables(self):
+
+        return self._variables.copy()
 
     #!SECTION
 

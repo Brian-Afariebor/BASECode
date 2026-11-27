@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from execution_modes import ExecutionMode
+from execution_modes import Mode
 from tokens import TokenStream
 from typing import Self
 
@@ -14,12 +14,12 @@ type TokenFilter = Callable[[UnfilteredTokenSream], FilteredTokenStream]
 
 class Filter:
 
-    _filters: dict[ExecutionMode, TokenFilter] = {}
+    _filters: dict[Mode, TokenFilter] = {}
 
     @classmethod
     def register(
         cls,
-        mode: ExecutionMode,
+        mode: Mode,
         filter: TokenFilter,
     ) -> type[Self]:
 
@@ -30,7 +30,7 @@ class Filter:
     def filter(
         cls,
         tokens: UnfilteredTokenSream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> FilteredTokenStream | None:
 
         if mode not in cls._filters:

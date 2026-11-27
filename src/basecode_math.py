@@ -9,6 +9,7 @@ from interpreter import Interpreter
 from intrinsics import Float
 from intrinsics import Integer
 from intrinsics import Null
+from intrinsics import NULL
 from intrinsics import String
 
 from states import ThreadId
@@ -16,11 +17,21 @@ from states import VariableValue
 
 from tokens import Token
 from token_types import Type
-from typing import NoReturn
 
 
 @get_args(2)
-def add(arguments: list[VariableValue]):
+def add(arguments: list[VariableValue]) -> VariableValue:
+    """Adds two values together.
+
+    Args:
+        arguments (list[VariableValue]): The values to be added.
+
+    Raises:
+        BASECodeTypeError: Raises an error if the types cannot be added.
+
+    Returns:
+        VariableValue: The addition of the two values.
+    """
 
     first_argument = arguments[0]
     second_argument = arguments[1]
@@ -40,15 +51,27 @@ def add(arguments: list[VariableValue]):
     if isinstance(second_argument, String):
 
         return String(first_argument) + second_argument
-    
+
     return first_argument + second_argument
+
 
 @get_self()
 def integer(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-) -> None | NoReturn:
+) -> None:
+    """Creates a new integer.
+
+    Args:
+        self (Token): The integer token.
+        thread_id (ThreadId): The current thread. Is not used.
+        interpreter (Interpreter): The current integer.
+
+    Raises:
+        BASECodeRuntimeError: 
+            Raises an error if the integer could not be created.
+    """    
 
     string_representation = self.value.replace("_", "")
 
@@ -74,7 +97,17 @@ def raw_float(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-) -> None | NoReturn:
+) -> None:
+    """Creates a float.
+
+    Args:
+        self (Token): The float token.
+        thread_id (ThreadId): The current thread. Is not used.
+        interpreter (Interpreter): The current interpreter.
+
+    Raises:
+        BASECodeRuntimeError: Raises an error if the float could not be created.
+    """
 
     string_representation = self.value
 
@@ -91,12 +124,45 @@ def raw_float(
     interpreter.state.append_to_stack(float_value)
 
 
+def raw_null(thread_id: ThreadId, interpreter: Interpreter) -> None:
+
+    state = interpreter.state
+
+    state.append_to_stack(NULL)
+
+
+@get_args(2)
+def remove(arguments: list[VariableValue]) -> VariableValue:
+
+    first_argument = arguments[0]
+    second_argument = arguments[1]
+
+    if isinstance(first_argument, Null):
+
+        raise BASECodeTypeError("Cannot subtract from NULL")
+
+    return first_argument - second_argument
+
+
 @get_self()
 def string(
     self: Token,
     thread_id: ThreadId,
     interpreter: Interpreter,
-) -> None | NoReturn:
+) -> None:
+    """Creates a new BASECode string.
+
+    Args:
+        self (Token): The string literal token.
+        thread_id (ThreadId): The id of the current thread. Is not used.
+        interpreter (Interpreter): The current interpreter.
+
+    Raises:
+        BASECodeRuntimeError: If the string cannot be created, raises an error.
+
+    Returns:
+        None: Adds the new string to the stack.
+    """
 
     string_literal = self.value
 
@@ -112,22 +178,14 @@ def string(
 
     interpreter.state.append_to_stack(float_value)
 
-@get_args(2)
-def remove(arguments: list[VariableValue]):
 
-    first_argument = arguments[0]
-    second_argument = arguments[1]
-
-    if isinstance(first_argument, Null):
-
-        raise BASECodeTypeError("Cannot subtract from NULL")
-
-    return first_argument - second_argument
-
-FUNCTIONS = [
+FUNCTION_MAPPINGS = [
     (integer, Type.INTEGER),
     (raw_float, Type.FLOAT),
     (string, Type.STRING),
+    (raw_null, Type.NULL),
     (add, Type.ADD),
-    (remove, Type.REMOVE)
+    (remove, Type.REMOVE),
 ]
+"""All of the BASECode math functions and their type mappings.
+"""

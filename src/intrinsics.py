@@ -3,16 +3,28 @@ from __future__ import annotations
 from typing import Any
 from typing import Self
 
+class _BaseNull:
 
-class Null: 
+    def __init__(self): ...
 
     def __repr__(self):
 
         return "NULL"
 
+class Null(_BaseNull):
+
+   NULL: Null
+
+   def __new__(cls) -> Null:
+
+        if not hasattr(cls, "NULL"):
+
+            cls.NULL = super().__new__(cls)
+
+        return cls.NULL
+
 
 NULL = Null()
-
 
 class Integer(int):
 

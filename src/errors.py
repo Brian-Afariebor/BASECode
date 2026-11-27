@@ -134,3 +134,10 @@ class MissingTerminatorError(InvalidTokenError):
 
     NOTE = """All functions need to be terminated.
     You can do that using ')' and ';'."""
+
+class SuspiciousError(BASECodeRuntimeError):
+
+    NOTE = """Make sure your code is not overwritting
+    built-in lanugage variables,
+    features,
+    or constants"""

@@ -6,8 +6,9 @@ from collections.abc import Callable
 from errors import BASECodeRuntimeError
 from errors import EndOfCodeError
 from errors import InvalidTokenError
+from errors import SuspiciousError
 
-from execution_modes import ExecutionMode
+from execution_modes import Mode
 from filter import FilteredTokenStream
 
 from states import State
@@ -29,10 +30,12 @@ class Interpreter(ABC):
         None | NoReturn,
     ]
 
+    type WarningMessage = str
+
     MAIN_THREAD_ID: ThreadId = "main"
     MAIN_THREAD: ThreadPosition = 0
 
-    _mappings: dict[tuple[ExecutionMode, Type], Implementation] = {}
+    _mappings: dict[tuple[Mode, Type], Implementation] = {}
     _state: State
 
     # SECTION - Class methods
@@ -41,7 +44,7 @@ class Interpreter(ABC):
     def generate_state(
         cls,
         tokens: FilteredTokenStream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> State:
 
         state = State(tokens, mode).set_thread_position(
@@ -59,7 +62,7 @@ class Interpreter(ABC):
     def get_implemenation_from_token(
         cls,
         token: Token,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> Implementation | None:
         """Gets the implentation of a token.
 
@@ -89,7 +92,7 @@ class Interpreter(ABC):
 
         # NOTE - The default mode for a non-found extra mode is NORMAL
 
-        key = (ExecutionMode.NORMAL, type)
+        key = (Mode.NORMAL, type)
 
         if key not in cls._mappings:
 
@@ -102,7 +105,7 @@ class Interpreter(ABC):
         cls,
         implementation: Implementation,
         type: Type,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> type[Self]:
         """Registers a new implementation.
 
@@ -125,7 +128,7 @@ class Interpreter(ABC):
     def run(
         cls,
         tokens: FilteredTokenStream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> VariableValue | NoReturn:
 
         interpreter = Interpreter(tokens, mode)
@@ -138,7 +141,7 @@ class Interpreter(ABC):
     def __init__(
         self,
         tokens: FilteredTokenStream,
-        mode: ExecutionMode = ExecutionMode.NORMAL,
+        mode: Mode = Mode.NORMAL,
     ) -> None:
 
         self._state = Interpreter.generate_state(tokens, mode)
@@ -215,5 +218,22 @@ class Interpreter(ABC):
         self._state = stepped_state
 
         return self.run_token_at_thread(thread_id)
+
+    def warn(self, message: WarningMessage):
+
+        match self._state.MODE:
+
+            case Mode.WARNING_ERRORS:
+
+                raise SuspiciousError(message)
+
+            case Mode.DEBUG:
+
+                # TODO - Add debug warning system
+                pass
+
+            case _:
+
+                pass
 
     # !SECTION

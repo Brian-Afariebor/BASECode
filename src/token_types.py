@@ -26,6 +26,7 @@ class Type(Enum):
     LINE_TERMINATOR = auto()
     MAIN = auto()
     MUL = auto()
+    NULL = auto()
     OUT = auto()
     POP = auto()
     PUSH = auto()

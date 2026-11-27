@@ -1,4 +1,4 @@
-from execution_modes import ExecutionMode
+from execution_modes import Mode
 
 from filter import Filter
 from filter import FilteredTokenStream
@@ -14,8 +14,8 @@ NORMAL_FIlTER_TYPES = [
 
 def register_all():
 
-    Filter.register(ExecutionMode.NORMAL, normal_filter)
-    Filter.register(ExecutionMode.DOCSTRINGS, debug_filter)
+    Filter.register(Mode.NORMAL, normal_filter)
+    Filter.register(Mode.DOCSTRINGS, debug_filter)
 
 
 def debug_filter(token_stream: UnfilteredTokenSream) -> FilteredTokenStream:

@@ -23,6 +23,7 @@ class Keyword(Enum):
     MAIN_STACK_NAME = "main::stack"
     MAIN_THREAD_NAME = "main"
     MUL = "mul"
+    NULL = "null"
     OUT = "out"
     POP = "pop"
     PUSH = "push"

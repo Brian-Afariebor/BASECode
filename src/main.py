@@ -1,3 +1,4 @@
+from execution_modes import Mode
 from filter import Filter
 from interpreter import Interpreter
 from linker import LinkedCode
@@ -11,7 +12,7 @@ def main():
     # TODO - Add linking
     tokens = Parser.parse(
         LinkedCode(
-    'end("Hello, World!");'
+    'set main::stack::tp = 1; set XY = 2; end(null);'
         ),
     )
     
@@ -22,7 +23,7 @@ def main():
         # TODO - Add error
         return
 
-    print(Interpreter.run(filtered_tokens))
+    print(Interpreter.run(filtered_tokens, Mode.WARNING_ERRORS))
 
 
 if __name__ == "__main__":

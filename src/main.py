@@ -12,7 +12,7 @@ def main():
     # TODO - Add linking
     tokens = Parser.parse(
         LinkedCode(
-    'set main::stack::tp = 1; set XY = 2; end(null);'
+    'out("Say something: "); end(in());'
         ),
     )
     

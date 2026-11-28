@@ -19,7 +19,7 @@ class Type(Enum):
     FUNCTION = auto()
     IDENTIFIER = auto()
     IF = auto()
-    INPUT = auto()
+    IN = auto()
     INT_CAST = auto()
     INTEGER = auto()
     JUMP = auto()

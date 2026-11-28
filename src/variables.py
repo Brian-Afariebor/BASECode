@@ -94,7 +94,7 @@ def set_variable(
             """,
         )
 
-    interpreter.step_and_run_thread(
+    _ = interpreter.step_and_run_thread(
         thread_id,
     )
 

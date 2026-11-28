@@ -1,3 +1,4 @@
+from basecode_io import FUNCTION_MAPPINGS as IO_FUNCTIONS
 from basecode_math import FUNCTION_MAPPINGS as MATH_FUNCTIONS
 from errors import BASECodeRuntimeError
 from interpreter import Interpreter
@@ -16,6 +17,10 @@ def register_all() -> None:
 
         Interpreter.register(implementation, function_type)
 
+    for implementation, function_type in IO_FUNCTIONS:
+    
+            Interpreter.register(implementation, function_type)
+
     Interpreter.register(end, Type.END)
 
 
@@ -26,15 +31,9 @@ def end(
 
     state = interpreter.state
 
-    try:
-
-        interpreter.step_and_run_thread(
-            thread_id,
-        )
-
-    except Exception as interpreter_error:
-
-        raise BASECodeRuntimeError(f"Missing end value") from interpreter_error
+    _ = interpreter.step_and_run_thread(
+        thread_id,
+    )
 
     return_value = state.pop_from_stack()
 

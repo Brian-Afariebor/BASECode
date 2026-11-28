@@ -15,7 +15,7 @@ class Keyword(Enum):
     FUNCTION_NAME = "function"
     IF = "if"
     IMPORT = "imp"
-    INPUT = "in"
+    IN = "in"
     INT_CAST = "int"
     JUMP = "jmp"
     LINE_TERMINATOR = ";"
@@ -63,7 +63,7 @@ IMPORT_ORDER: list[Keyword | Regex] = [
     Keyword.FUNCTION,
     Keyword.IF,
     Keyword.INT_CAST,
-    Keyword.INPUT,
+    Keyword.IN,
     Keyword.JUMP,
     Keyword.LINE_TERMINATOR,
     Keyword.MAIN,

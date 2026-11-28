@@ -1,9 +1,13 @@
 from errors import BASECodeRuntimeError
 from errors import MissingTerminatorError
 
+from implementation_uitls import get_args
 from interpreter import Interpreter
+from intrinsics import String
 from states import ThreadId
+from states import VariableValue
 from token_types import Type
+
 
 def out(
     thread_id: ThreadId,
@@ -20,7 +24,7 @@ def out(
 
         raise BASECodeRuntimeError("Could not get value to print")
 
-    print(value, end = "")
+    print(value, end="")
 
     new_state = state.step_thread(thread_id)
 
@@ -28,4 +32,20 @@ def out(
 
         raise MissingTerminatorError("Missing ending parenthesis ')'")
 
-FUNCTION_MAPPINGS = [(out, Type.OUT)]
+    new_state = state.step_thread(thread_id)
+    
+    if new_state is None:
+
+        raise MissingTerminatorError("Missing ending semocolon ';'")
+
+
+@get_args(0)
+def get_input(args: list[VariableValue]):
+
+    return String(input())
+
+
+FUNCTION_MAPPINGS = [
+    (out, Type.OUT),
+    (get_input, Type.IN),
+]
